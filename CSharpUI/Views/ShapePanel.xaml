@@ -1,0 +1,273 @@
+<UserControl x:Class="ThreeDBuilder.Views.ShapePanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+
+    <StackPanel Margin="4">
+
+        <!-- ── Shapes ───────────────────────────────────────────────────── -->
+        <TextBlock Style="{StaticResource SectionHeader}"
+                   Text="{Binding T[panel_shapes]}"/>
+
+        <WrapPanel>
+            <!-- Box -->
+            <Button Style="{StaticResource ShapeButtonStyle}"
+                    Command="{Binding AddShapeCommand}"
+                    CommandParameter="box"
+                    ToolTip="{Binding T[shape_box]}">
+                <StackPanel>
+                    <materialDesign:PackIcon Kind="CubeOutline" Width="28" Height="28"
+                                            HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding T[shape_box]}" TextAlignment="Center" FontSize="10"/>
+                </StackPanel>
+            </Button>
+
+            <!-- Sphere -->
+            <Button Style="{StaticResource ShapeButtonStyle}"
+                    Command="{Binding AddShapeCommand}"
+                    CommandParameter="sphere"
+                    ToolTip="{Binding T[shape_sphere]}">
+                <StackPanel>
+                    <materialDesign:PackIcon Kind="CircleOutline" Width="28" Height="28"
+                                            HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding T[shape_sphere]}" TextAlignment="Center" FontSize="10"/>
+                </StackPanel>
+            </Button>
+
+            <!-- Cylinder -->
+            <Button Style="{StaticResource ShapeButtonStyle}"
+                    Command="{Binding AddShapeCommand}"
+                    CommandParameter="cylinder"
+                    ToolTip="{Binding T[shape_cylinder]}">
+                <StackPanel>
+                    <materialDesign:PackIcon Kind="CylinderOff" Width="28" Height="28"
+                                            HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding T[shape_cylinder]}" TextAlignment="Center" FontSize="10"/>
+                </StackPanel>
+            </Button>
+
+            <!-- Cone -->
+            <Button Style="{StaticResource ShapeButtonStyle}"
+                    Command="{Binding AddShapeCommand}"
+                    CommandParameter="cone"
+                    ToolTip="{Binding T[shape_cone]}">
+                <StackPanel>
+                    <materialDesign:PackIcon Kind="Triangle" Width="28" Height="28"
+                                            HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding T[shape_cone]}" TextAlignment="Center" FontSize="10"/>
+                </StackPanel>
+            </Button>
+
+            <!-- Torus -->
+            <Button Style="{StaticResource ShapeButtonStyle}"
+                    Command="{Binding AddShapeCommand}"
+                    CommandParameter="torus"
+                    ToolTip="{Binding T[shape_torus]}">
+                <StackPanel>
+                    <materialDesign:PackIcon Kind="DonutLarge" Width="28" Height="28"
+                                            HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding T[shape_torus]}" TextAlignment="Center" FontSize="10"/>
+                </StackPanel>
+            </Button>
+
+            <!-- Prism -->
+            <Button Style="{StaticResource ShapeButtonStyle}"
+                    Command="{Binding AddShapeCommand}"
+                    CommandParameter="prism"
+                    ToolTip="{Binding T[shape_prism]}">
+                <StackPanel>
+                    <materialDesign:PackIcon Kind="HexagonOutline" Width="28" Height="28"
+                                            HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding T[shape_prism]}" TextAlignment="Center" FontSize="10"/>
+                </StackPanel>
+            </Button>
+
+            <!-- Pyramid -->
+            <Button Style="{StaticResource ShapeButtonStyle}"
+                    Command="{Binding AddShapeCommand}"
+                    CommandParameter="pyramid"
+                    ToolTip="{Binding T[shape_pyramid]}">
+                <StackPanel>
+                    <materialDesign:PackIcon Kind="TriangleOutline" Width="28" Height="28"
+                                            HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding T[shape_pyramid]}" TextAlignment="Center" FontSize="10"/>
+                </StackPanel>
+            </Button>
+
+            <!-- Tube -->
+            <Button Style="{StaticResource ShapeButtonStyle}"
+                    Command="{Binding AddShapeCommand}"
+                    CommandParameter="tube"
+                    ToolTip="{Binding T[shape_tube]}">
+                <StackPanel>
+                    <materialDesign:PackIcon Kind="Pipe" Width="28" Height="28"
+                                            HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding T[shape_tube]}" TextAlignment="Center" FontSize="10"/>
+                </StackPanel>
+            </Button>
+
+            <!-- Ellipsoid -->
+            <Button Style="{StaticResource ShapeButtonStyle}"
+                    Command="{Binding AddShapeCommand}"
+                    CommandParameter="ellipsoid"
+                    ToolTip="{Binding T[shape_ellipsoid]}">
+                <StackPanel>
+                    <materialDesign:PackIcon Kind="EllipseOutline" Width="28" Height="28"
+                                            HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding T[shape_ellipsoid]}" TextAlignment="Center" FontSize="10"/>
+                </StackPanel>
+            </Button>
+
+            <!-- Hemisphere -->
+            <Button Style="{StaticResource ShapeButtonStyle}"
+                    Command="{Binding AddShapeCommand}"
+                    CommandParameter="hemisphere"
+                    ToolTip="{Binding T[shape_hemisphere]}">
+                <StackPanel>
+                    <materialDesign:PackIcon Kind="Dome" Width="28" Height="28"
+                                            HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding T[shape_hemisphere]}" TextAlignment="Center" FontSize="10"/>
+                </StackPanel>
+            </Button>
+
+            <!-- L-Profile -->
+            <Button Style="{StaticResource ShapeButtonStyle}"
+                    Command="{Binding AddShapeCommand}"
+                    CommandParameter="l_profile"
+                    ToolTip="{Binding T[shape_l_profile]}">
+                <StackPanel>
+                    <materialDesign:PackIcon Kind="CornerDownRight" Width="28" Height="28"
+                                            HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding T[shape_l_profile]}" TextAlignment="Center" FontSize="10"/>
+                </StackPanel>
+            </Button>
+
+            <!-- T-Profile -->
+            <Button Style="{StaticResource ShapeButtonStyle}"
+                    Command="{Binding AddShapeCommand}"
+                    CommandParameter="t_profile"
+                    ToolTip="{Binding T[shape_t_profile]}">
+                <StackPanel>
+                    <materialDesign:PackIcon Kind="FormatAlignTop" Width="28" Height="28"
+                                            HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding T[shape_t_profile]}" TextAlignment="Center" FontSize="10"/>
+                </StackPanel>
+            </Button>
+
+            <!-- Star -->
+            <Button Style="{StaticResource ShapeButtonStyle}"
+                    Command="{Binding AddShapeCommand}"
+                    CommandParameter="star"
+                    ToolTip="{Binding T[shape_star]}">
+                <StackPanel>
+                    <materialDesign:PackIcon Kind="StarOutline" Width="28" Height="28"
+                                            HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding T[shape_star]}" TextAlignment="Center" FontSize="10"/>
+                </StackPanel>
+            </Button>
+
+            <!-- Polygon -->
+            <Button Style="{StaticResource ShapeButtonStyle}"
+                    Command="{Binding AddShapeCommand}"
+                    CommandParameter="polygon"
+                    ToolTip="{Binding T[shape_polygon]}">
+                <StackPanel>
+                    <materialDesign:PackIcon Kind="Pentagon" Width="28" Height="28"
+                                            HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding T[shape_polygon]}" TextAlignment="Center" FontSize="10"/>
+                </StackPanel>
+            </Button>
+
+            <!-- Threaded Cylinder -->
+            <Button Style="{StaticResource ShapeButtonStyle}"
+                    Command="{Binding AddShapeCommand}"
+                    CommandParameter="thread_cyl"
+                    ToolTip="{Binding T[shape_thread_cyl]}">
+                <StackPanel>
+                    <materialDesign:PackIcon Kind="Screw" Width="28" Height="28"
+                                            HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding T[shape_thread_cyl]}" TextAlignment="Center" FontSize="10"/>
+                </StackPanel>
+            </Button>
+        </WrapPanel>
+
+        <Separator Style="{StaticResource PanelSeparator}"/>
+
+        <!-- ── Import ────────────────────────────────────────────────────── -->
+        <TextBlock Style="{StaticResource SectionHeader}"
+                   Text="{Binding T[panel_import]}"/>
+
+        <Button Style="{StaticResource ActionButton}"
+                Command="{Binding ImportStlCommand}"
+                HorizontalAlignment="Stretch"
+                Margin="4,2">
+            <StackPanel Orientation="Horizontal">
+                <materialDesign:PackIcon Kind="Upload" Margin="0,0,6,0"/>
+                <TextBlock Text="{Binding T[btn_import_stl]}"/>
+            </StackPanel>
+        </Button>
+
+        <Separator Style="{StaticResource PanelSeparator}"/>
+
+        <!-- ── Boolean Operations ─────────────────────────────────────────── -->
+        <TextBlock Style="{StaticResource SectionHeader}"
+                   Text="{Binding T[panel_operations]}"/>
+
+        <TextBlock Text="(2 Objekte auswählen)"
+                   Foreground="{StaticResource TextSecondary}"
+                   FontSize="9" Margin="5,0,5,4"
+                   Visibility="{Binding HasTwoSelections,
+                       Converter={StaticResource InverseBoolToVisibilityConverter}}"/>
+
+        <Button Style="{StaticResource ActionButton}"
+                Command="{Binding BoolUnionCommand}"
+                IsEnabled="{Binding HasTwoSelections}"
+                HorizontalAlignment="Stretch" Margin="4,2">
+            <StackPanel Orientation="Horizontal">
+                <materialDesign:PackIcon Kind="SetAll" Margin="0,0,6,0"/>
+                <TextBlock Text="{Binding T[op_union]}"/>
+            </StackPanel>
+        </Button>
+
+        <Button Style="{StaticResource ActionButton}"
+                Command="{Binding BoolSubtractCommand}"
+                IsEnabled="{Binding HasTwoSelections}"
+                HorizontalAlignment="Stretch" Margin="4,2">
+            <StackPanel Orientation="Horizontal">
+                <materialDesign:PackIcon Kind="SetLeft" Margin="0,0,6,0"/>
+                <TextBlock Text="{Binding T[op_subtract]}"/>
+            </StackPanel>
+        </Button>
+
+        <Button Style="{StaticResource ActionButton}"
+                Command="{Binding BoolIntersectCommand}"
+                IsEnabled="{Binding HasTwoSelections}"
+                HorizontalAlignment="Stretch" Margin="4,2">
+            <StackPanel Orientation="Horizontal">
+                <materialDesign:PackIcon Kind="SetCenter" Margin="0,0,6,0"/>
+                <TextBlock Text="{Binding T[op_intersect]}"/>
+            </StackPanel>
+        </Button>
+
+        <Separator Style="{StaticResource PanelSeparator}"/>
+
+        <!-- ── Object List ─────────────────────────────────────────────────── -->
+        <TextBlock Style="{StaticResource SectionHeader}"
+                   Text="{Binding T[object_list]}"/>
+
+        <ListBox ItemsSource="{Binding SceneObjects}"
+                 SelectedItem="{Binding SelectedObject}"
+                 Background="Transparent"
+                 Foreground="{StaticResource TextPrimary}"
+                 BorderThickness="0"
+                 MaxHeight="200">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Name}" Padding="4,2"
+                               FontSize="11"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+    </StackPanel>
+</UserControl>
