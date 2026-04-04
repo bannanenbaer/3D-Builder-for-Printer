@@ -1,0 +1,187 @@
+<UserControl x:Class="ThreeDBuilder.Views.SettingsPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+
+    <StackPanel Margin="8">
+
+        <!-- ── Allgemeine Einstellungen ────────────────────────────────── -->
+        <TextBlock Style="{StaticResource SectionHeader}"
+                   Text="Allgemeine Einstellungen"/>
+
+        <Grid Margin="4,6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0"
+                       Text="Sprache:"
+                       Foreground="{StaticResource TextPrimary}"
+                       VerticalAlignment="Center"
+                       FontSize="11"/>
+
+            <ComboBox Grid.Column="1"
+                      SelectedItem="{Binding SelectedLanguage}"
+                      ItemsSource="{Binding AvailableLanguages}"
+                      Width="120"
+                      Background="#1F2937"
+                      Foreground="{StaticResource TextPrimary}"
+                      BorderBrush="#374151"/>
+        </Grid>
+
+        <Grid Margin="4,6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0"
+                       Text="Theme:"
+                       Foreground="{StaticResource TextPrimary}"
+                       VerticalAlignment="Center"
+                       FontSize="11"/>
+
+            <ComboBox Grid.Column="1"
+                      SelectedItem="{Binding SelectedTheme}"
+                      ItemsSource="{Binding AvailableThemes}"
+                      Width="120"
+                      Background="#1F2937"
+                      Foreground="{StaticResource TextPrimary}"
+                      BorderBrush="#374151"/>
+        </Grid>
+
+        <Separator Style="{StaticResource PanelSeparator}"/>
+
+        <!-- ── Assistent-Einstellungen ────────────────────────────────── -->
+        <TextBlock Style="{StaticResource SectionHeader}"
+                   Text="3D-Assistent"/>
+
+        <Border Background="#0F1419" 
+                BorderBrush="#374151" 
+                BorderThickness="1"
+                CornerRadius="4"
+                Padding="8"
+                Margin="4,6">
+            <StackPanel>
+                <Grid Margin="0,4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Assistenten aktivieren"
+                                   Foreground="{StaticResource TextPrimary}"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"/>
+                        <TextBlock Text="Aktiviere den süßen KI-Assistenten für Hilfe und Tipps"
+                                   Foreground="{StaticResource TextSecondary}"
+                                   FontSize="9"
+                                   Margin="0,2,0,0"/>
+                    </StackPanel>
+
+                    <ToggleButton Grid.Column="1"
+                                  IsChecked="{Binding IsAssistantEnabled}"
+                                  Style="{StaticResource MaterialDesignToggleButton}"
+                                  VerticalAlignment="Center"/>
+                </Grid>
+
+                <Separator Background="#2D3748" Margin="0,6"/>
+
+                <Grid Margin="0,4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Automatische Vorschläge"
+                                   Foreground="{StaticResource TextPrimary}"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"/>
+                        <TextBlock Text="Der Assistent macht Vorschläge basierend auf deinen Aktionen"
+                                   Foreground="{StaticResource TextSecondary}"
+                                   FontSize="9"
+                                   Margin="0,2,0,0"/>
+                    </StackPanel>
+
+                    <ToggleButton Grid.Column="1"
+                                  IsChecked="{Binding AutoSuggestionsEnabled}"
+                                  IsEnabled="{Binding IsAssistantEnabled}"
+                                  Style="{StaticResource MaterialDesignToggleButton}"
+                                  VerticalAlignment="Center"/>
+                </Grid>
+
+                <Separator Background="#2D3748" Margin="0,6"/>
+
+                <Grid Margin="0,4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Animationen"
+                                   Foreground="{StaticResource TextPrimary}"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"/>
+                        <TextBlock Text="Süße Animationen des Assistenten"
+                                   Foreground="{StaticResource TextSecondary}"
+                                   FontSize="9"
+                                   Margin="0,2,0,0"/>
+                    </StackPanel>
+
+                    <ToggleButton Grid.Column="1"
+                                  IsChecked="{Binding AnimationsEnabled}"
+                                  IsEnabled="{Binding IsAssistantEnabled}"
+                                  Style="{StaticResource MaterialDesignToggleButton}"
+                                  VerticalAlignment="Center"/>
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <Separator Style="{StaticResource PanelSeparator}"/>
+
+        <!-- ── API-Einstellungen ──────────────────────────────────────── -->
+        <TextBlock Style="{StaticResource SectionHeader}"
+                   Text="KI-Integration (Optional)"/>
+
+        <TextBlock Text="Um den Assistenten mit KI-Features zu nutzen, benötigst du einen OpenAI API-Schlüssel."
+                   Foreground="{StaticResource TextSecondary}"
+                   FontSize="10"
+                   TextWrapping="Wrap"
+                   Margin="4,4"/>
+
+        <PasswordBox x:Name="ApiKeyBox"
+                     Background="#1F2937"
+                     Foreground="{StaticResource TextPrimary}"
+                     BorderBrush="#374151"
+                     BorderThickness="1"
+                     Padding="8,6"
+                     Margin="4,4"
+                     materialDesign:HintAssist.Hint="OpenAI API Key"/>
+
+        <TextBlock Text="Dein API-Schlüssel wird lokal gespeichert und nicht weitergegeben."
+                   Foreground="{StaticResource TextSecondary}"
+                   FontSize="9"
+                   FontStyle="Italic"
+                   Margin="4,2"/>
+
+        <Button Content="API-Schlüssel speichern"
+                Command="{Binding SaveApiKeyCommand}"
+                Style="{StaticResource ActionButton}"
+                HorizontalAlignment="Stretch"
+                Margin="4,4"/>
+
+        <Separator Style="{StaticResource PanelSeparator}"/>
+
+        <!-- ── Info ──────────────────────────────────────────────────── -->
+        <TextBlock Text="3D Builder Pro v1.0"
+                   Foreground="{StaticResource TextSecondary}"
+                   FontSize="10"
+                   TextAlignment="Center"
+                   Margin="4,8"/>
+
+    </StackPanel>
+</UserControl>
