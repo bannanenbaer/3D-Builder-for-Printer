@@ -1,0 +1,257 @@
+<UserControl x:Class="ThreeDBuilder.Views.PropertiesPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+
+    <StackPanel Margin="6">
+
+        <!-- No selection hint -->
+        <TextBlock Text="{Binding T[msg_no_selection]}"
+                   Foreground="{StaticResource TextSecondary}"
+                   FontSize="11" Margin="4,8"
+                   Visibility="{Binding HasSelection,
+                       Converter={StaticResource InverseBoolToVisibilityConverter}}"/>
+
+        <!-- Properties shown when an object is selected -->
+        <StackPanel Visibility="{Binding HasSelection,
+                        Converter={StaticResource BoolToVisibilityConverter}}">
+
+            <!-- Object name -->
+            <TextBox Text="{Binding SelectedObject.Name, UpdateSourceTrigger=PropertyChanged}"
+                     materialDesign:HintAssist.Hint="Name"
+                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                     Foreground="{StaticResource TextPrimary}"
+                     Margin="4,4"/>
+
+            <Separator Style="{StaticResource PanelSeparator}"/>
+
+            <!-- ── Dimensions ─────────────────────────────────────────────── -->
+            <TextBlock Style="{StaticResource SectionHeader}"
+                       Text="{Binding T[section_dimensions]}"/>
+
+            <!-- Dynamic parameter rows -->
+            <ItemsControl ItemsSource="{Binding ParameterRows}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="4,2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="90"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="{Binding Label}" Grid.Column="0"
+                                       Foreground="{StaticResource TextPrimary}"
+                                       VerticalAlignment="Center" FontSize="11"/>
+                            <TextBox Grid.Column="1"
+                                     Text="{Binding Value, UpdateSourceTrigger=LostFocus,
+                                                    StringFormat=N2}"
+                                     Style="{StaticResource NumericInput}"
+                                     materialDesign:HintAssist.Hint="mm"/>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <!-- Apply button -->
+            <Button Content="{Binding T[btn_apply_fillet]}"
+                    Command="{Binding ApplyParamsCommand}"
+                    Style="{StaticResource ActionButton}"
+                    HorizontalAlignment="Stretch"
+                    Margin="4,6,4,2"
+                    ToolTip="Abmessungen übernehmen und 3D-Ansicht aktualisieren">
+                <Button.Content>
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="Refresh" Margin="0,0,6,0"/>
+                        <TextBlock Text="Aktualisieren"/>
+                    </StackPanel>
+                </Button.Content>
+            </Button>
+
+            <Separator Style="{StaticResource PanelSeparator}"/>
+
+            <!-- ── Position ───────────────────────────────────────────────── -->
+            <TextBlock Style="{StaticResource SectionHeader}"
+                       Text="{Binding T[section_position]}"/>
+
+            <Grid Margin="4,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="X" Foreground="#FF6B6B"
+                           VerticalAlignment="Center" FontWeight="Bold"/>
+                <TextBox Grid.Row="0" Grid.Column="1"
+                         Text="{Binding SelectedObject.PosX, UpdateSourceTrigger=LostFocus,
+                                        StringFormat=N1}"
+                         Style="{StaticResource NumericInput}"
+                         materialDesign:HintAssist.Hint="mm"
+                         Margin="0,1"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Y" Foreground="#51CF66"
+                           VerticalAlignment="Center" FontWeight="Bold"/>
+                <TextBox Grid.Row="1" Grid.Column="1"
+                         Text="{Binding SelectedObject.PosY, UpdateSourceTrigger=LostFocus,
+                                        StringFormat=N1}"
+                         Style="{StaticResource NumericInput}"
+                         materialDesign:HintAssist.Hint="mm"
+                         Margin="0,1"/>
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Z" Foreground="#339AF0"
+                           VerticalAlignment="Center" FontWeight="Bold"/>
+                <TextBox Grid.Row="2" Grid.Column="1"
+                         Text="{Binding SelectedObject.PosZ, UpdateSourceTrigger=LostFocus,
+                                        StringFormat=N1}"
+                         Style="{StaticResource NumericInput}"
+                         materialDesign:HintAssist.Hint="mm"
+                         Margin="0,1"/>
+            </Grid>
+
+            <Separator Style="{StaticResource PanelSeparator}"/>
+
+            <!-- ── Rotation ───────────────────────────────────────────────── -->
+            <TextBlock Style="{StaticResource SectionHeader}"
+                       Text="{Binding T[section_rotation]}"/>
+
+            <Grid Margin="4,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="X" Foreground="#FF6B6B"
+                           VerticalAlignment="Center" FontWeight="Bold"/>
+                <TextBox Grid.Row="0" Grid.Column="1"
+                         Text="{Binding SelectedObject.RotX, UpdateSourceTrigger=LostFocus,
+                                        StringFormat=N1}"
+                         Style="{StaticResource NumericInput}"
+                         materialDesign:HintAssist.Hint="°"
+                         Margin="0,1"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Y" Foreground="#51CF66"
+                           VerticalAlignment="Center" FontWeight="Bold"/>
+                <TextBox Grid.Row="1" Grid.Column="1"
+                         Text="{Binding SelectedObject.RotY, UpdateSourceTrigger=LostFocus,
+                                        StringFormat=N1}"
+                         Style="{StaticResource NumericInput}"
+                         materialDesign:HintAssist.Hint="°"
+                         Margin="0,1"/>
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Z" Foreground="#339AF0"
+                           VerticalAlignment="Center" FontWeight="Bold"/>
+                <TextBox Grid.Row="2" Grid.Column="1"
+                         Text="{Binding SelectedObject.RotZ, UpdateSourceTrigger=LostFocus,
+                                        StringFormat=N1}"
+                         Style="{StaticResource NumericInput}"
+                         materialDesign:HintAssist.Hint="°"
+                         Margin="0,1"/>
+            </Grid>
+
+            <Button Command="{Binding ApplyParamsCommand}"
+                    Style="{StaticResource ActionButton}"
+                    HorizontalAlignment="Stretch"
+                    Margin="4,4">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="Refresh" Margin="0,0,6,0"/>
+                    <TextBlock Text="Position / Rotation aktualisieren"/>
+                </StackPanel>
+            </Button>
+
+            <Separator Style="{StaticResource PanelSeparator}"/>
+
+            <!-- ── Fillet (Kanten abrunden) ────────────────────────────────── -->
+            <TextBlock Style="{StaticResource SectionHeader}"
+                       Text="{Binding T[op_fillet]}"/>
+
+            <Grid Margin="4,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="90"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding T[op_fillet_radius]}" Grid.Column="0"
+                           Foreground="{StaticResource TextPrimary}"
+                           VerticalAlignment="Center" FontSize="11"/>
+                <TextBox Grid.Column="1"
+                         Text="{Binding FilletRadius, UpdateSourceTrigger=LostFocus,
+                                        StringFormat=N1}"
+                         Style="{StaticResource NumericInput}"
+                         materialDesign:HintAssist.Hint="mm"/>
+            </Grid>
+
+            <Button Command="{Binding ApplyFilletCommand}"
+                    Style="{StaticResource ActionButton}"
+                    HorizontalAlignment="Stretch"
+                    Margin="4,2">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="RoundedCorner" Margin="0,0,6,0"/>
+                    <TextBlock Text="{Binding T[btn_apply_fillet]}"/>
+                </StackPanel>
+            </Button>
+
+            <Separator Style="{StaticResource PanelSeparator}"/>
+
+            <!-- ── Chamfer (Fase) ─────────────────────────────────────────── -->
+            <TextBlock Style="{StaticResource SectionHeader}"
+                       Text="{Binding T[op_chamfer]}"/>
+
+            <Grid Margin="4,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="90"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding T[op_chamfer_size]}" Grid.Column="0"
+                           Foreground="{StaticResource TextPrimary}"
+                           VerticalAlignment="Center" FontSize="11"/>
+                <TextBox Grid.Column="1"
+                         Text="{Binding ChamferSize, UpdateSourceTrigger=LostFocus,
+                                        StringFormat=N1}"
+                         Style="{StaticResource NumericInput}"
+                         materialDesign:HintAssist.Hint="mm"/>
+            </Grid>
+
+            <Button Command="{Binding ApplyChamferCommand}"
+                    Style="{StaticResource ActionButton}"
+                    HorizontalAlignment="Stretch"
+                    Margin="4,2">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="VectorSquareEdit" Margin="0,0,6,0"/>
+                    <TextBlock Text="{Binding T[btn_apply_chamfer]}"/>
+                </StackPanel>
+            </Button>
+
+            <Separator Style="{StaticResource PanelSeparator}"/>
+
+            <!-- ── Object actions ─────────────────────────────────────────── -->
+            <Button Command="{Binding DuplicateCommand}"
+                    Style="{StaticResource ActionButton}"
+                    HorizontalAlignment="Stretch"
+                    Margin="4,2">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="ContentDuplicate" Margin="0,0,6,0"/>
+                    <TextBlock Text="{Binding T[btn_duplicate]}"/>
+                </StackPanel>
+            </Button>
+
+            <Button Command="{Binding DeleteCommand}"
+                    HorizontalAlignment="Stretch"
+                    Margin="4,2" Height="30" FontSize="11"
+                    Background="#C0392B" Foreground="White"
+                    Style="{StaticResource MaterialDesignRaisedButton}">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="Delete" Margin="0,0,6,0"/>
+                    <TextBlock Text="{Binding T[btn_delete]}"/>
+                </StackPanel>
+            </Button>
+
+        </StackPanel>
+    </StackPanel>
+</UserControl>
