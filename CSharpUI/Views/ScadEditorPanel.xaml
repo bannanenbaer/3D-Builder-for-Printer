@@ -3,42 +3,47 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
 
-    <Grid>
+    <Grid Background="{StaticResource PanelBackground}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>   <!-- Toolbar -->
-            <RowDefinition Height="*"/>      <!-- Editor -->
-            <RowDefinition Height="Auto"/>   <!-- Error output -->
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- Toolbar -->
-        <ToolBar Grid.Row="0" Background="#2D2D30">
-            <Button Command="{Binding ScadPreviewCommand}"
-                    ToolTip="{Binding T[btn_scad_preview]}"
+        <ToolBar Grid.Row="0" Background="#1A1F2E" BorderThickness="0,0,0,1" BorderBrush="#2D3748" Padding="4">
+            <Button ToolTip="Vorschau (Ctrl+Shift+P)"
+                    Command="{Binding ScadPreviewCommand}"
                     Style="{StaticResource MaterialDesignFlatButton}"
-                    Foreground="White">
+                    Foreground="{StaticResource TextPrimary}"
+                    Padding="8,4">
                 <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="Play" Margin="0,0,4,0"/>
-                    <TextBlock Text="{Binding T[btn_scad_preview]}"/>
+                    <materialDesign:PackIcon Kind="Eye" Width="18" Height="18" Margin="0,0,6,0"/>
+                    <TextBlock Text="Vorschau"/>
                 </StackPanel>
             </Button>
-            <Separator/>
-            <Button Command="{Binding ScadExportCommand}"
-                    ToolTip="{Binding T[btn_scad_export]}"
+
+            <Button ToolTip="Exportieren"
+                    Command="{Binding ScadExportCommand}"
                     Style="{StaticResource MaterialDesignFlatButton}"
-                    Foreground="White">
+                    Foreground="{StaticResource TextPrimary}"
+                    Padding="8,4">
                 <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="Download" Margin="0,0,4,0"/>
-                    <TextBlock Text="{Binding T[btn_scad_export]}"/>
+                    <materialDesign:PackIcon Kind="Download" Width="18" Height="18" Margin="0,0,6,0"/>
+                    <TextBlock Text="Exportieren"/>
                 </StackPanel>
             </Button>
-            <Separator/>
-            <Button Command="{Binding ScadFromSceneCommand}"
-                    ToolTip="Szene → SCAD Code"
+
+            <Separator Background="#2D3748" Margin="4,4"/>
+
+            <Button ToolTip="Szene zu SCAD"
+                    Command="{Binding ScadFromSceneCommand}"
                     Style="{StaticResource MaterialDesignFlatButton}"
-                    Foreground="White">
+                    Foreground="{StaticResource TextPrimary}"
+                    Padding="8,4">
                 <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="CodeBraces" Margin="0,0,4,0"/>
-                    <TextBlock Text="Szene → SCAD"/>
+                    <materialDesign:PackIcon Kind="FileExport" Width="18" Height="18" Margin="0,0,6,0"/>
+                    <TextBlock Text="Szene zu SCAD"/>
                 </StackPanel>
             </Button>
         </ToolBar>
@@ -47,11 +52,11 @@
         <TextBox Grid.Row="1"
                  x:Name="ScadCodeEditor"
                  Text="{Binding ScadCode, UpdateSourceTrigger=PropertyChanged}"
-                 FontFamily="Consolas, Courier New, monospace"
-                 FontSize="13"
-                 Background="#1E1E1E"
-                 Foreground="#D4D4D4"
-                 CaretBrush="White"
+                 FontFamily="Consolas"
+                 FontSize="11"
+                 Background="#0F1419"
+                 Foreground="#E0E0E0"
+                 CaretBrush="#60A5FA"
                  BorderThickness="0"
                  AcceptsReturn="True"
                  AcceptsTab="True"
@@ -60,16 +65,18 @@
                  TextWrapping="NoWrap"
                  Padding="8"/>
 
-        <!-- Error / status output -->
-        <Border Grid.Row="2" Background="#1A1A2E" MinHeight="60" MaxHeight="120"
-                Visibility="{Binding HasScadMessage,
-                    Converter={StaticResource BoolToVisibilityConverter}}">
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <!-- Status/Error Message -->
+        <Border Grid.Row="2"
+                Background="#1A1F2E"
+                BorderThickness="0,1,0,0"
+                BorderBrush="#2D3748"
+                Visibility="{Binding HasScadMessage, Converter={StaticResource BoolToVisibilityConverter}}"
+                Padding="8">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="120">
                 <TextBlock Text="{Binding ScadMessage}"
                            Foreground="{Binding ScadMessageBrush}"
                            FontFamily="Consolas"
                            FontSize="11"
-                           Padding="8"
                            TextWrapping="Wrap"/>
             </ScrollViewer>
         </Border>

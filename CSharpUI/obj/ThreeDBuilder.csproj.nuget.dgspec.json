@@ -1,0 +1,75 @@
+{
+  "format": 1,
+  "restore": {
+    "/home/ubuntu/3d-builder/CSharpUI/ThreeDBuilder.csproj": {}
+  },
+  "projects": {
+    "/home/ubuntu/3d-builder/CSharpUI/ThreeDBuilder.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/ubuntu/3d-builder/CSharpUI/ThreeDBuilder.csproj",
+        "projectName": "3D-Builder",
+        "projectPath": "/home/ubuntu/3d-builder/CSharpUI/ThreeDBuilder.csproj",
+        "packagesPath": "/home/ubuntu/.nuget/packages/",
+        "outputPath": "/home/ubuntu/3d-builder/CSharpUI/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/ubuntu/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0-windows"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0-windows7.0": {
+            "targetAlias": "net8.0-windows",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net8.0-windows7.0": {
+          "targetAlias": "net8.0-windows",
+          "dependencies": {
+            "HelixToolkit.Wpf": {
+              "target": "Package",
+              "version": "[2.25.0, )"
+            },
+            "MaterialDesignThemes": {
+              "target": "Package",
+              "version": "[5.1.0, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.125/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

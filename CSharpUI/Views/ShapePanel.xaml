@@ -3,22 +3,22 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
 
-    <StackPanel Margin="4">
+    <StackPanel Margin="8">
 
         <!-- ── Shapes ───────────────────────────────────────────────────── -->
         <TextBlock Style="{StaticResource SectionHeader}"
                    Text="{Binding T[panel_shapes]}"/>
 
-        <WrapPanel>
+        <WrapPanel Margin="0,4,0,0">
             <!-- Box -->
             <Button Style="{StaticResource ShapeButtonStyle}"
                     Command="{Binding AddShapeCommand}"
                     CommandParameter="box"
                     ToolTip="{Binding T[shape_box]}">
                 <StackPanel>
-                    <materialDesign:PackIcon Kind="CubeOutline" Width="28" Height="28"
-                                            HorizontalAlignment="Center"/>
-                    <TextBlock Text="{Binding T[shape_box]}" TextAlignment="Center" FontSize="10"/>
+                    <materialDesign:PackIcon Kind="CubeOutline" Width="32" Height="32"
+                                            HorizontalAlignment="Center" Foreground="{StaticResource AccentBrush}"/>
+                    <TextBlock Text="{Binding T[shape_box]}" TextAlignment="Center" FontSize="9" Foreground="{StaticResource TextPrimary}"/>
                 </StackPanel>
             </Button>
 
@@ -28,9 +28,9 @@
                     CommandParameter="sphere"
                     ToolTip="{Binding T[shape_sphere]}">
                 <StackPanel>
-                    <materialDesign:PackIcon Kind="CircleOutline" Width="28" Height="28"
-                                            HorizontalAlignment="Center"/>
-                    <TextBlock Text="{Binding T[shape_sphere]}" TextAlignment="Center" FontSize="10"/>
+                    <materialDesign:PackIcon Kind="CircleOutline" Width="32" Height="32"
+                                            HorizontalAlignment="Center" Foreground="{StaticResource AccentBrush}"/>
+                    <TextBlock Text="{Binding T[shape_sphere]}" TextAlignment="Center" FontSize="9" Foreground="{StaticResource TextPrimary}"/>
                 </StackPanel>
             </Button>
 
@@ -40,9 +40,9 @@
                     CommandParameter="cylinder"
                     ToolTip="{Binding T[shape_cylinder]}">
                 <StackPanel>
-                    <materialDesign:PackIcon Kind="CylinderOff" Width="28" Height="28"
-                                            HorizontalAlignment="Center"/>
-                    <TextBlock Text="{Binding T[shape_cylinder]}" TextAlignment="Center" FontSize="10"/>
+                    <materialDesign:PackIcon Kind="CylinderOff" Width="32" Height="32"
+                                            HorizontalAlignment="Center" Foreground="{StaticResource AccentBrush}"/>
+                    <TextBlock Text="{Binding T[shape_cylinder]}" TextAlignment="Center" FontSize="9" Foreground="{StaticResource TextPrimary}"/>
                 </StackPanel>
             </Button>
 
@@ -52,9 +52,9 @@
                     CommandParameter="cone"
                     ToolTip="{Binding T[shape_cone]}">
                 <StackPanel>
-                    <materialDesign:PackIcon Kind="Triangle" Width="28" Height="28"
-                                            HorizontalAlignment="Center"/>
-                    <TextBlock Text="{Binding T[shape_cone]}" TextAlignment="Center" FontSize="10"/>
+                    <materialDesign:PackIcon Kind="Triangle" Width="32" Height="32"
+                                            HorizontalAlignment="Center" Foreground="{StaticResource AccentBrush}"/>
+                    <TextBlock Text="{Binding T[shape_cone]}" TextAlignment="Center" FontSize="9" Foreground="{StaticResource TextPrimary}"/>
                 </StackPanel>
             </Button>
 
@@ -64,9 +64,9 @@
                     CommandParameter="torus"
                     ToolTip="{Binding T[shape_torus]}">
                 <StackPanel>
-                    <materialDesign:PackIcon Kind="DonutLarge" Width="28" Height="28"
-                                            HorizontalAlignment="Center"/>
-                    <TextBlock Text="{Binding T[shape_torus]}" TextAlignment="Center" FontSize="10"/>
+                    <materialDesign:PackIcon Kind="DonutLarge" Width="32" Height="32"
+                                            HorizontalAlignment="Center" Foreground="{StaticResource AccentBrush}"/>
+                    <TextBlock Text="{Binding T[shape_torus]}" TextAlignment="Center" FontSize="9" Foreground="{StaticResource TextPrimary}"/>
                 </StackPanel>
             </Button>
 
@@ -76,9 +76,9 @@
                     CommandParameter="prism"
                     ToolTip="{Binding T[shape_prism]}">
                 <StackPanel>
-                    <materialDesign:PackIcon Kind="HexagonOutline" Width="28" Height="28"
-                                            HorizontalAlignment="Center"/>
-                    <TextBlock Text="{Binding T[shape_prism]}" TextAlignment="Center" FontSize="10"/>
+                    <materialDesign:PackIcon Kind="HexagonOutline" Width="32" Height="32"
+                                            HorizontalAlignment="Center" Foreground="{StaticResource AccentBrush}"/>
+                    <TextBlock Text="{Binding T[shape_prism]}" TextAlignment="Center" FontSize="9" Foreground="{StaticResource TextPrimary}"/>
                 </StackPanel>
             </Button>
 
@@ -88,9 +88,9 @@
                     CommandParameter="pyramid"
                     ToolTip="{Binding T[shape_pyramid]}">
                 <StackPanel>
-                    <materialDesign:PackIcon Kind="TriangleOutline" Width="28" Height="28"
-                                            HorizontalAlignment="Center"/>
-                    <TextBlock Text="{Binding T[shape_pyramid]}" TextAlignment="Center" FontSize="10"/>
+                    <materialDesign:PackIcon Kind="TriangleOutline" Width="32" Height="32"
+                                            HorizontalAlignment="Center" Foreground="{StaticResource AccentBrush}"/>
+                    <TextBlock Text="{Binding T[shape_pyramid]}" TextAlignment="Center" FontSize="9" Foreground="{StaticResource TextPrimary}"/>
                 </StackPanel>
             </Button>
 
@@ -100,9 +100,9 @@
                     CommandParameter="tube"
                     ToolTip="{Binding T[shape_tube]}">
                 <StackPanel>
-                    <materialDesign:PackIcon Kind="Pipe" Width="28" Height="28"
-                                            HorizontalAlignment="Center"/>
-                    <TextBlock Text="{Binding T[shape_tube]}" TextAlignment="Center" FontSize="10"/>
+                    <materialDesign:PackIcon Kind="Pipe" Width="32" Height="32"
+                                            HorizontalAlignment="Center" Foreground="{StaticResource AccentBrush}"/>
+                    <TextBlock Text="{Binding T[shape_tube]}" TextAlignment="Center" FontSize="9" Foreground="{StaticResource TextPrimary}"/>
                 </StackPanel>
             </Button>
 
@@ -112,9 +112,9 @@
                     CommandParameter="ellipsoid"
                     ToolTip="{Binding T[shape_ellipsoid]}">
                 <StackPanel>
-                    <materialDesign:PackIcon Kind="EllipseOutline" Width="28" Height="28"
-                                            HorizontalAlignment="Center"/>
-                    <TextBlock Text="{Binding T[shape_ellipsoid]}" TextAlignment="Center" FontSize="10"/>
+                    <materialDesign:PackIcon Kind="EllipseOutline" Width="32" Height="32"
+                                            HorizontalAlignment="Center" Foreground="{StaticResource AccentBrush}"/>
+                    <TextBlock Text="{Binding T[shape_ellipsoid]}" TextAlignment="Center" FontSize="9" Foreground="{StaticResource TextPrimary}"/>
                 </StackPanel>
             </Button>
 
@@ -124,9 +124,9 @@
                     CommandParameter="hemisphere"
                     ToolTip="{Binding T[shape_hemisphere]}">
                 <StackPanel>
-                    <materialDesign:PackIcon Kind="Dome" Width="28" Height="28"
-                                            HorizontalAlignment="Center"/>
-                    <TextBlock Text="{Binding T[shape_hemisphere]}" TextAlignment="Center" FontSize="10"/>
+                    <materialDesign:PackIcon Kind="Dome" Width="32" Height="32"
+                                            HorizontalAlignment="Center" Foreground="{StaticResource AccentBrush}"/>
+                    <TextBlock Text="{Binding T[shape_hemisphere]}" TextAlignment="Center" FontSize="9" Foreground="{StaticResource TextPrimary}"/>
                 </StackPanel>
             </Button>
 
@@ -136,9 +136,9 @@
                     CommandParameter="l_profile"
                     ToolTip="{Binding T[shape_l_profile]}">
                 <StackPanel>
-                    <materialDesign:PackIcon Kind="CornerDownRight" Width="28" Height="28"
-                                            HorizontalAlignment="Center"/>
-                    <TextBlock Text="{Binding T[shape_l_profile]}" TextAlignment="Center" FontSize="10"/>
+                    <materialDesign:PackIcon Kind="CornerDownRight" Width="32" Height="32"
+                                            HorizontalAlignment="Center" Foreground="{StaticResource AccentBrush}"/>
+                    <TextBlock Text="{Binding T[shape_l_profile]}" TextAlignment="Center" FontSize="9" Foreground="{StaticResource TextPrimary}"/>
                 </StackPanel>
             </Button>
 
@@ -148,9 +148,9 @@
                     CommandParameter="t_profile"
                     ToolTip="{Binding T[shape_t_profile]}">
                 <StackPanel>
-                    <materialDesign:PackIcon Kind="FormatAlignTop" Width="28" Height="28"
-                                            HorizontalAlignment="Center"/>
-                    <TextBlock Text="{Binding T[shape_t_profile]}" TextAlignment="Center" FontSize="10"/>
+                    <materialDesign:PackIcon Kind="FormatAlignTop" Width="32" Height="32"
+                                            HorizontalAlignment="Center" Foreground="{StaticResource AccentBrush}"/>
+                    <TextBlock Text="{Binding T[shape_t_profile]}" TextAlignment="Center" FontSize="9" Foreground="{StaticResource TextPrimary}"/>
                 </StackPanel>
             </Button>
 
@@ -160,9 +160,9 @@
                     CommandParameter="star"
                     ToolTip="{Binding T[shape_star]}">
                 <StackPanel>
-                    <materialDesign:PackIcon Kind="StarOutline" Width="28" Height="28"
-                                            HorizontalAlignment="Center"/>
-                    <TextBlock Text="{Binding T[shape_star]}" TextAlignment="Center" FontSize="10"/>
+                    <materialDesign:PackIcon Kind="StarOutline" Width="32" Height="32"
+                                            HorizontalAlignment="Center" Foreground="{StaticResource AccentBrush}"/>
+                    <TextBlock Text="{Binding T[shape_star]}" TextAlignment="Center" FontSize="9" Foreground="{StaticResource TextPrimary}"/>
                 </StackPanel>
             </Button>
 
@@ -172,9 +172,9 @@
                     CommandParameter="polygon"
                     ToolTip="{Binding T[shape_polygon]}">
                 <StackPanel>
-                    <materialDesign:PackIcon Kind="Pentagon" Width="28" Height="28"
-                                            HorizontalAlignment="Center"/>
-                    <TextBlock Text="{Binding T[shape_polygon]}" TextAlignment="Center" FontSize="10"/>
+                    <materialDesign:PackIcon Kind="Pentagon" Width="32" Height="32"
+                                            HorizontalAlignment="Center" Foreground="{StaticResource AccentBrush}"/>
+                    <TextBlock Text="{Binding T[shape_polygon]}" TextAlignment="Center" FontSize="9" Foreground="{StaticResource TextPrimary}"/>
                 </StackPanel>
             </Button>
 
@@ -184,9 +184,9 @@
                     CommandParameter="thread_cyl"
                     ToolTip="{Binding T[shape_thread_cyl]}">
                 <StackPanel>
-                    <materialDesign:PackIcon Kind="Screw" Width="28" Height="28"
-                                            HorizontalAlignment="Center"/>
-                    <TextBlock Text="{Binding T[shape_thread_cyl]}" TextAlignment="Center" FontSize="10"/>
+                    <materialDesign:PackIcon Kind="Screw" Width="32" Height="32"
+                                            HorizontalAlignment="Center" Foreground="{StaticResource AccentBrush}"/>
+                    <TextBlock Text="{Binding T[shape_thread_cyl]}" TextAlignment="Center" FontSize="9" Foreground="{StaticResource TextPrimary}"/>
                 </StackPanel>
             </Button>
         </WrapPanel>
@@ -215,7 +215,7 @@
 
         <TextBlock Text="(2 Objekte auswählen)"
                    Foreground="{StaticResource TextSecondary}"
-                   FontSize="9" Margin="5,0,5,4"
+                   FontSize="10" Margin="6,2,6,4" FontStyle="Italic"
                    Visibility="{Binding HasTwoSelections,
                        Converter={StaticResource InverseBoolToVisibilityConverter}}"/>
 
@@ -257,16 +257,43 @@
 
         <ListBox ItemsSource="{Binding SceneObjects}"
                  SelectedItem="{Binding SelectedObject}"
-                 Background="Transparent"
+                 Background="#1F2937"
                  Foreground="{StaticResource TextPrimary}"
-                 BorderThickness="0"
-                 MaxHeight="200">
+                 BorderThickness="1"
+                 BorderBrush="#374151"
+                 MaxHeight="250"
+                 Padding="2">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding Name}" Padding="4,2"
-                               FontSize="11"/>
+                    <Border Background="Transparent" Padding="6,4" CornerRadius="3">
+                        <TextBlock Text="{Binding Name}" FontSize="11" Foreground="{StaticResource TextPrimary}"/>
+                    </Border>
                 </DataTemplate>
             </ListBox.ItemTemplate>
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <Border x:Name="Bd" Background="Transparent" BorderThickness="0" Padding="0">
+                                    <ContentPresenter/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="Bd" Property="Background" Value="#3B82F6"/>
+                                        <Setter TargetName="Bd" Property="CornerRadius" Value="3"/>
+                                    </Trigger>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="Bd" Property="Background" Value="#2D3748"/>
+                                        <Setter TargetName="Bd" Property="CornerRadius" Value="3"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListBox.ItemContainerStyle>
         </ListBox>
 
     </StackPanel>

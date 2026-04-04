@@ -1,14 +1,17 @@
-<Window x:Class="ThreeDBuilder.Views.MainWindow"
+    <Window x:Class="ThreeDBuilder.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:helix="http://helix-toolkit.org/wpf"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:ThreeDBuilder.Views"
-        Title="3D-Builder für 3D-Druck"
-        Width="1400" Height="900"
-        MinWidth="1000" MinHeight="600"
+        Title="3D-Builder Pro | Parametrisches 3D-Modellieren"
+        Width="1600" Height="1000"
+        MinWidth="1200" MinHeight="700"
         Background="{StaticResource PanelBackground}"
-        WindowStartupLocation="CenterScreen">
+        Foreground="{StaticResource TextPrimary}"
+        WindowStartupLocation="CenterScreen"
+        FontFamily="Segoe UI"
+        FontSize="12">
 
     <Window.InputBindings>
         <KeyBinding Command="{Binding UndoCommand}"      Gesture="Ctrl+Z"/>
@@ -19,9 +22,10 @@
 
     <DockPanel>
         <!-- ═══ MENU BAR ═══════════════════════════════════════════════════ -->
-        <Menu DockPanel.Dock="Top" Background="#1C1C1C" Foreground="White">
+        <Menu DockPanel.Dock="Top" Background="#0F1419" Foreground="{StaticResource TextPrimary}"
+              FontSize="11" FontFamily="Segoe UI">
             <!-- File -->
-            <MenuItem Header="{Binding T[menu_file]}" Foreground="White">
+            <MenuItem Header="{Binding T[menu_file]}" Foreground="{StaticResource TextPrimary}">
                 <MenuItem Header="{Binding T[action_new]}"
                           Command="{Binding NewSceneCommand}"
                           InputGestureText="Ctrl+N"/>
@@ -40,7 +44,7 @@
                 <MenuItem Header="{Binding T[action_quit]}" Click="OnQuit"/>
             </MenuItem>
             <!-- Edit -->
-            <MenuItem Header="{Binding T[menu_edit]}" Foreground="White">
+            <MenuItem Header="{Binding T[menu_edit]}" Foreground="{StaticResource TextPrimary}">
                 <MenuItem Header="{Binding T[action_undo]}"
                           Command="{Binding UndoCommand}"
                           InputGestureText="Ctrl+Z"/>
@@ -56,7 +60,7 @@
                           InputGestureText="Ctrl+D"/>
             </MenuItem>
             <!-- View -->
-            <MenuItem Header="{Binding T[menu_view]}" Foreground="White">
+            <MenuItem Header="{Binding T[menu_view]}" Foreground="{StaticResource TextPrimary}">
                 <MenuItem Header="{Binding T[action_reset_view]}"  Click="OnResetView"/>
                 <MenuItem Header="{Binding T[action_top_view]}"    Click="OnTopView"/>
                 <MenuItem Header="{Binding T[action_front_view]}"  Click="OnFrontView"/>
@@ -64,66 +68,74 @@
                 <MenuItem Header="{Binding T[action_iso_view]}"    Click="OnIsometricView"/>
             </MenuItem>
             <!-- Language -->
-            <MenuItem Header="{Binding T[menu_language]}" Foreground="White">
+            <MenuItem Header="{Binding T[menu_language]}" Foreground="{StaticResource TextPrimary}">
                 <MenuItem Header="Deutsch" Click="OnSetDe"/>
                 <MenuItem Header="English" Click="OnSetEn"/>
             </MenuItem>
             <!-- Help -->
-            <MenuItem Header="{Binding T[menu_help]}" Foreground="White">
+            <MenuItem Header="{Binding T[menu_help]}" Foreground="{StaticResource TextPrimary}">
                 <MenuItem Header="{Binding T[help_about]}" Click="OnAbout"/>
             </MenuItem>
         </Menu>
 
         <!-- ═══ TOOLBAR ════════════════════════════════════════════════════ -->
-        <ToolBar DockPanel.Dock="Top" Background="#2D2D30">
+        <ToolBar DockPanel.Dock="Top" Background="#1A1F2E" BorderThickness="0,1,0,0" BorderBrush="#2D3748">
             <Button ToolTip="{Binding T[action_new]}"
                     Command="{Binding NewSceneCommand}"
                     Style="{StaticResource MaterialDesignFlatButton}"
-                    Foreground="White">
-                <materialDesign:PackIcon Kind="FileOutline" Width="20" Height="20"/>
+                    Foreground="{StaticResource TextPrimary}"
+                    Padding="6,4">
+                <materialDesign:PackIcon Kind="FileOutline" Width="18" Height="18"/>
             </Button>
             <Button ToolTip="{Binding T[action_open_stl]}"
                     Command="{Binding ImportStlCommand}"
                     Style="{StaticResource MaterialDesignFlatButton}"
-                    Foreground="White">
-                <materialDesign:PackIcon Kind="FolderOpen" Width="20" Height="20"/>
+                    Foreground="{StaticResource TextPrimary}"
+                    Padding="6,4">
+                <materialDesign:PackIcon Kind="FolderOpen" Width="18" Height="18"/>
             </Button>
             <Button ToolTip="{Binding T[action_export_stl]}"
                     Command="{Binding ExportStlCommand}"
                     Style="{StaticResource MaterialDesignFlatButton}"
-                    Foreground="White">
-                <materialDesign:PackIcon Kind="ContentSave" Width="20" Height="20"/>
+                    Foreground="{StaticResource TextPrimary}"
+                    Padding="6,4">
+                <materialDesign:PackIcon Kind="ContentSave" Width="18" Height="18"/>
             </Button>
-            <Separator/>
+            <Separator Background="#2D3748" Margin="2,4"/>
             <Button ToolTip="{Binding T[action_undo]}"
                     Command="{Binding UndoCommand}"
                     Style="{StaticResource MaterialDesignFlatButton}"
-                    Foreground="White">
-                <materialDesign:PackIcon Kind="Undo" Width="20" Height="20"/>
+                    Foreground="{StaticResource TextPrimary}"
+                    Padding="6,4">
+                <materialDesign:PackIcon Kind="Undo" Width="18" Height="18"/>
             </Button>
             <Button ToolTip="{Binding T[action_redo]}"
                     Command="{Binding RedoCommand}"
                     Style="{StaticResource MaterialDesignFlatButton}"
-                    Foreground="White">
-                <materialDesign:PackIcon Kind="Redo" Width="20" Height="20"/>
+                    Foreground="{StaticResource TextPrimary}"
+                    Padding="6,4">
+                <materialDesign:PackIcon Kind="Redo" Width="18" Height="18"/>
             </Button>
-            <Separator/>
+            <Separator Background="#2D3748" Margin="2,4"/>
             <Button ToolTip="{Binding T[action_delete]}"
                     Command="{Binding DeleteCommand}"
                     Style="{StaticResource MaterialDesignFlatButton}"
-                    Foreground="White">
-                <materialDesign:PackIcon Kind="Delete" Width="20" Height="20"/>
+                    Foreground="{StaticResource TextPrimary}"
+                    Padding="6,4">
+                <materialDesign:PackIcon Kind="Delete" Width="18" Height="18"/>
             </Button>
             <Button ToolTip="{Binding T[action_duplicate]}"
                     Command="{Binding DuplicateCommand}"
                     Style="{StaticResource MaterialDesignFlatButton}"
-                    Foreground="White">
-                <materialDesign:PackIcon Kind="ContentDuplicate" Width="20" Height="20"/>
+                    Foreground="{StaticResource TextPrimary}"
+                    Padding="6,4">
+                <materialDesign:PackIcon Kind="ContentDuplicate" Width="18" Height="18"/>
             </Button>
         </ToolBar>
 
         <!-- ═══ STATUS BAR ═════════════════════════════════════════════════ -->
-        <StatusBar DockPanel.Dock="Bottom" Background="#007ACC" Foreground="White">
+        <StatusBar DockPanel.Dock="Bottom" Background="#1A1F2E" Foreground="{StaticResource TextPrimary}"
+                   BorderThickness="0,1,0,0" BorderBrush="#2D3748">
             <StatusBarItem>
                 <TextBlock Text="{Binding StatusText}" FontSize="12"/>
             </StatusBarItem>
@@ -142,11 +154,11 @@
         <!-- ═══ MAIN CONTENT ════════════════════════════════════════════════ -->
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="160" MinWidth="120"/>
-                <ColumnDefinition Width="4"/>
-                <ColumnDefinition Width="*" MinWidth="300"/>
-                <ColumnDefinition Width="4"/>
-                <ColumnDefinition Width="260" MinWidth="200"/>
+                <ColumnDefinition Width="180" MinWidth="140"/>
+                <ColumnDefinition Width="1"/>
+                <ColumnDefinition Width="*" MinWidth="400"/>
+                <ColumnDefinition Width="1"/>
+                <ColumnDefinition Width="300" MinWidth="250"/>
             </Grid.ColumnDefinitions>
 
             <!-- ─ LEFT SIDEBAR: Shape Library ─ -->
@@ -156,15 +168,15 @@
                 </ScrollViewer>
             </Border>
 
-            <GridSplitter Grid.Column="1" Background="{StaticResource SeparatorBrush}"
-                          HorizontalAlignment="Stretch"/>
+            <GridSplitter Grid.Column="1" Background="#2D3748"
+                          HorizontalAlignment="Stretch" ShowsPreview="False"/>
 
             <!-- ─ CENTER: 3D Viewport + Tab with SCAD Editor ─ -->
             <TabControl Grid.Column="2" Background="{StaticResource PanelBackground}"
                         x:Name="MainTabControl">
 
                 <!-- Tab 1: 3D Builder Viewport -->
-                <TabItem Header="{Binding T[tab_builder]}" Foreground="White"
+                <TabItem Header="{Binding T[tab_builder]}" Foreground="{StaticResource TextPrimary}"
                          Background="{StaticResource PanelBackground}">
                     <Grid>
                         <!-- 3D Viewport -->
@@ -182,26 +194,26 @@
                         </helix:HelixViewport3D>
 
                         <!-- Loading overlay -->
-                        <Border Background="#AA000000"
+                        <Border Background="#CC000000"
                                 Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}">
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <ProgressBar IsIndeterminate="True" Width="200" Margin="0,0,0,10"/>
-                                <TextBlock Text="{Binding StatusText}" Foreground="White"
-                                           HorizontalAlignment="Center"/>
+                                <ProgressBar IsIndeterminate="True" Width="240" Margin="0,0,0,12" Height="4"/>
+                                <TextBlock Text="{Binding StatusText}" Foreground="{StaticResource TextPrimary}"
+                                           HorizontalAlignment="Center" FontSize="13"/>
                             </StackPanel>
                         </Border>
                     </Grid>
                 </TabItem>
 
                 <!-- Tab 2: OpenSCAD Editor -->
-                <TabItem Header="{Binding T[tab_scad]}" Foreground="White"
+                <TabItem Header="{Binding T[tab_scad]}" Foreground="{StaticResource TextPrimary}"
                          Background="{StaticResource PanelBackground}">
                     <local:ScadEditorPanel x:Name="ScadPanel" DataContext="{Binding}"/>
                 </TabItem>
             </TabControl>
 
-            <GridSplitter Grid.Column="3" Background="{StaticResource SeparatorBrush}"
-                          HorizontalAlignment="Stretch"/>
+            <GridSplitter Grid.Column="3" Background="#2D3748"
+                          HorizontalAlignment="Stretch" ShowsPreview="False"/>
 
             <!-- ─ RIGHT SIDEBAR: Properties ─ -->
             <Border Grid.Column="4" Background="{StaticResource SidebarBackground}">
