@@ -17,6 +17,8 @@
             <!-- Converters -->
             <local:BoolToVisibilityConverter        x:Key="BoolToVisibilityConverter"/>
             <local:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter"/>
+            <local:InvertBoolConverter             x:Key="InvertBoolConverter"/>
+            <local:BoolToColorConverter            x:Key="BoolToColorConverter"/>
 
             <!-- App-wide colors - Premium Dark Theme -->
             <SolidColorBrush x:Key="PanelBackground"  Color="#0F1419"/>
