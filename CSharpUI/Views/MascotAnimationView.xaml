@@ -76,7 +76,7 @@
         </Canvas>
 
         <!-- Animation Storyboards -->
-        <Canvas.Resources>
+        <Grid.Resources>
             <!-- Brush Animation -->
             <Storyboard x:Key="BrushAnimation" RepeatBehavior="Forever">
                 <!-- Move right arm with brush -->

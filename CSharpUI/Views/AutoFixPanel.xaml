@@ -114,7 +114,7 @@
                                FontSize="10"/>
 
                     <TextBlock Grid.Column="1"
-                               Text="{Binding PrintQualityScore, StringFormat=N0}%"
+                               Text="{Binding PrintQualityScore, StringFormat='{}{0}%'}"
                                Foreground="{Binding PrintQualityColor}"
                                FontSize="10"
                                FontWeight="SemiBold"

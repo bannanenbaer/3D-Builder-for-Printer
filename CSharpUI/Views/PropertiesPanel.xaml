@@ -54,8 +54,7 @@
             </ItemsControl>
 
             <!-- Apply button -->
-            <Button Content="{Binding T[btn_apply_fillet]}"
-                    Command="{Binding ApplyParamsCommand}"
+            <Button Command="{Binding ApplyParamsCommand}"
                     Style="{StaticResource ActionButton}"
                     HorizontalAlignment="Stretch"
                     Margin="4,6,4,2"
@@ -63,7 +62,7 @@
                 <Button.Content>
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="Refresh" Margin="0,0,6,0"/>
-                        <TextBlock Text="Aktualisieren"/>
+                        <TextBlock Text="{Binding T[btn_apply_fillet]}"/>
                     </StackPanel>
                 </Button.Content>
             </Button>

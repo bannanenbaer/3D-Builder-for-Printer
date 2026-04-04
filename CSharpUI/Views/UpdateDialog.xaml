@@ -83,13 +83,12 @@
             <ScrollViewer Height="120" 
                          Margin="0,0,0,12"
                          Visibility="{Binding UpdateAvailable, Converter={StaticResource BoolToVisibilityConverter}}">
-                <TextBlock Text="{Binding ReleaseNotes}" 
-                           Foreground="#D1D5DB" 
-                           FontSize="10" 
-                           TextWrapping="Wrap"
-                           Background="#1A1F2E"
-                           Padding="8"
-                           CornerRadius="4"/>
+<Border Background="#1A1F2E" CornerRadius="4" Padding="8">
+                    <TextBlock Text="{Binding ReleaseNotes}" 
+                               Foreground="#D1D5DB" 
+                               FontSize="10" 
+                               TextWrapping="Wrap"/>
+                </Border>
             </ScrollViewer>
 
             <!-- Progress Bar -->

@@ -190,7 +190,7 @@
                                                      MajorDistance="10"
                                                      MinorDistance="5"
                                                      Thickness="0.3"
-                                                     Color="#444444"/>
+                                                     />
                         </helix:HelixViewport3D>
 
                         <!-- Loading overlay -->
