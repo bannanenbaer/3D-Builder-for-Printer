@@ -148,6 +148,6 @@
                                  From="0" To="50" Duration="0:0:2" 
                                  RepeatBehavior="Forever" AutoReverse="True"/>
             </Storyboard>
-        </Canvas.Resources>
+        </Grid.Resources>
     </Grid>
 </UserControl>
