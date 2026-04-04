@@ -48,6 +48,7 @@ namespace ThreeDBuilder.ViewModels
         private string _analyzeButtonText = "Modell analysieren";
         private string _mascotAnimationText = "Das Maskottchen läuft über dein Objekt und optimiert es! ✨";
         private string _analysisReportTitle = "Analyse-Ergebnis:";
+        private MascotAnimationView.ToolType _currentMascotTool = MascotAnimationView.ToolType.None;
 
         private RelayCommand _undoCommand;
         private RelayCommand _redoCommand;
@@ -116,6 +117,7 @@ namespace ThreeDBuilder.ViewModels
             IsOptimizing = true;
             OptimizationProgress = $"Analysiere '{SelectedObjectForOptimization.Name}'...";
             AnalysisReportTitle = $"Analyse-Ergebnis für '{SelectedObjectForOptimization.Name}':";
+            CurrentMascotTool = MascotAnimationView.ToolType.Brush; // Pinsel für Analyse
 
             try
             {
@@ -425,6 +427,12 @@ namespace ThreeDBuilder.ViewModels
         {
             get => _analysisReportTitle;
             set { if (_analysisReportTitle != value) { _analysisReportTitle = value; OnPropertyChanged(); } }
+        }
+
+        public MascotAnimationView.ToolType CurrentMascotTool
+        {
+            get => _currentMascotTool;
+            set { if (_currentMascotTool != value) { _currentMascotTool = value; OnPropertyChanged(); } }
         }
 
         public ICommand UndoCommand => _undoCommand;

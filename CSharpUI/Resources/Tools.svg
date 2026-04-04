@@ -1,0 +1,91 @@
+<svg viewBox="0 0 300 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      @keyframes paintStroke {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.6; }
+      }
+      .brush-bristles { animation: paintStroke 0.5s ease-in-out infinite; }
+    </style>
+  </defs>
+
+  <!-- BRUSH TOOL (0-100) -->
+  <g id="brush">
+    <!-- Handle -->
+    <rect x="20" y="35" width="8" height="50" fill="#8B4513" rx="2"/>
+    <!-- Handle grip -->
+    <rect x="18" y="50" width="12" height="15" fill="#A0522D" rx="1"/>
+    <!-- Ferrule (metal part) -->
+    <rect x="16" y="30" width="16" height="8" fill="#C0C0C0" rx="1"/>
+    <!-- Bristles -->
+    <g class="brush-bristles">
+      <ellipse cx="24" cy="20" rx="10" ry="15" fill="#FF69B4"/>
+      <ellipse cx="24" cy="18" rx="8" ry="12" fill="#FF1493"/>
+    </g>
+    <!-- Paint drops -->
+    <circle cx="15" cy="25" r="2" fill="#FF0000" opacity="0.7"/>
+    <circle cx="33" cy="22" r="1.5" fill="#00FF00" opacity="0.7"/>
+    <circle cx="20" cy="15" r="1" fill="#0099FF" opacity="0.7"/>
+  </g>
+
+  <!-- HAMMER TOOL (100-200) -->
+  <g id="hammer">
+    <!-- Handle -->
+    <rect x="120" y="40" width="6" height="45" fill="#8B4513" rx="1"/>
+    <!-- Handle grip -->
+    <rect x="118" y="55" width="10" height="12" fill="#A0522D" rx="1"/>
+    <!-- Head back -->
+    <rect x="110" y="25" width="20" height="18" fill="#696969" rx="1"/>
+    <!-- Head face (striking surface) -->
+    <rect x="112" y="27" width="16" height="14" fill="#808080" rx="1"/>
+    <!-- Head shine -->
+    <rect x="113" y="28" width="14" height="3" fill="#A9A9A9" opacity="0.6"/>
+    <!-- Claw -->
+    <path d="M 110 35 L 105 38 M 110 35 L 105 32" stroke="#696969" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <!-- Sparks (impact effect) -->
+    <g opacity="0.8">
+      <line x1="100" y1="30" x2="95" y2="25" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="100" y1="30" x2="105" y2="20" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="100" y1="30" x2="95" y2="35" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/>
+    </g>
+  </g>
+
+  <!-- TAPE TOOL (200-300) -->
+  <g id="tape">
+    <!-- Tape roll (main) -->
+    <circle cx="240" cy="50" r="18" fill="#FFD700"/>
+    <!-- Tape roll inner -->
+    <circle cx="240" cy="50" r="12" fill="#FFA500"/>
+    <!-- Tape roll center hole -->
+    <circle cx="240" cy="50" r="6" fill="#696969"/>
+    <!-- Tape strip unrolled -->
+    <rect x="258" y="42" width="35" height="16" fill="#FFD700" rx="2"/>
+    <!-- Tape strip shadow -->
+    <rect x="258" y="42" width="35" height="4" fill="#FFA500" rx="2" opacity="0.5"/>
+    <!-- Tape wrinkles -->
+    <path d="M 265 48 Q 270 46 275 48" stroke="#FFA500" stroke-width="0.5" fill="none" opacity="0.6"/>
+    <path d="M 280 48 Q 285 46 290 48" stroke="#FFA500" stroke-width="0.5" fill="none" opacity="0.6"/>
+    <!-- Tape end (sticky) -->
+    <path d="M 293 42 L 298 40 L 298 58 L 293 56 Z" fill="#FFD700" opacity="0.7"/>
+  </g>
+
+  <!-- ANALYSIS ICON (for brush context) -->
+  <g id="analysis" opacity="0.5">
+    <circle cx="50" cy="85" r="3" fill="#FF0000"/>
+    <circle cx="60" cy="85" r="3" fill="#FFA500"/>
+    <circle cx="70" cy="85" r="3" fill="#00FF00"/>
+    <text x="50" y="95" font-size="8" fill="#666" text-anchor="middle">Analyse</text>
+  </g>
+
+  <!-- REPAIR ICON (for hammer context) -->
+  <g id="repair" opacity="0.5">
+    <path d="M 140 85 L 150 85 M 145 80 L 145 90" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
+    <text x="145" y="95" font-size="8" fill="#666" text-anchor="middle">Reparatur</text>
+  </g>
+
+  <!-- OPTIMIZE ICON (for tape context) -->
+  <g id="optimize" opacity="0.5">
+    <path d="M 235 80 L 245 85 L 235 90 M 245 85 L 255 85" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
+    <text x="245" y="95" font-size="8" fill="#666" text-anchor="middle">Optimierung</text>
+  </g>
+</svg>

@@ -1,0 +1,151 @@
+<Window x:Class="ThreeDBuilder.Views.UpdateDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Title="Updates" 
+        Width="500" 
+        Height="400"
+        WindowStartupLocation="CenterOwner"
+        Background="#0F1419"
+        Foreground="#E5E7EB"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False">
+
+    <Grid>
+        <StackPanel Margin="20" VerticalAlignment="Stretch">
+            
+            <!-- Header -->
+            <StackPanel Margin="0,0,0,16">
+                <TextBlock Text="🔄 Update-Prüfung" 
+                           FontSize="18" 
+                           FontWeight="SemiBold" 
+                           Foreground="#60A5FA"/>
+                <TextBlock Text="Prüfe auf verfügbare Updates für 3D Builder Pro"
+                           FontSize="11"
+                           Foreground="#9CA3AF"
+                           Margin="0,4,0,0"/>
+            </StackPanel>
+
+            <!-- Version Info -->
+            <Border Background="#1A1F2E" 
+                    BorderBrush="#374151" 
+                    BorderThickness="1" 
+                    CornerRadius="4" 
+                    Padding="12" 
+                    Margin="0,0,0,16">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Current Version -->
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Aktuelle Version:" 
+                                   Foreground="#9CA3AF" 
+                                   FontSize="10"/>
+                        <TextBlock Text="{Binding CurrentVersion}" 
+                                   Foreground="#60A5FA" 
+                                   FontSize="14" 
+                                   FontWeight="SemiBold"
+                                   Margin="0,2,0,0"/>
+                    </StackPanel>
+
+                    <!-- Latest Version -->
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="Neueste Version:" 
+                                   Foreground="#9CA3AF" 
+                                   FontSize="10"/>
+                        <TextBlock Text="{Binding LatestVersion, FallbackValue='Prüfung läuft...'}" 
+                                   Foreground="{Binding UpdateAvailable, Converter={StaticResource BoolToColorConverter}, ConverterParameter='#10B981|#9CA3AF'}" 
+                                   FontSize="14" 
+                                   FontWeight="SemiBold"
+                                   Margin="0,2,0,0"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Status Message -->
+            <TextBlock Text="{Binding StatusMessage}" 
+                       Foreground="{StaticResource TextSecondary}" 
+                       FontSize="10" 
+                       TextWrapping="Wrap"
+                       Margin="0,0,0,12"/>
+
+            <!-- Release Notes -->
+            <TextBlock Text="Release Notes:" 
+                       Foreground="#E5E7EB" 
+                       FontSize="11" 
+                       FontWeight="SemiBold"
+                       Margin="0,0,0,8"
+                       Visibility="{Binding UpdateAvailable, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+            <ScrollViewer Height="120" 
+                         Margin="0,0,0,12"
+                         Visibility="{Binding UpdateAvailable, Converter={StaticResource BoolToVisibilityConverter}}">
+                <TextBlock Text="{Binding ReleaseNotes}" 
+                           Foreground="#D1D5DB" 
+                           FontSize="10" 
+                           TextWrapping="Wrap"
+                           Background="#1A1F2E"
+                           Padding="8"
+                           CornerRadius="4"/>
+            </ScrollViewer>
+
+            <!-- Progress Bar -->
+            <ProgressBar Height="4" 
+                        Margin="0,0,0,8"
+                        Value="{Binding UpdateProgress}"
+                        Foreground="#60A5FA"
+                        Visibility="{Binding IsDownloading, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+            <!-- Action Buttons -->
+            <StackPanel Orientation="Horizontal" 
+                       HorizontalAlignment="Right" 
+                       Margin="0,12,0,0">
+                
+                <!-- Cancel Button -->
+                <Button Command="{Binding CancelCommand}"
+                        IsEnabled="{Binding IsDownloading}"
+                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                        Padding="16,8"
+                        Margin="0,0,8,0">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="Close" Margin="0,0,6,0"/>
+                        <TextBlock Text="Abbrechen"/>
+                    </StackPanel>
+                </Button>
+
+                <!-- Check for Updates Button -->
+                <Button Command="{Binding CheckForUpdatesCommand}"
+                        IsEnabled="{Binding IsCheckingForUpdates, Converter={StaticResource InvertBoolConverter}}"
+                        Style="{StaticResource MaterialDesignRaisedButton}"
+                        Background="#3B82F6"
+                        Foreground="White"
+                        Padding="16,8"
+                        Margin="0,0,8,0"
+                        Visibility="{Binding IsDownloading, Converter={StaticResource InvertBoolToVisibilityConverter}}">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="Refresh" Margin="0,0,6,0"/>
+                        <TextBlock Text="Prüfen"/>
+                    </StackPanel>
+                </Button>
+
+                <!-- Download & Install Button -->
+                <Button Command="{Binding DownloadAndInstallCommand}"
+                        IsEnabled="{Binding UpdateAvailable}"
+                        Style="{StaticResource MaterialDesignRaisedButton}"
+                        Background="#10B981"
+                        Foreground="White"
+                        Padding="16,8"
+                        Visibility="{Binding UpdateAvailable, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="Download" Margin="0,0,6,0"/>
+                        <TextBlock Text="Jetzt aktualisieren"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+
+        </StackPanel>
+    </Grid>
+</Window>
