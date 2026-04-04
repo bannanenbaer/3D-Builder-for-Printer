@@ -1,134 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-    <Product Id="*" 
-             Name="3D Builder Pro" 
-             Language="1031" 
-             Version="1.0.0.0" 
-             Manufacturer="3D Builder Team" 
-             UpgradeCode="12345678-1234-1234-1234-123456789012">
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" 
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+
+  <!-- In WiX v4/v5 heißt 'Product' jetzt 'Package' -->
+  <Package Name="3D Builder Pro" 
+           Manufacturer="Bannanenbaer" 
+           Version="1.0.0.0" 
+           UpgradeCode="12345678-1234-1234-1234-123456789ABC"
+           Language="1031"> <!-- 1031 ist Deutsch -->
+
+    <MajorUpgrade DowngradeErrorMessage="Eine neuere Version von [ProductName] ist bereits installiert." />
+
+    <!-- Standard-Icon für Programme & Funktionen -->
+    <Icon Id="icon.ico" SourceFile="..\CSharpUI\Resources\icon.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="icon.ico" />
+
+    <Feature Id="MainFeature" Title="3D Builder Pro" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+    </Feature>
+
+    <!-- UI-Design (Modernes Windows-Design ) -->
+    <ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" />
+  </Package>
+
+  <Fragment>
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="3D Builder Pro" />
+    </StandardDirectory>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <Component Id="MainExecutable" Guid="*">
+        <!-- WICHTIG: Der Pfad muss zu Ihrer gebauten .exe führen -->
+        <File Id="ThreeDBuilderEXE" 
+              Source="..\CSharpUI\bin\Release\net10.0-windows\ThreeDBuilder.exe" 
+              KeyPath="yes" />
         
-        <Package InstallerVersion="200" 
-                 Compressed="yes" 
-                 InstallScope="perMachine" 
-                 Description="3D Builder Pro - Professionelle 3D-CAD-Anwendung mit KI-Assistent"/>
-
-        <MajorUpgrade DowngradeErrorMessage="Eine neuere Version von 3D Builder Pro ist bereits installiert."/>
-        
-        <MediaTemplate EmbedCab="yes"/>
-
-        <!-- Features -->
-        <Feature Id="ProductFeature" 
-                 Title="3D Builder Pro" 
-                 Level="1"
-                 Description="Installiert 3D Builder Pro mit allen Komponenten">
-            
-            <Feature Id="MainApplication" 
-                     Title="Hauptanwendung" 
-                     Level="1"
-                     Description="Die 3D Builder Pro Anwendung">
-                <ComponentRef Id="MainExecutable"/>
-                <ComponentRef Id="ApplicationShortcut"/>
-            </Feature>
-
-            <Feature Id="PythonBackend" 
-                     Title="Python Backend" 
-                     Level="1"
-                     Description="Python CadQuery Backend für 3D-Modellierung">
-                <ComponentRef Id="PythonBackendFiles"/>
-            </Feature>
-
-            <Feature Id="Documentation" 
-                     Title="Dokumentation" 
-                     Level="2"
-                     Description="Benutzerhandbuch und Tutorials">
-                <ComponentRef Id="DocumentationFiles"/>
-            </Feature>
-        </Feature>
-
-        <!-- Installation Directory -->
-        <InstallFolder Id="ProgramFilesFolder">
-            <Directory Id="INSTALLFOLDER" Name="3D Builder Pro"/>
-        </InstallFolder>
-
-        <!-- Shortcuts -->
-        <Directory Id="ProgramMenuFolder">
-            <Directory Id="ApplicationProgramsFolder" Name="3D Builder Pro"/>
-        </Directory>
-
-        <Directory Id="DesktopFolder" Name="Desktop"/>
-
-        <!-- Main Executable Component -->
-        <Component Id="MainExecutable" Directory="INSTALLFOLDER">
-            <File Id="ThreeDBuilderExe" 
-                  Source="$(var.BuildOutputPath)\ThreeDBuilder.exe" 
-                  KeyPath="yes"/>
-            <File Id="ThreeDBuilderDll" 
-                  Source="$(var.BuildOutputPath)\ThreeDBuilder.dll"/>
-        </Component>
-
-        <!-- Application Shortcut -->
-        <Component Id="ApplicationShortcut" Directory="ApplicationProgramsFolder">
-            <Shortcut Id="ApplicationStartMenuShortcut" 
-                      Name="3D Builder Pro" 
-                      Description="Professionelle 3D-CAD-Anwendung mit KI-Assistent"
-                      Target="[INSTALLFOLDER]ThreeDBuilder.exe" 
-                      WorkingDirectory="INSTALLFOLDER"/>
-            <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
-            <RegistryValue Root="HKCU" 
-                          Key="Software\3DBuilderPro" 
-                          Name="installed" 
-                          Type="integer" 
-                          Value="1" 
-                          KeyPath="yes"/>
-        </Component>
-
-        <!-- Desktop Shortcut -->
-        <Component Id="DesktopShortcut" Directory="DesktopFolder">
-            <Shortcut Id="DesktopApplicationShortcut" 
-                      Name="3D Builder Pro" 
-                      Description="Professionelle 3D-CAD-Anwendung mit KI-Assistent"
-                      Target="[INSTALLFOLDER]ThreeDBuilder.exe" 
-                      WorkingDirectory="INSTALLFOLDER"/>
-            <RegistryValue Root="HKCU" 
-                          Key="Software\3DBuilderPro" 
-                          Name="desktopShortcut" 
-                          Type="integer" 
-                          Value="1" 
-                          KeyPath="yes"/>
-        </Component>
-
-        <!-- Python Backend Files -->
-        <Component Id="PythonBackendFiles" Directory="INSTALLFOLDER">
-            <File Id="PythonServer" 
-                  Source="$(var.BuildOutputPath)\server.py"/>
-            <File Id="PythonShapes" 
-                  Source="$(var.BuildOutputPath)\shapes.py"/>
-            <File Id="PythonRequirements" 
-                  Source="$(var.BuildOutputPath)\requirements.txt"/>
-        </Component>
-
-        <!-- Documentation Files -->
-        <Component Id="DocumentationFiles" Directory="INSTALLFOLDER">
-            <File Id="UserManual" 
-                  Source="$(var.BuildOutputPath)\README.md"/>
-            <File Id="QuickStart" 
-                  Source="$(var.BuildOutputPath)\QUICKSTART.md"/>
-        </Component>
-
-        <!-- Registry for Add/Remove Programs -->
-        <RegistryKey Root="HKLM" 
-                     Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\3DBuilderPro">
-            <RegistryValue Type="string" Name="DisplayName" Value="3D Builder Pro"/>
-            <RegistryValue Type="string" Name="DisplayVersion" Value="1.0.0.0"/>
-            <RegistryValue Type="string" Name="Publisher" Value="3D Builder Team"/>
-            <RegistryValue Type="string" Name="InstallLocation" Value="[INSTALLFOLDER]"/>
-        </RegistryKey>
-
-        <!-- UI -->
-        <UIRef Id="WixUI_InstallDir"/>
-        <WixVariable Id="WixUILicenseRtf" Value="License.rtf"/>
-        <WixVariable Id="WixUIBannerBmp" Value="banner.bmp"/>
-        <WixVariable Id="WixUIDialogBmp" Value="dialog.bmp"/>
-
-    </Product>
+        <!-- Desktop-Verknüpfung -->
+        <Shortcut Id="DesktopShortcut"
+                  Directory="DesktopFolder"
+                  Name="3D Builder Pro"
+                  WorkingDirectory="INSTALLFOLDER"
+                  Icon="icon.ico"
+                  Advertise="yes" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
 </Wix>
