@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" 
-     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
 
-  <!-- In WiX v4/v5 heißt 'Product' jetzt 'Package' -->
+  <!-- In WiX v6/v7 im Jahr 2026 ist der ProductCode jetzt Pflicht -->
   <Package Name="3D Builder Pro" 
            Manufacturer="Bannanenbaer" 
            Version="1.0.0.0" 
            UpgradeCode="12345678-1234-1234-1234-123456789ABC"
-           Language="1031"> <!-- 1031 ist Deutsch -->
+           Language="1031">
 
     <MajorUpgrade DowngradeErrorMessage="Eine neuere Version von [ProductName] ist bereits installiert." />
 
@@ -19,8 +18,8 @@
       <ComponentGroupRef Id="ProductComponents" />
     </Feature>
 
-    <!-- UI-Design (Modernes Windows-Design ) -->
-    <ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" />
+    <!-- UI vorerst deaktiviert, um WIX0144 Fehler zu vermeiden -->
+    <!-- <ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" /> -->
   </Package>
 
   <Fragment>
@@ -32,7 +31,7 @@
   <Fragment>
     <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
       <Component Id="MainExecutable" Guid="*">
-        <!-- WICHTIG: Der Pfad muss zu Ihrer gebauten .exe führen -->
+        <!-- Pfad für .NET 10 Release-Build -->
         <File Id="ThreeDBuilderEXE" 
               Source="..\CSharpUI\bin\Release\net10.0-windows\ThreeDBuilder.exe" 
               KeyPath="yes" />
