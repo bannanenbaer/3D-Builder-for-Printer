@@ -12,10 +12,6 @@
     <!-- Upgrade: ältere Versionen werden automatisch ersetzt -->
     <MajorUpgrade DowngradeErrorMessage="Eine neuere Version von [ProductName] ist bereits installiert." />
 
-    <!-- App-Icon in Programme &amp; Funktionen -->
-    <Icon Id="icon.ico" SourceFile="..\CSharpUI\Resources\icon.ico"/>
-    <Property Id="ARPPRODUCTICON" Value="icon.ico" />
-
     <!-- Installer-UI mit Ordnerauswahl -->
     <ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" />
 
@@ -56,8 +52,7 @@
                   Name="3D Builder Pro"
                   Description="3D Builder für 3D-Drucker"
                   Target="[INSTALLFOLDER]3D-Builder.exe"
-                  WorkingDirectory="INSTALLFOLDER"
-                  Icon="icon.ico" />
+                  WorkingDirectory="INSTALLFOLDER" />
         <RegistryValue Root="HKCU"
                        Key="Software\Bannanenbaer\3DBuilderPro"
                        Name="DesktopShortcut"
@@ -73,8 +68,7 @@
                   Name="3D Builder Pro"
                   Description="3D Builder für 3D-Drucker"
                   Target="[INSTALLFOLDER]3D-Builder.exe"
-                  WorkingDirectory="INSTALLFOLDER"
-                  Icon="icon.ico" />
+                  WorkingDirectory="INSTALLFOLDER" />
         <RemoveFolder Id="CleanUpStartMenu"
                       Directory="ApplicationProgramsFolder"
                       On="uninstall" />
