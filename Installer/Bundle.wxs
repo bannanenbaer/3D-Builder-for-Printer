@@ -26,7 +26,8 @@
     -->
     <BootstrapperApplication>
       <bal:WixStandardBootstrapperApplication
-        Theme="standard"
+        Theme="none"
+        LogoFile="..\CSharpUI\logo.ico"
         LicenseUrl=""
         SuppressOptionsUI="yes"
         ShowVersion="yes"

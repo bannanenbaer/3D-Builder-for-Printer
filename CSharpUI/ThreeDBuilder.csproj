@@ -11,6 +11,7 @@
     <Version>1.0.0</Version>
     <Authors>3D-Builder</Authors>
     <Description>3D Builder for 3D Printing - Create and edit 3D models</Description>
+    <ApplicationIcon>logo.ico</ApplicationIcon>
     <!-- Self-contained publish includes .NET runtime in .exe -->
     <SelfContained>false</SelfContained>
     <PublishSingleFile>false</PublishSingleFile>
