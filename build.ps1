@@ -41,20 +41,19 @@ $colors = @{
 
 function Write-Header {
     param([string]$Message)
-    Write-Host "`n" -NoNewline
-    Write-Host "╔" + ("═" * ($Message.Length + 2)) + "╗" -ForegroundColor $colors.Info
-    Write-Host "║ $Message ║" -ForegroundColor $colors.Info
-    Write-Host "╚" + ("═" * ($Message.Length + 2)) + "╝" -ForegroundColor $colors.Info
+    Write-Host "`n# =========================================" -ForegroundColor Cyan
+    Write-Host "# $Message" -ForegroundColor Cyan
+    Write-Host "# =========================================" -ForegroundColor Cyan
 }
 
 function Write-Step {
     param([string]$Message, [int]$Step, [int]$Total)
-    Write-Host "`n[$Step/$Total] $Message" -ForegroundColor $colors.Info
+    Write-Host "`n[$Step/$Total] $Message" -ForegroundColor Cyan
 }
 
 function Write-Success {
     param([string]$Message)
-    Write-Host "✓ $Message" -ForegroundColor $colors.Success
+    Write-Host "OK: $Message" -ForegroundColor Green
 }
 
 function Write-Error-Custom {
