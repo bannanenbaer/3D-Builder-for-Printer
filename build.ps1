@@ -31,6 +31,82 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+# Generiert Installer/AppFiles.wxs aus dem publish/-Verzeichnis
+function Generate-AppFilesWxs {
+    param([string]$PublishDir, [string]$OutputFile)
+
+    $publishRoot = (Resolve-Path $PublishDir).Path.TrimEnd('\', '/')
+
+    # Verzeichnisbaum aufbauen (fuer WiX Directory-Elemente)
+    $allFiles = Get-ChildItem -Path $publishRoot -Recurse -File | Sort-Object FullName
+
+    # Hilfsfunktion: Verzeichnis-XML rekursiv erzeugen
+    function Build-DirXml($tree, $parentId, $indent) {
+        $xml = ''
+        foreach ($name in ($tree.Keys | Sort-Object)) {
+            $safeId = $parentId + '_' + ($name -replace '[^a-zA-Z0-9]', '_')
+            $xml += "$indent<Directory Id=""$safeId"" Name=""$name"">`n"
+            if ($tree[$name].Count -gt 0) {
+                $xml += Build-DirXml $tree[$name] $safeId ($indent + '  ')
+            }
+            $xml += "$indent</Directory>`n"
+        }
+        return $xml
+    }
+
+    # Verzeichnisbaum aus Dateipfaden ableiten
+    $dirTree = [ordered]@{}
+    foreach ($file in $allFiles) {
+        $rel = $file.FullName.Substring($publishRoot.Length).TrimStart('\', '/')
+        $parts = $rel -split '[\\/]'
+        if ($parts.Count -gt 1) {
+            $node = $dirTree
+            for ($i = 0; $i -lt $parts.Count - 1; $i++) {
+                if (-not $node.Contains($parts[$i])) { $node[$parts[$i]] = [ordered]@{} }
+                $node = $node[$parts[$i]]
+            }
+        }
+    }
+
+    $lines = [System.Collections.Generic.List[string]]::new()
+    $lines.Add('<?xml version="1.0" encoding="UTF-8"?>')
+    $lines.Add('<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">')
+    $lines.Add('  <Fragment>')
+
+    if ($dirTree.Count -gt 0) {
+        $lines.Add('    <DirectoryRef Id="INSTALLFOLDER">')
+        $dirXml = (Build-DirXml $dirTree 'dir' '      ').TrimEnd("`n")
+        foreach ($l in ($dirXml -split "`n")) { $lines.Add($l) }
+        $lines.Add('    </DirectoryRef>')
+    }
+
+    $lines.Add('    <ComponentGroup Id="AppFiles">')
+    foreach ($file in $allFiles) {
+        $rel    = $file.FullName.Substring($publishRoot.Length).TrimStart('\', '/')
+        $parts  = $rel -split '[\\/]'
+        $compId = 'comp_' + ($rel -replace '[^a-zA-Z0-9]', '_')
+        $guid   = [System.Guid]::NewGuid().ToString().ToUpper()
+        $src    = $rel -replace '/', '\'
+
+        if ($parts.Count -gt 1) {
+            $dirParts = $parts[0..($parts.Count - 2)]
+            $dirId = 'dir_' + (($dirParts -join '_') -replace '[^a-zA-Z0-9]', '_')
+            $lines.Add("      <Component Id=""$compId"" Directory=""$dirId"" Guid=""{$guid}"">")
+        } else {
+            $lines.Add("      <Component Id=""$compId"" Directory=""INSTALLFOLDER"" Guid=""{$guid}"">")
+        }
+        $lines.Add("        <File Source=""..\publish\$src"" KeyPath=""yes"" />")
+        $lines.Add("      </Component>")
+    }
+    $lines.Add('    </ComponentGroup>')
+    $lines.Add('  </Fragment>')
+    $lines.Add('</Wix>')
+
+    $absOutput = Join-Path (Get-Location).Path $OutputFile
+    [System.IO.File]::WriteAllText($absOutput, ($lines -join "`n"), [System.Text.Encoding]::UTF8)
+    Write-Success "AppFiles.wxs generiert ($($allFiles.Count) Dateien)"
+}
+
 # Farben für Output
 $colors = @{
     Success = "Green"
@@ -172,6 +248,14 @@ if ($BuildOnly) {
         Write-Success "Anwendung erfolgreich publiziert"
     } catch {
         Write-Error-Custom "Publish fehlgeschlagen: $_"
+        exit 1
+    }
+
+    # Schritt 5a.2: AppFiles.wxs aus publish/ generieren (wird von Installer.wixproj eingebunden)
+    try {
+        Generate-AppFilesWxs -PublishDir "publish" -OutputFile "Installer\AppFiles.wxs"
+    } catch {
+        Write-Error-Custom "AppFiles.wxs konnte nicht generiert werden: $_"
         exit 1
     }
 
