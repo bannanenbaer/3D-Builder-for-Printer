@@ -26,7 +26,7 @@
     -->
     <BootstrapperApplication>
       <bal:WixStandardBootstrapperApplication
-        Theme="standard"
+        Theme="none"
         LicenseUrl=""
         SuppressOptionsUI="yes"
         ShowVersion="yes"
