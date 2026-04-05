@@ -79,8 +79,8 @@
                   Name="Python 3.12"
                   Description="Python 3.12 Laufzeitumgebung"
                   DownloadUrl="https://www.python.org/ftp/python/3.12.7/python-3.12.7-amd64.exe"
-                  InstallCommand="/quiet InstallAllUsers=1 PrependPath=1 Include_pip=1 Include_tcltk=0 Include_test=0 SimpleInstall=1"
-                  UninstallCommand="/uninstall /quiet"
+                  InstallArguments="/quiet InstallAllUsers=1 PrependPath=1 Include_pip=1 Include_tcltk=0 Include_test=0 SimpleInstall=1"
+                  UninstallArguments="/uninstall /quiet"
                   DetectCondition="PythonAlreadyInstalled"
                   InstallCondition="NOT PythonAlreadyInstalled"
                   Vital="yes" />
@@ -94,9 +94,9 @@
       -->
       <ExePackage Id="PipInstall"
                   Name="Python-Pakete (cadquery, numpy)"
-                  Description="Installiere benötigte Python-Pakete..."
+                  Description="Installiere benoetigte Python-Pakete..."
                   SourceFile="install-python-deps.bat"
-                  InstallCommand=""
+                  InstallArguments=""
                   Vital="no"
                   Permanent="yes" />
 
@@ -108,8 +108,7 @@
       <MsiPackage Id="ThreeDBuilderMsi"
                   Name="3D Builder Pro"
                   Description="3D Builder Pro Anwendung"
-                  Vital="yes"
-                  DisplayInternalUI="no" />
+                  Vital="yes" />
 
     </Chain>
   </Bundle>

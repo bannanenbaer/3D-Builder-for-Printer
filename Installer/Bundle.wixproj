@@ -21,6 +21,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Product.wxs gehoert nur zu Installer.wixproj, nicht hierher -->
+    <Compile Remove="Product.wxs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- Bundle.wxs: Hauptdefinition des Bootstrappers -->
     <Compile Include="Bundle.wxs" />
 

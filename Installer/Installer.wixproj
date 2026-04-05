@@ -11,8 +11,22 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- WiX UI-Extension für Installationsordner-Auswahl -->
+    <!-- Bundle.wxs gehoert nur zu Bundle.wixproj, nicht hierher -->
+    <Compile Remove="Bundle.wxs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- WiX UI-Extension fuer Installationsordner-Auswahl -->
     <PackageReference Include="WixToolset.UI.wixext" Version="4.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Alle Dateien aus dem publish-Ordner automatisch einsammeln -->
+    <HarvestDirectory Include="..\publish\">
+      <DirectoryRefId>INSTALLFOLDER</DirectoryRefId>
+      <ComponentGroupName>AppFiles</ComponentGroupName>
+      <SuppressRootDirectory>true</SuppressRootDirectory>
+    </HarvestDirectory>
   </ItemGroup>
 
 </Project>
