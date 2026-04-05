@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- WiX v4 SDK-basiertes Projekt -->
-<!-- Voraussetzung: dotnet tool install --global wix -->
+<!-- Voraussetzung: dotnet tool install -global wix (WiX v4) -->
 <Project Sdk="WixToolset.Sdk/4.0.5">
 
   <PropertyGroup>
