@@ -9,7 +9,7 @@
     <Version>1.0.0</Version>
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <!-- SDK-Auto-Glob fuer *.wxs deaktivieren, damit Bundle.wxs nicht mitgeladen wird -->
-    <EnableDefaultItems>false</EnableDefaultItems>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
   </PropertyGroup>
 
   <ItemGroup>
