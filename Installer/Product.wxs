@@ -15,6 +15,8 @@
     <!-- Installer-UI mit Ordnerauswahl -->
     <ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" />
 
+    <Icon Id="AppIcon" SourceFile="..\CSharpUI\logo.ico" />
+
     <Feature Id="MainFeature" Title="3D Builder Pro" Level="1">
       <ComponentGroupRef Id="AppFiles" />
       <ComponentGroupRef Id="Shortcuts" />
@@ -44,7 +46,8 @@
                   Name="3D Builder Pro"
                   Description="3D Builder für 3D-Drucker"
                   Target="[INSTALLFOLDER]3D-Builder.exe"
-                  WorkingDirectory="INSTALLFOLDER" />
+                  WorkingDirectory="INSTALLFOLDER"
+                  Icon="AppIcon" />
         <RegistryValue Root="HKCU"
                        Key="Software\Bannanenbaer\3DBuilderPro"
                        Name="DesktopShortcut"
@@ -60,7 +63,8 @@
                   Name="3D Builder Pro"
                   Description="3D Builder für 3D-Drucker"
                   Target="[INSTALLFOLDER]3D-Builder.exe"
-                  WorkingDirectory="INSTALLFOLDER" />
+                  WorkingDirectory="INSTALLFOLDER"
+                  Icon="AppIcon" />
         <RemoveFolder Id="CleanUpStartMenu"
                       Directory="ApplicationProgramsFolder"
                       On="uninstall" />
