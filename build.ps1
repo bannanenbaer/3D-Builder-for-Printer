@@ -180,9 +180,22 @@ if (-not $BuildOnly) {
     } catch {
         Write-Error-Custom "WiX v4 Toolset nicht gefunden!"
         Write-Host "Installation: dotnet tool install --global wix"
-        Write-Host "Danach: wix extension add WixToolset.UI.wixext"
         exit 1
     }
+
+    # WiX-Extensions global installieren (werden von 'wix build -ext ...' benoetigt)
+    # Bereits installierte Versionen werden einfach uebersprungen.
+    $wixExts = @(
+        "WixToolset.UI.wixext/4.0.5",
+        "WixToolset.Bal.wixext/4.0.5",
+        "WixToolset.Util.wixext/4.0.5"
+    )
+    foreach ($ext in $wixExts) {
+        $extName = $ext.Split('/')[0]
+        Write-Host "  Extension sicherstellen: $extName..."
+        wix extension add $ext 2>&1 | Out-Null
+    }
+    Write-Success "WiX-Extensions bereit"
 }
 
 # Schritt 2: Abhängigkeiten wiederherstellen
