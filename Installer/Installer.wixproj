@@ -11,8 +11,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- Bundle.wxs gehoert nur zu Bundle.wixproj, nicht hierher -->
-    <Compile Remove="Bundle.wxs" />
+    <!-- Nur Product.wxs kompilieren - Bundle.wxs gehoert zu Bundle.wixproj -->
+    <Compile Remove="*.wxs" />
+    <Compile Include="Product.wxs" />
   </ItemGroup>
 
   <ItemGroup>
