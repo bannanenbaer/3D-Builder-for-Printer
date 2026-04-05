@@ -285,16 +285,28 @@ if ($BuildOnly) {
     }
 
     # Schritt 5c: Burn-Bundle bauen (wix build → 3DBuilderPro-Setup.exe)
-    # Wir rufen wix.exe direkt auf, damit die Extensions (bal/util) explizit
-    # geladen werden und kein Auto-Glob Product.wxs einschließt.
+    # Extension-DLLs aus dem NuGet-Cache holen (garantiert vorhanden nach MSI-Build).
     try {
         Write-Host "Baue Burn-Bundle (Bundle.wxs → 3DBuilderPro-Setup.exe)..."
+
+        $nugetPkgs = "$env:USERPROFILE\.nuget\packages"
+        $balDll  = Get-ChildItem "$nugetPkgs\wixtoolset.bal.wixext\4.0.5"  -Recurse -Filter "WixToolset.Bal.wixext.dll"  |
+                   Where-Object { $_.FullName -notmatch '\\ref\\' } | Select-Object -First 1
+        $utilDll = Get-ChildItem "$nugetPkgs\wixtoolset.util.wixext\4.0.5" -Recurse -Filter "WixToolset.Util.wixext.dll" |
+                   Where-Object { $_.FullName -notmatch '\\ref\\' } | Select-Object -First 1
+
+        if (-not $balDll)  { throw "WixToolset.Bal.wixext.dll nicht im NuGet-Cache gefunden ($nugetPkgs)" }
+        if (-not $utilDll) { throw "WixToolset.Util.wixext.dll nicht im NuGet-Cache gefunden ($nugetPkgs)" }
+
+        Write-Host "  Bal-Extension:  $($balDll.FullName)"
+        Write-Host "  Util-Extension: $($utilDll.FullName)"
+
         $msiRelPath = "bin\$Configuration\3DBuilderPro.msi"
         $outExe     = "bin\$Configuration\3DBuilderPro-Setup.exe"
         Push-Location Installer
         wix build Bundle.wxs `
-            -ext WixToolset.Bal.wixext `
-            -ext WixToolset.Util.wixext `
+            -ext $balDll.FullName `
+            -ext $utilDll.FullName `
             -arch x64 `
             -d "MsiPath=$msiRelPath" `
             -b . `
