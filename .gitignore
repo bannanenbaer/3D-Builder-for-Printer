@@ -5,3 +5,6 @@ obj/
 
 # Generated WiX harvest file (wird von build.ps1 erzeugt)
 Installer/AppFiles.wxs
+
+# Python-Installer (wird von build.ps1 heruntergeladen, nicht einchecken)
+Installer/python-*.exe
