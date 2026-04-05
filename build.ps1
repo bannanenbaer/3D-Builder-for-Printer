@@ -271,16 +271,27 @@ if ($BuildOnly) {
         Write-Warning-Custom "Anwendung gebaut, aber Installer konnte nicht erstellt werden"
     }
 
-    # Schritt 5c: Burn-Bundle bauen (Bundle.wixproj → Setup.exe)
-    # Der Bundle enthält: Python-Installer (Download) + pip-Skript + MSI
-    # Der Nutzer lädt nur die Setup.exe herunter und drückt einen Knopf.
+    # Schritt 5c: Burn-Bundle bauen (wix build → 3DBuilderPro-Setup.exe)
+    # Wir rufen wix.exe direkt auf, damit die Extensions (bal/util) explizit
+    # geladen werden und kein Auto-Glob Product.wxs einschließt.
     try {
-        Write-Host "Baue Burn-Bundle (Bundle.wixproj → 3DBuilderPro-Setup.exe)..."
-        dotnet build Installer/Bundle.wixproj -c $Configuration --verbosity minimal
+        Write-Host "Baue Burn-Bundle (Bundle.wxs → 3DBuilderPro-Setup.exe)..."
+        $msiRelPath = "bin\$Configuration\3DBuilderPro.msi"
+        $outExe     = "bin\$Configuration\3DBuilderPro-Setup.exe"
+        Push-Location Installer
+        wix build Bundle.wxs `
+            -ext WixToolset.Bal.wixext `
+            -ext WixToolset.Util.wixext `
+            -arch x64 `
+            -d "MsiPath=$msiRelPath" `
+            -b . `
+            -o $outExe
+        Pop-Location
         Write-Success "Setup.exe erfolgreich erstellt"
     } catch {
+        Pop-Location -ErrorAction SilentlyContinue
         Write-Error-Custom "Bundle-Build fehlgeschlagen: $_"
-        Write-Warning-Custom "WiX Bal-Extension prüfen: wix extension add WixToolset.Bal.wixext"
+        Write-Warning-Custom "WiX global installiert? dotnet tool install --global wix"
     }
 }
 
