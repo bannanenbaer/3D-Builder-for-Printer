@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- WiX v4 Burn-Bundle-Projekt -->
+<!-- Erstellt: 3DBuilderPro-Setup.exe (der einzige Download für den Nutzer) -->
+<!-- Voraussetzung: dotnet tool install --global wix -->
+<Project Sdk="WixToolset.Sdk/4.0.5">
+
+  <PropertyGroup>
+    <!-- Ausgabedatei: 3DBuilderPro-Setup.exe -->
+    <OutputName>3DBuilderPro-Setup</OutputName>
+    <OutputType>Bundle</OutputType>
+    <Platform>x64</Platform>
+    <Version>1.0.0</Version>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Burn-Bootstrapper-UI (bal:WixStandardBootstrapperApplication) -->
+    <PackageReference Include="WixToolset.Bal.wixext" Version="4.0.5" />
+    <!-- Burn-Such-Extensions (util:RegistrySearch) -->
+    <PackageReference Include="WixToolset.Util.wixext" Version="4.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Bundle.wxs: Hauptdefinition des Bootstrappers -->
+    <Compile Include="Bundle.wxs" />
+
+    <!--
+      install-python-deps.bat wird in den Bundle eingebettet.
+      Der Nutzer muss sie nicht separat herunterladen.
+    -->
+    <Payload Include="install-python-deps.bat" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      Referenz auf das MSI-Projekt.
+      WiX SDK löst automatisch auf: Installer/bin/<Configuration>/3DBuilderPro.msi
+      Muss zuerst gebaut werden (build.ps1 baut Installer.wixproj vor Bundle.wixproj).
+    -->
+    <ProjectReference Include="Installer.wixproj">
+      <Private>true</Private>
+    </ProjectReference>
+  </ItemGroup>
+
+</Project>

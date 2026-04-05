@@ -1,49 +1,86 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
 
-  <!-- In WiX v6/v7 im Jahr 2026 ist der ProductCode jetzt Pflicht -->
-  <Package Name="3D Builder Pro" 
-           Manufacturer="Bannanenbaer" 
-           Version="1.0.0.0" 
+  <Package Name="3D Builder Pro"
+           Manufacturer="Bannanenbaer"
+           Version="1.0.0.0"
            UpgradeCode="12345678-1234-1234-1234-123456789ABC"
-           Language="1031">
+           Language="1031"
+           Codepage="1252">
 
+    <!-- Upgrade: ältere Versionen werden automatisch ersetzt -->
     <MajorUpgrade DowngradeErrorMessage="Eine neuere Version von [ProductName] ist bereits installiert." />
 
-    <!-- Standard-Icon für Programme & Funktionen -->
-    <Icon Id="icon.ico" SourceFile="..\CSharpUI\Resources\icon.ico"/>
-    <Property Id="ARPPRODUCTICON" Value="icon.ico" />
+    <!-- Installer-UI mit Ordnerauswahl -->
+    <ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" />
 
     <Feature Id="MainFeature" Title="3D Builder Pro" Level="1">
-      <ComponentGroupRef Id="ProductComponents" />
+      <ComponentGroupRef Id="AppFiles" />
+      <ComponentGroupRef Id="Shortcuts" />
     </Feature>
 
-    <!-- UI vorerst deaktiviert, um WIX0144 Fehler zu vermeiden -->
-    <!-- <ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" /> -->
   </Package>
 
+  <!-- Verzeichnisstruktur -->
   <Fragment>
     <StandardDirectory Id="ProgramFiles64Folder">
       <Directory Id="INSTALLFOLDER" Name="3D Builder Pro" />
     </StandardDirectory>
+    <StandardDirectory Id="DesktopFolder" />
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Directory Id="ApplicationProgramsFolder" Name="3D Builder Pro" />
+    </StandardDirectory>
   </Fragment>
 
+  <!-- Alle Anwendungsdateien aus dem publish-Ordner -->
   <Fragment>
-    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-      <Component Id="MainExecutable" Guid="*">
-        <!-- Pfad für .NET 10 Release-Build -->
-        <File Id="ThreeDBuilderEXE" 
-              Source="..\CSharpUI\bin\Release\net10.0-windows\ThreeDBuilder.exe" 
-              KeyPath="yes" />
-        
-        <!-- Desktop-Verknüpfung -->
-        <Shortcut Id="DesktopShortcut"
-                  Directory="DesktopFolder"
-                  Name="3D Builder Pro"
-                  WorkingDirectory="INSTALLFOLDER"
-                  Icon="icon.ico"
-                  Advertise="yes" />
-      </Component>
+    <ComponentGroup Id="AppFiles" Directory="INSTALLFOLDER">
+      <!-- Alle Dateien aus dem dotnet publish Ausgabeordner -->
+      <Files Source="..\publish\" />
     </ComponentGroup>
   </Fragment>
+
+  <!-- Desktop- und Start-Menü-Verknüpfungen -->
+  <Fragment>
+    <ComponentGroup Id="Shortcuts" Directory="INSTALLFOLDER">
+
+      <!-- Desktop-Verknüpfung -->
+      <Component Id="DesktopShortcut" Guid="A1B2C3D4-E5F6-7890-ABCD-EF1234567891">
+        <Shortcut Id="DesktopSC"
+                  Directory="DesktopFolder"
+                  Name="3D Builder Pro"
+                  Description="3D Builder für 3D-Drucker"
+                  Target="[INSTALLFOLDER]3D-Builder.exe"
+                  WorkingDirectory="INSTALLFOLDER" />
+        <RegistryValue Root="HKCU"
+                       Key="Software\Bannanenbaer\3DBuilderPro"
+                       Name="DesktopShortcut"
+                       Type="integer"
+                       Value="1"
+                       KeyPath="yes" />
+      </Component>
+
+      <!-- Start-Menü-Verknüpfung -->
+      <Component Id="StartMenuShortcut" Guid="B2C3D4E5-F6A7-8901-BCDE-F12345678912">
+        <Shortcut Id="StartMenuSC"
+                  Directory="ApplicationProgramsFolder"
+                  Name="3D Builder Pro"
+                  Description="3D Builder für 3D-Drucker"
+                  Target="[INSTALLFOLDER]3D-Builder.exe"
+                  WorkingDirectory="INSTALLFOLDER" />
+        <RemoveFolder Id="CleanUpStartMenu"
+                      Directory="ApplicationProgramsFolder"
+                      On="uninstall" />
+        <RegistryValue Root="HKCU"
+                       Key="Software\Bannanenbaer\3DBuilderPro"
+                       Name="StartMenuShortcut"
+                       Type="integer"
+                       Value="1"
+                       KeyPath="yes" />
+      </Component>
+
+    </ComponentGroup>
+  </Fragment>
+
 </Wix>
