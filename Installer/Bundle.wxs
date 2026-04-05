@@ -96,7 +96,6 @@
                   Name="Python-Pakete (cadquery, numpy)"
                   Description="Installiere benoetigte Python-Pakete..."
                   SourceFile="install-python-deps.bat"
-                  InstallArguments=""
                   Vital="no"
                   Permanent="yes" />
 
