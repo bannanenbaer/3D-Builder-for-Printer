@@ -75,6 +75,7 @@
       -->
       <ExePackage Id="Python312"
                   Name="python-3.12.7-amd64.exe"
+                  Compressed="no"
                   Description="Python 3.12 Laufzeitumgebung"
                   DownloadUrl="https://www.python.org/ftp/python/3.12.7/python-3.12.7-amd64.exe"
                   InstallArguments="/quiet InstallAllUsers=1 PrependPath=1 Include_pip=1 Include_tcltk=0 Include_test=0 SimpleInstall=1"
