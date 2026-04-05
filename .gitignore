@@ -1,0 +1,7 @@
+# Build outputs
+publish/
+bin/
+obj/
+
+# Generated WiX harvest file (wird von build.ps1 erzeugt)
+Installer/AppFiles.wxs
