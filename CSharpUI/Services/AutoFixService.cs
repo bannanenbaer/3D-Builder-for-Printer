@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
 namespace ThreeDBuilder.Services
 {
@@ -48,7 +49,7 @@ namespace ThreeDBuilder.Services
             try
             {
                 // Rufe Python-Backend auf für detaillierte Analyse
-                var analysisResult = await _pythonBridge.CallAsync(
+                var analysisResult = await _pythonBridge.SendAsync(
                     "analyze_model",
                     new { model_id = modelId }
                 );
@@ -56,7 +57,7 @@ namespace ThreeDBuilder.Services
                 // Parse results
                 if (analysisResult.ContainsKey("sharp_edges"))
                 {
-                    report.HasSharpEdges = (bool)analysisResult["sharp_edges"];
+                    report.HasSharpEdges = analysisResult["sharp_edges"]?.Value<bool>() ?? false;
                     if (report.HasSharpEdges)
                     {
                         report.Issues.Add("⚠️ Scharfe Kanten gefunden - können zu Druckfehlern führen");
@@ -67,7 +68,7 @@ namespace ThreeDBuilder.Services
 
                 if (analysisResult.ContainsKey("small_holes"))
                 {
-                    report.HasSmallHoles = (bool)analysisResult["small_holes"];
+                    report.HasSmallHoles = analysisResult["small_holes"]?.Value<bool>() ?? false;
                     if (report.HasSmallHoles)
                     {
                         report.Issues.Add("⚠️ Kleine Löcher gefunden - können verstopfen");
@@ -78,7 +79,7 @@ namespace ThreeDBuilder.Services
 
                 if (analysisResult.ContainsKey("thin_walls"))
                 {
-                    report.HasThinWalls = (bool)analysisResult["thin_walls"];
+                    report.HasThinWalls = analysisResult["thin_walls"]?.Value<bool>() ?? false;
                     if (report.HasThinWalls)
                     {
                         report.Issues.Add("⚠️ Zu dünne Wände erkannt - können reißen");
@@ -89,7 +90,7 @@ namespace ThreeDBuilder.Services
 
                 if (analysisResult.ContainsKey("non_manifold"))
                 {
-                    report.HasNonManifoldGeometry = (bool)analysisResult["non_manifold"];
+                    report.HasNonManifoldGeometry = analysisResult["non_manifold"]?.Value<bool>() ?? false;
                     if (report.HasNonManifoldGeometry)
                     {
                         report.Issues.Add("⚠️ Nicht-manifold Geometrie - kann zu Druckfehlern führen");
@@ -127,7 +128,7 @@ namespace ThreeDBuilder.Services
                 if (report.HasSharpEdges && options.FilletRadius > 0)
                 {
                     optimizations.Add($"Fillet mit {options.FilletRadius}mm Radius anwenden");
-                    await _pythonBridge.CallAsync(
+                    await _pythonBridge.SendAsync(
                         "apply_fillet",
                         new { model_id = modelId, radius = options.FilletRadius }
                     );
@@ -136,7 +137,7 @@ namespace ThreeDBuilder.Services
                 if (report.HasSmallHoles && options.RemoveSmallHoles)
                 {
                     optimizations.Add($"Kleine Löcher (< {options.MinHoleSize}mm) füllen");
-                    await _pythonBridge.CallAsync(
+                    await _pythonBridge.SendAsync(
                         "fill_small_holes",
                         new { model_id = modelId, min_size = options.MinHoleSize }
                     );
@@ -145,7 +146,7 @@ namespace ThreeDBuilder.Services
                 if (report.HasThinWalls)
                 {
                     optimizations.Add($"Wandstärke auf mindestens {options.MinWallThickness}mm erhöhen");
-                    await _pythonBridge.CallAsync(
+                    await _pythonBridge.SendAsync(
                         "thicken_walls",
                         new { model_id = modelId, min_thickness = options.MinWallThickness }
                     );
@@ -154,7 +155,7 @@ namespace ThreeDBuilder.Services
                 if (report.HasNonManifoldGeometry && options.FixNonManifold)
                 {
                     optimizations.Add("Nicht-manifold Geometrie reparieren");
-                    await _pythonBridge.CallAsync(
+                    await _pythonBridge.SendAsync(
                         "fix_non_manifold",
                         new { model_id = modelId }
                     );
@@ -163,7 +164,7 @@ namespace ThreeDBuilder.Services
                 if (options.SmoothMesh)
                 {
                     optimizations.Add("Mesh glätten für bessere Oberflächenqualität");
-                    await _pythonBridge.CallAsync(
+                    await _pythonBridge.SendAsync(
                         "smooth_mesh",
                         new { model_id = modelId }
                     );

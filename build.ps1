@@ -102,9 +102,9 @@ if (-not $BuildOnly) {
         $wixVersion = wix --version 2>$null
         Write-Success "WiX Toolset gefunden: $wixVersion"
     } catch {
-        Write-Error-Custom "WiX Toolset nicht gefunden!"
-        Write-Host "Download: https://github.com/wixtoolset/wix3/releases"
-        Write-Host "Oder: choco install wixtoolset"
+        Write-Error-Custom "WiX v4 Toolset nicht gefunden!"
+        Write-Host "Installation: dotnet tool install --global wix"
+        Write-Host "Danach: wix extension add WixToolset.UI.wixext"
         exit 1
     }
 }
@@ -114,7 +114,7 @@ Write-Step "Stelle Abhängigkeiten wieder her" 2 6
 
 try {
     Write-Host "Führe 'dotnet restore' aus..."
-    dotnet restore CSharpUI/CSharpUI.csproj --verbosity minimal
+    dotnet restore CSharpUI/ThreeDBuilder.csproj --verbosity minimal
     Write-Success "Abhängigkeiten wiederhergestellt"
 } catch {
     Write-Error-Custom "Fehler beim Restore: $_"
@@ -126,7 +126,7 @@ Write-Step "Kompiliere Hauptprojekt (CSharpUI)" 3 6
 
 try {
     Write-Host "Führe 'dotnet build' aus mit Konfiguration: $Configuration..."
-    dotnet build CSharpUI/CSharpUI.csproj -c $Configuration --verbosity minimal
+    dotnet build CSharpUI/ThreeDBuilder.csproj -c $Configuration --verbosity minimal
     Write-Success "Hauptprojekt erfolgreich kompiliert"
 } catch {
     Write-Error-Custom "Build fehlgeschlagen: $_"
@@ -163,14 +163,27 @@ if (-not $SkipTests) {
 if ($BuildOnly) {
     Write-Step "Installer-Build übersprungen (BuildOnly-Flag gesetzt)" 5 6
 } else {
-    Write-Step "Kompiliere Installer (WiX)" 5 6
-    
+    Write-Step "Erstelle Publish-Paket und Installer (WiX v4)" 5 6
+
+    # Schritt 5a: Anwendung publizieren (erzeugt alle DLLs + Python-Backend in publish/)
     try {
-        Write-Host "Führe WiX Build aus..."
+        Write-Host "Publiziere Anwendung nach publish/..."
+        dotnet publish CSharpUI/ThreeDBuilder.csproj -c $Configuration -o publish/ --verbosity minimal
+        Write-Success "Anwendung erfolgreich publiziert"
+    } catch {
+        Write-Error-Custom "Publish fehlgeschlagen: $_"
+        exit 1
+    }
+
+    # Schritt 5b: WiX v4 Installer bauen
+    # Voraussetzung: dotnet tool install --global wix
+    try {
+        Write-Host "Führe WiX v4 Build aus..."
         dotnet build Installer/Installer.wixproj -c $Configuration --verbosity minimal
         Write-Success "Installer erfolgreich kompiliert"
     } catch {
         Write-Error-Custom "Installer-Build fehlgeschlagen: $_"
+        Write-Warning-Custom "Prüfe ob WiX v4 installiert ist: dotnet tool install --global wix"
         Write-Warning-Custom "Die Anwendung wurde gebaut, aber der Installer konnte nicht erstellt werden"
     }
 }
