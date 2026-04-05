@@ -105,6 +105,7 @@
         – Die Source wird via ProjectReference in Bundle.wixproj aufgelöst
       -->
       <MsiPackage Id="ThreeDBuilderMsi"
+                  SourceFile="$(var.MsiPath)"
                   Name="3D Builder Pro"
                   Description="3D Builder Pro Anwendung"
                   Vital="yes" />
