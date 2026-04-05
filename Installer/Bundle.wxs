@@ -74,7 +74,6 @@
         – SimpleInstall=1   = Vereinfachte Installation ohne Extras
       -->
       <ExePackage Id="Python312"
-                  Name="Python 3.12"
                   Description="Python 3.12 Laufzeitumgebung"
                   DownloadUrl="https://www.python.org/ftp/python/3.12.7/python-3.12.7-amd64.exe"
                   InstallArguments="/quiet InstallAllUsers=1 PrependPath=1 Include_pip=1 Include_tcltk=0 Include_test=0 SimpleInstall=1"
@@ -91,7 +90,6 @@
         – Permanent="yes" → beim Deinstallieren nicht entfernen
       -->
       <ExePackage Id="PipInstall"
-                  Name="Python-Pakete (cadquery, numpy)"
                   Description="Installiere benoetigte Python-Pakete..."
                   SourceFile="install-python-deps.bat"
                   Vital="no"
