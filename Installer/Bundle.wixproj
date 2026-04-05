@@ -11,6 +11,8 @@
     <Platform>x64</Platform>
     <Version>1.0.0</Version>
     <OutputPath>bin\$(Configuration)\</OutputPath>
+    <!-- SDK-Auto-Glob deaktivieren, damit nur Bundle.wxs kompiliert wird -->
+    <EnableDefaultItems>false</EnableDefaultItems>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,8 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Nur Bundle.wxs kompilieren - Product.wxs gehoert zu Installer.wixproj -->
-    <Compile Remove="*.wxs" />
+    <!-- Nur Bundle.wxs explizit einschliessen -->
     <Compile Include="Bundle.wxs" />
 
     <!--
