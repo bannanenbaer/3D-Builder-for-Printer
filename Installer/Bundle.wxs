@@ -26,6 +26,7 @@
     -->
     <BootstrapperApplication>
       <bal:WixStandardBootstrapperApplication
+        Theme="standard"
         LicenseUrl=""
         SuppressOptionsUI="yes"
         ShowVersion="yes"
@@ -40,25 +41,21 @@
     <util:RegistrySearch Id="PySearch310"
                          Root="HKLM"
                          Key="SOFTWARE\Python\PythonCore\3.10\InstallPath"
-                         Value=""
                          Result="exists"
                          Variable="PythonAlreadyInstalled" />
     <util:RegistrySearch Id="PySearch311"
                          Root="HKLM"
                          Key="SOFTWARE\Python\PythonCore\3.11\InstallPath"
-                         Value=""
                          Result="exists"
                          Variable="PythonAlreadyInstalled" />
     <util:RegistrySearch Id="PySearch312"
                          Root="HKLM"
                          Key="SOFTWARE\Python\PythonCore\3.12\InstallPath"
-                         Value=""
                          Result="exists"
                          Variable="PythonAlreadyInstalled" />
     <util:RegistrySearch Id="PySearch313"
                          Root="HKLM"
                          Key="SOFTWARE\Python\PythonCore\3.13\InstallPath"
-                         Value=""
                          Result="exists"
                          Variable="PythonAlreadyInstalled" />
 
