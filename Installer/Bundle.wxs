@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  3D Builder Pro – WiX Burn Bootstrapper
+  Erstellt einen einzelnen Setup.exe der alles still installiert:
+    1. Python 3.12  (nur falls kein Python 3.10+ vorhanden)
+    2. cadquery + numpy via pip
+    3. 3D Builder Pro Anwendung (MSI)
+
+  Der Nutzer drückt nur einmal auf "Installieren".
+-->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:bal="http://wixtoolset.org/schemas/v4/wxs/bal"
+     xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
+
+  <Bundle Name="3D Builder Pro"
+          Version="1.0.0.0"
+          Manufacturer="Bannanenbaer"
+          UpgradeCode="32345678-1234-1234-1234-123456789ABC"
+          AboutUrl="https://github.com/bannanenbaer/3D-Builder-for-Printer">
+
+    <!--
+      Ein-Knopf-Oberfläche:
+      – Kein Options-Dialog (kein Installationspfad wählbar)
+      – Kein Lizenz-Dialog
+      – Nur: Willkommen → Installieren → Fertig
+    -->
+    <BootstrapperApplication>
+      <bal:WixStandardBootstrapperApplication
+        LicenseUrl=""
+        SuppressOptionsUI="yes"
+        ShowVersion="yes"
+        SuppressDowngradeFailure="yes" />
+    </BootstrapperApplication>
+
+    <!--
+      Python-Erkennung:
+      Suche nach Python 3.10 / 3.11 / 3.12 / 3.13 in der Windows-Registry
+      (gilt nur für Systeminstallationen mit InstallAllUsers=1)
+    -->
+    <util:RegistrySearch Id="PySearch310"
+                         Root="HKLM"
+                         Key="SOFTWARE\Python\PythonCore\3.10\InstallPath"
+                         Value=""
+                         Result="exists"
+                         Variable="PythonAlreadyInstalled" />
+    <util:RegistrySearch Id="PySearch311"
+                         Root="HKLM"
+                         Key="SOFTWARE\Python\PythonCore\3.11\InstallPath"
+                         Value=""
+                         Result="exists"
+                         Variable="PythonAlreadyInstalled" />
+    <util:RegistrySearch Id="PySearch312"
+                         Root="HKLM"
+                         Key="SOFTWARE\Python\PythonCore\3.12\InstallPath"
+                         Value=""
+                         Result="exists"
+                         Variable="PythonAlreadyInstalled" />
+    <util:RegistrySearch Id="PySearch313"
+                         Root="HKLM"
+                         Key="SOFTWARE\Python\PythonCore\3.13\InstallPath"
+                         Value=""
+                         Result="exists"
+                         Variable="PythonAlreadyInstalled" />
+
+    <Chain>
+
+      <!--
+        Schritt 1: Python 3.12 (64-bit)
+        – Wird übersprungen wenn Python 3.10+ bereits installiert ist
+        – /quiet            = keine Dialoge
+        – InstallAllUsers=1 = Systemweite Installation (für alle Nutzer)
+        – PrependPath=1     = Python zum PATH hinzufügen
+        – Include_pip=1     = pip mitinstallieren
+        – Include_tcltk=0   = Tk/Tcl weglassen (nicht benötigt)
+        – Include_test=0    = Test-Suite weglassen (nicht benötigt)
+        – SimpleInstall=1   = Vereinfachte Installation ohne Extras
+      -->
+      <ExePackage Id="Python312"
+                  Name="Python 3.12"
+                  Description="Python 3.12 Laufzeitumgebung"
+                  DownloadUrl="https://www.python.org/ftp/python/3.12.7/python-3.12.7-amd64.exe"
+                  InstallCommand="/quiet InstallAllUsers=1 PrependPath=1 Include_pip=1 Include_tcltk=0 Include_test=0 SimpleInstall=1"
+                  UninstallCommand="/uninstall /quiet"
+                  DetectCondition="PythonAlreadyInstalled"
+                  InstallCondition="NOT PythonAlreadyInstalled"
+                  Vital="yes" />
+
+      <!--
+        Schritt 2: Python-Pakete (cadquery, numpy)
+        – Ruft install-python-deps.bat auf (still, kein Fenster)
+        – Findet Python über py-Launcher oder PATH
+        – Vital="no" → fehlende Pakete blockieren den Installer nicht
+        – Permanent="yes" → beim Deinstallieren nicht entfernen
+      -->
+      <ExePackage Id="PipInstall"
+                  Name="Python-Pakete (cadquery, numpy)"
+                  Description="Installiere benötigte Python-Pakete..."
+                  SourceFile="install-python-deps.bat"
+                  InstallCommand=""
+                  Vital="no"
+                  Permanent="yes" />
+
+      <!--
+        Schritt 3: 3D Builder Pro (MSI)
+        – DisplayInternalUI="no" → keine zusätzlichen MSI-Dialoge
+        – Die Source wird via ProjectReference in Bundle.wixproj aufgelöst
+      -->
+      <MsiPackage Id="ThreeDBuilderMsi"
+                  Name="3D Builder Pro"
+                  Description="3D Builder Pro Anwendung"
+                  Vital="yes"
+                  DisplayInternalUI="no" />
+
+    </Chain>
+  </Bundle>
+</Wix>

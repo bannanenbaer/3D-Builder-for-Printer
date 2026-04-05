@@ -175,29 +175,40 @@ if ($BuildOnly) {
         exit 1
     }
 
-    # Schritt 5b: WiX v4 Installer bauen
+    # Schritt 5b: WiX v4 MSI bauen (Installer.wixproj)
     # Voraussetzung: dotnet tool install --global wix
     try {
-        Write-Host "Führe WiX v4 Build aus..."
+        Write-Host "Baue MSI (Installer.wixproj)..."
         dotnet build Installer/Installer.wixproj -c $Configuration --verbosity minimal
-        Write-Success "Installer erfolgreich kompiliert"
+        Write-Success "MSI erfolgreich kompiliert"
     } catch {
-        Write-Error-Custom "Installer-Build fehlgeschlagen: $_"
+        Write-Error-Custom "MSI-Build fehlgeschlagen: $_"
         Write-Warning-Custom "Prüfe ob WiX v4 installiert ist: dotnet tool install --global wix"
-        Write-Warning-Custom "Die Anwendung wurde gebaut, aber der Installer konnte nicht erstellt werden"
+        Write-Warning-Custom "Anwendung gebaut, aber Installer konnte nicht erstellt werden"
+    }
+
+    # Schritt 5c: Burn-Bundle bauen (Bundle.wixproj → Setup.exe)
+    # Der Bundle enthält: Python-Installer (Download) + pip-Skript + MSI
+    # Der Nutzer lädt nur die Setup.exe herunter und drückt einen Knopf.
+    try {
+        Write-Host "Baue Burn-Bundle (Bundle.wixproj → 3DBuilderPro-Setup.exe)..."
+        dotnet build Installer/Bundle.wixproj -c $Configuration --verbosity minimal
+        Write-Success "Setup.exe erfolgreich erstellt"
+    } catch {
+        Write-Error-Custom "Bundle-Build fehlgeschlagen: $_"
+        Write-Warning-Custom "WiX Bal-Extension prüfen: wix extension add WixToolset.Bal.wixext"
     }
 }
 
 # Schritt 6: Output-Verzeichnis anzeigen
 Write-Step "Build abgeschlossen" 6 6
 
-$outputDir = "CSharpUI\bin\$Configuration"
+$outputDir = "publish"
 if (Test-Path $outputDir) {
-    Write-Success "Output-Verzeichnis: $outputDir"
-    
+    Write-Success "Publish-Verzeichnis: $outputDir"
     $exeFile = Get-ChildItem -Path $outputDir -Filter "*.exe" | Select-Object -First 1
     if ($exeFile) {
-        Write-Success "Executable: $($exeFile.Name)"
+        Write-Success "Anwendung: $($exeFile.Name)"
         Write-Host "  Größe: $([math]::Round($exeFile.Length / 1MB, 2)) MB"
     }
 }
@@ -205,18 +216,28 @@ if (Test-Path $outputDir) {
 if (-not $BuildOnly) {
     $installerDir = "Installer\bin\$Configuration"
     if (Test-Path $installerDir) {
+        # Setup.exe (Burn-Bundle) – das ist die Datei für den Nutzer
+        $setupFile = Get-ChildItem -Path $installerDir -Filter "*-Setup.exe" | Select-Object -First 1
+        if ($setupFile) {
+            Write-Success ">>> Setup (für Nutzer): $($setupFile.Name)"
+            Write-Host "  Größe: $([math]::Round($setupFile.Length / 1MB, 2)) MB"
+            Write-Host "  Pfad: $($setupFile.FullName)"
+        }
+
+        # MSI (intern, wird vom Bundle verwendet)
         $msiFile = Get-ChildItem -Path $installerDir -Filter "*.msi" | Select-Object -First 1
         if ($msiFile) {
-            Write-Success "Installer: $($msiFile.Name)"
+            Write-Success "MSI (intern): $($msiFile.Name)"
             Write-Host "  Größe: $([math]::Round($msiFile.Length / 1MB, 2)) MB"
             Write-Host "  Pfad: $($msiFile.FullName)"
-            
-            # Angebot zum Testen
+
+            # Angebot zum Testen (Setup.exe bevorzugt)
+            $testFile = if ($setupFile) { $setupFile } else { $msiFile }
             Write-Host "`nMöchtest du den Installer jetzt testen? (j/n)" -ForegroundColor $colors.Warning
             $response = Read-Host
             if ($response -eq "j") {
                 Write-Host "Starte Installer..."
-                & $msiFile.FullName
+                & $testFile.FullName
             }
         }
     }
@@ -225,7 +246,11 @@ if (-not $BuildOnly) {
 Write-Header "Build erfolgreich abgeschlossen! 🎉"
 
 Write-Host "`nNächste Schritte:"
-Write-Host "1. Teste die Anwendung"
-Write-Host "2. Lade den Installer auf GitHub Releases hoch"
+Write-Host "1. Teste 3DBuilderPro-Setup.exe (ein Klick → alles installiert sich still)"
+Write-Host "2. Lade 3DBuilderPro-Setup.exe auf GitHub Releases hoch"
 Write-Host "3. Teile den Download-Link mit Benutzern"
+Write-Host "`nWas der Setup.exe installiert (alles still, kein weiterer Eingriff nötig):"
+Write-Host "  • Python 3.12  (falls nicht vorhanden)"
+Write-Host "  • cadquery + numpy  (via pip)"
+Write-Host "  • 3D Builder Pro Anwendung"
 Write-Host "`nDokumentation: https://github.com/bannanenbaer/3D-Builder-for-Printer"
