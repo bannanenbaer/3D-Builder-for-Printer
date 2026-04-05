@@ -33,14 +33,6 @@
     </StandardDirectory>
   </Fragment>
 
-  <!-- Alle Anwendungsdateien aus dem publish-Ordner -->
-  <Fragment>
-    <ComponentGroup Id="AppFiles" Directory="INSTALLFOLDER">
-      <!-- Alle Dateien aus dem dotnet publish Ausgabeordner -->
-      <Files Source="..\publish\" />
-    </ComponentGroup>
-  </Fragment>
-
   <!-- Desktop- und Start-Menü-Verknüpfungen -->
   <Fragment>
     <ComponentGroup Id="Shortcuts" Directory="INSTALLFOLDER">
