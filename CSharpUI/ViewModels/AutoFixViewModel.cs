@@ -5,10 +5,11 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using System.Windows.Media;
 using ThreeDBuilder.Services;
+using ThreeDBuilder.Views;
 
 namespace ThreeDBuilder.ViewModels
 {
-    public class SceneObject
+    public class AutoFixSceneItem
     {
         public string Id { get; set; }
         public string Name { get; set; }
@@ -41,8 +42,8 @@ namespace ThreeDBuilder.ViewModels
         private bool _canAutoFix;
         private bool _isOptimizing;
         private string _optimizationProgress = "";
-        private ObservableCollection<SceneObject> _availableObjects = new();
-        private SceneObject _selectedObjectForOptimization;
+        private ObservableCollection<AutoFixSceneItem> _availableObjects = new();
+        private AutoFixSceneItem _selectedObjectForOptimization;
         private bool _hasSelectedObject;
         private string _selectedObjectInfo = "Kein Objekt ausgewählt";
         private string _analyzeButtonText = "Modell analysieren";
@@ -64,7 +65,7 @@ namespace ThreeDBuilder.ViewModels
 
             InitializeCommands();
             InitializePrinters();
-            InitializeSceneObjects();
+            InitializeAutoFixSceneItems();
             UpdateHistoryInfo();
 
             _undoRedoService.HistoryChanged += (s, e) => UpdateHistoryInfo();
@@ -99,14 +100,14 @@ namespace ThreeDBuilder.ViewModels
             _selectedPrinter = PrinterProfile.Prusa;
         }
 
-        private void InitializeSceneObjects()
+        private void InitializeAutoFixSceneItems()
         {
             // Beispiel-Objekte aus der Szene
-            _availableObjects.Add(new SceneObject { Id = "obj_1", Name = "Zylinder", Type = "Cylinder" });
-            _availableObjects.Add(new SceneObject { Id = "obj_2", Name = "Quader", Type = "Box" });
-            _availableObjects.Add(new SceneObject { Id = "obj_3", Name = "Kugel", Type = "Sphere" });
-            _availableObjects.Add(new SceneObject { Id = "obj_4", Name = "Kegel", Type = "Cone" });
-            _availableObjects.Add(new SceneObject { Id = "obj_5", Name = "Torus", Type = "Torus" });
+            _availableObjects.Add(new AutoFixSceneItem { Id = "obj_1", Name = "Zylinder", Type = "Cylinder" });
+            _availableObjects.Add(new AutoFixSceneItem { Id = "obj_2", Name = "Quader", Type = "Box" });
+            _availableObjects.Add(new AutoFixSceneItem { Id = "obj_3", Name = "Kugel", Type = "Sphere" });
+            _availableObjects.Add(new AutoFixSceneItem { Id = "obj_4", Name = "Kegel", Type = "Cone" });
+            _availableObjects.Add(new AutoFixSceneItem { Id = "obj_5", Name = "Torus", Type = "Torus" });
         }
 
         private async void AnalyzeModel()
@@ -379,13 +380,13 @@ namespace ThreeDBuilder.ViewModels
             set { if (_optimizationProgress != value) { _optimizationProgress = value; OnPropertyChanged(); } }
         }
 
-        public ObservableCollection<SceneObject> AvailableObjects
+        public ObservableCollection<AutoFixSceneItem> AvailableObjects
         {
             get => _availableObjects;
             set { if (_availableObjects != value) { _availableObjects = value; OnPropertyChanged(); } }
         }
 
-        public SceneObject SelectedObjectForOptimization
+        public AutoFixSceneItem SelectedObjectForOptimization
         {
             get => _selectedObjectForOptimization;
             set 

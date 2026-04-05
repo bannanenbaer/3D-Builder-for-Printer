@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- WiX v4 Burn-Bundle-Projekt -->
 <!-- Erstellt: 3DBuilderPro-Setup.exe (der einzige Download für den Nutzer) -->
-<!-- Voraussetzung: dotnet tool install --global wix -->
+<!-- Voraussetzung: dotnet tool install -global wix (WiX v4) -->
 <Project Sdk="WixToolset.Sdk/4.0.5">
 
   <PropertyGroup>
