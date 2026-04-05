@@ -300,6 +300,18 @@ if ($BuildOnly) {
         Write-Host "  Bal-Extension:  $($balDll.FullName)"
         Write-Host "  Util-Extension: $($utilDll.FullName)"
 
+        # Python-Installer lokal bereitstellen (WiX liest ihn bei Build-Zeit für Hash/Größe;
+        # Compressed="no" verhindert das Einbetten – zur Laufzeit wird DownloadUrl genutzt).
+        $pythonExe = "Installer\python-3.12.7-amd64.exe"
+        if (-not (Test-Path $pythonExe)) {
+            Write-Host "  Lade Python 3.12.7 Installer herunter (nur für Build benötigt)..."
+            Invoke-WebRequest -Uri "https://www.python.org/ftp/python/3.12.7/python-3.12.7-amd64.exe" `
+                              -OutFile $pythonExe -UseBasicParsing
+            Write-Success "Python-Installer heruntergeladen"
+        } else {
+            Write-Success "Python-Installer bereits vorhanden"
+        }
+
         $msiRelPath = "bin\$Configuration\3DBuilderPro.msi"
         $outExe     = "bin\$Configuration\3DBuilderPro-Setup.exe"
         Push-Location Installer
@@ -311,6 +323,9 @@ if ($BuildOnly) {
             -b . `
             -o $outExe
         Pop-Location
+        if ($LASTEXITCODE -ne 0) {
+            throw "wix build fehlgeschlagen (Exit-Code $LASTEXITCODE)"
+        }
         Write-Success "Setup.exe erfolgreich erstellt"
     } catch {
         Pop-Location -ErrorAction SilentlyContinue
