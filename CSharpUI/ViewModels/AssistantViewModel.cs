@@ -14,11 +14,11 @@ namespace ThreeDBuilder.ViewModels
         private bool _isAssistantEnabled = true;
         private RelayCommand _sendAssistantMessageCommand;
         private RelayCommand _closeAssistantCommand;
-        private PythonBridge? _pythonBridge;
+        private PythonBridge _pythonBridge;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        public AssistantViewModel(PythonBridge? pythonBridge)
+        public AssistantViewModel(PythonBridge pythonBridge)
         {
             _pythonBridge = pythonBridge;
             InitializeCommands();
