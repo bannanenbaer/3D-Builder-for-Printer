@@ -12,8 +12,9 @@
     <Authors>3D-Builder</Authors>
     <Description>3D Builder for 3D Printing - Create and edit 3D models</Description>
     <ApplicationIcon>logo.ico</ApplicationIcon>
-    <!-- Self-contained publish includes .NET runtime in .exe -->
-    <SelfContained>false</SelfContained>
+    <!-- Self-contained: .NET runtime wird mitgeliefert, kein separater Download nötig -->
+    <SelfContained>true</SelfContained>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <PublishSingleFile>false</PublishSingleFile>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>

@@ -257,7 +257,7 @@ if ($BuildOnly) {
     # Schritt 5a: Anwendung publizieren (erzeugt alle DLLs + Python-Backend in publish/)
     try {
         Write-Host "Publiziere Anwendung nach publish/..."
-        dotnet publish CSharpUI/ThreeDBuilder.csproj -c $Configuration -o publish/ --verbosity minimal
+        dotnet publish CSharpUI/ThreeDBuilder.csproj -c $Configuration -r win-x64 --self-contained true -o publish/ --verbosity minimal
         Write-Success "Anwendung erfolgreich publiziert"
     } catch {
         Write-Error-Custom "Publish fehlgeschlagen: $_"

@@ -26,9 +26,9 @@
     -->
     <BootstrapperApplication>
       <bal:WixStandardBootstrapperApplication
-        Theme="none"
+        Theme="rtfLicense"
+        LicenseFile="License.rtf"
         LogoFile="..\CSharpUI\logo.ico"
-        LicenseUrl=""
         SuppressOptionsUI="yes"
         ShowVersion="yes"
         SuppressDowngradeFailure="yes" />
