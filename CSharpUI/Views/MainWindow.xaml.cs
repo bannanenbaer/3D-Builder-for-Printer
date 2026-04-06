@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
-using System.Windows.Shapes;
 using HelixToolkit.Wpf;
 using ThreeDBuilder.Models;
 using ThreeDBuilder.ViewModels;
@@ -219,7 +218,7 @@ public partial class MainWindow : Window
         for (int i = 0; i < TutorialSteps.Length; i++)
         {
             bool active = i == step;
-            TutorialDotsList.Items.Add(new Ellipse
+            TutorialDotsList.Items.Add(new System.Windows.Shapes.Ellipse
             {
                 Width  = active ? 10 : 7,
                 Height = active ? 10 : 7,
