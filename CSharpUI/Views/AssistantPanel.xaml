@@ -28,7 +28,7 @@
                     </Grid.ColumnDefinitions>
                     
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <materialDesign:PackIcon Kind="RobotHappy" 
+                        <materialDesign:PackIcon Kind="Robot" 
                                                 Width="24" Height="24" 
                                                 Foreground="#60A5FA"
                                                 Margin="0,0,8,0"/>
