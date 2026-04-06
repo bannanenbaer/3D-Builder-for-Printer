@@ -131,6 +131,21 @@
                     Padding="6,4">
                 <materialDesign:PackIcon Kind="ContentDuplicate" Width="18" Height="18"/>
             </Button>
+            <Separator Background="#2D3748" Margin="2,4"/>
+            <!-- Update Button -->
+            <local:UpdateToolbarButton DataContext="{Binding UpdateVM}"/>
+            <Separator Background="#2D3748" Margin="2,4"/>
+            <!-- KI-Assistent Toggle -->
+            <Button Command="{Binding ToggleAssistantCommand}"
+                    Style="{StaticResource MaterialDesignFlatButton}"
+                    Foreground="#60A5FA"
+                    ToolTip="KI-Assistent öffnen/schließen"
+                    Padding="10,4">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="Robot" Width="18" Height="18" VerticalAlignment="Center"/>
+                    <TextBlock Text="Assistent" Margin="6,0,0,0" VerticalAlignment="Center" FontSize="11" FontWeight="Medium"/>
+                </StackPanel>
+            </Button>
         </ToolBar>
 
         <!-- ═══ STATUS BAR ═════════════════════════════════════════════════ -->
@@ -202,6 +217,16 @@
                                            HorizontalAlignment="Center" FontSize="13"/>
                             </StackPanel>
                         </Border>
+
+                        <!-- KI-Assistent floating Panel (unten rechts) -->
+                        <local:AssistantPanel x:Name="AssistantPanelControl"
+                                              HorizontalAlignment="Right"
+                                              VerticalAlignment="Bottom"
+                                              Margin="0,0,16,16"
+                                              DataContext="{Binding AssistantVM}"
+                                              Visibility="{Binding DataContext.IsAssistantVisible,
+                                                  RelativeSource={RelativeSource AncestorType=Window},
+                                                  Converter={StaticResource BoolToVisibilityConverter}}"/>
                     </Grid>
                 </TabItem>
 

@@ -46,7 +46,12 @@ public class TranslationService : INotifyPropertyChanged
     public Dictionary<string, string> Tr => _translations.GetValueOrDefault(_currentLanguage, new());
 
     protected void OnPropertyChanged([CallerMemberName] string? name = null)
-        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        // Also notify indexer bindings (T[key] in XAML) when language changes
+        if (name == nameof(CurrentLanguage) || name == nameof(Tr))
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Item[]"));
+    }
 
     // ─── Translation tables ────────────────────────────────────────────────
 
