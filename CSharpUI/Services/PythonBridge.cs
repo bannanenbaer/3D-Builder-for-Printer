@@ -197,7 +197,11 @@ public class PythonBridge : IDisposable
         => SendAsync("boolean_op", new { op, object_a = objA, object_b = objB });
 
     public Task<JObject> ImportStlAsync(string filePath)
-        => SendAsync("import_stl", new { file_path = filePath });
+    {
+        var ext = Path.GetExtension(filePath).ToLowerInvariant();
+        var command = ext == ".3mf" ? "import_3mf" : "import_stl";
+        return SendAsync(command, new { file_path = filePath });
+    }
 
     public Task<JObject> CompileScadAsync(string scadCode)
         => SendAsync("compile_scad", new { scad_code = scadCode }, timeoutMs: 90000);

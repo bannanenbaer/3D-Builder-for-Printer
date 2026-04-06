@@ -384,7 +384,14 @@ public class MainViewModel : INotifyPropertyChanged
             Filter = T.T("dlg_filter_stl"),
         };
         if (dlg.ShowDialog() == true)
-            await ImportStlAsync(dlg.FileName);
+            await Import3dFileAsync(dlg.FileName);
+    }
+
+    private async Task Import3dFileAsync(string filePath)
+    {
+        var ext = Path.GetExtension(filePath).ToLowerInvariant();
+        // Both STL and 3MF go through the same import path
+        await ImportStlAsync(filePath);
     }
 
     private void ExecuteImportScad()
@@ -404,7 +411,7 @@ public class MainViewModel : INotifyPropertyChanged
         var dlg = new SaveFileDialog
         {
             Title      = T.T("dlg_export_stl"),
-            Filter     = T.T("dlg_filter_stl"),
+            Filter     = T.T("dlg_filter_stl_save"),
             DefaultExt = ".stl",
         };
         if (dlg.ShowDialog() != true) return;
