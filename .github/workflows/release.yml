@@ -1,9 +1,9 @@
-name: Build & Release
+name: Build & Auto-Release
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - main
 
 jobs:
   build:
@@ -30,21 +30,31 @@ jobs:
         run: .\build.ps1 -SkipTests
         shell: pwsh
 
-      - name: Create GitHub Release
+      - name: Delete existing 'latest' release (if any)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release delete latest --yes --cleanup-tag 2>$null || true
+        shell: pwsh
+
+      - name: Create rolling 'latest' release
         uses: softprops/action-gh-release@v2
         with:
-          files: Installer/bin/Release/3DBuilderPro-Setup.exe
-          name: "3D Builder Pro ${{ github.ref_name }}"
+          tag_name: latest
+          name: "3D Builder Pro – Neueste Version"
           body: |
-            ## 3D Builder Pro ${{ github.ref_name }}
+            ## Automatischer Build
 
-            **Automatisch erstellter Release.**
+            Dieser Release wird bei **jedem Push auf `main`** automatisch neu erstellt.
+            Die App prüft diesen Release beim Klick auf "Update" und lädt die neueste Version.
+
+            **Commit:** `${{ github.sha }}`
+            **Erstellt:** ${{ github.event.head_commit.timestamp }}
 
             ### Installation
             1. `3DBuilderPro-Setup.exe` herunterladen
             2. Doppelklick → alles installiert sich automatisch
-
-            Enthält: Python 3.12, alle Abhängigkeiten, 3D Builder Pro
+          files: Installer/bin/Release/3DBuilderPro-Setup.exe
           draft: false
           prerelease: false
         env:

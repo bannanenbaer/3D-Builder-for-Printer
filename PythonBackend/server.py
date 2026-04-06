@@ -43,8 +43,8 @@ except ImportError:
 
 scad_bridge = ScadBridge()
 
-# In-memory shape cache: object_id → cq.Workplane
-_shape_cache: dict[str, cq.Workplane] = {}
+# In-memory shape cache: object_id → cq.Workplane (only populated when CQ_AVAILABLE)
+_shape_cache: dict = {}
 
 
 def _stl_from_shape(shape: "cq.Workplane", prefix: str = "shape") -> str:
