@@ -93,7 +93,14 @@ public partial class App : Application
 
         try
         {
-            MessageBox.Show($"3D Builder Pro crashed:\n\n{ex.Message}\n\nLog: {logPath}",
+            var msg = ex.Message;
+            var inner = ex.InnerException;
+            while (inner != null)
+            {
+                msg += $"\n→ {inner.Message}";
+                inner = inner.InnerException;
+            }
+            MessageBox.Show($"3D Builder Pro crashed:\n\n{msg}\n\nLog: {logPath}",
                 "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
         catch { }
