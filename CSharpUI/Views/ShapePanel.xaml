@@ -40,7 +40,7 @@
                     CommandParameter="cylinder"
                     ToolTip="{Binding T[shape_cylinder]}">
                 <StackPanel>
-                    <materialDesign:PackIcon Kind="CylinderOff" Width="32" Height="32"
+                    <materialDesign:PackIcon Kind="Cylinder" Width="32" Height="32"
                                             HorizontalAlignment="Center" Foreground="{StaticResource AccentBrush}"/>
                     <TextBlock Text="{Binding T[shape_cylinder]}" TextAlignment="Center" FontSize="9" Foreground="{StaticResource TextPrimary}"/>
                 </StackPanel>
@@ -64,7 +64,7 @@
                     CommandParameter="torus"
                     ToolTip="{Binding T[shape_torus]}">
                 <StackPanel>
-                    <materialDesign:PackIcon Kind="CircleDouble" Width="32" Height="32"
+                    <materialDesign:PackIcon Kind="Autorenew" Width="32" Height="32"
                                             HorizontalAlignment="Center" Foreground="{StaticResource AccentBrush}"/>
                     <TextBlock Text="{Binding T[shape_torus]}" TextAlignment="Center" FontSize="9" Foreground="{StaticResource TextPrimary}"/>
                 </StackPanel>
@@ -124,7 +124,7 @@
                     CommandParameter="hemisphere"
                     ToolTip="{Binding T[shape_hemisphere]}">
                 <StackPanel>
-                    <materialDesign:PackIcon Kind="Dome" Width="32" Height="32"
+                    <materialDesign:PackIcon Kind="Brightness2" Width="32" Height="32"
                                             HorizontalAlignment="Center" Foreground="{StaticResource AccentBrush}"/>
                     <TextBlock Text="{Binding T[shape_hemisphere]}" TextAlignment="Center" FontSize="9" Foreground="{StaticResource TextPrimary}"/>
                 </StackPanel>
@@ -136,7 +136,7 @@
                     CommandParameter="l_profile"
                     ToolTip="{Binding T[shape_l_profile]}">
                 <StackPanel>
-                    <materialDesign:PackIcon Kind="CornerDownRight" Width="32" Height="32"
+                    <materialDesign:PackIcon Kind="AlphaL" Width="32" Height="32"
                                             HorizontalAlignment="Center" Foreground="{StaticResource AccentBrush}"/>
                     <TextBlock Text="{Binding T[shape_l_profile]}" TextAlignment="Center" FontSize="9" Foreground="{StaticResource TextPrimary}"/>
                 </StackPanel>
@@ -148,7 +148,7 @@
                     CommandParameter="t_profile"
                     ToolTip="{Binding T[shape_t_profile]}">
                 <StackPanel>
-                    <materialDesign:PackIcon Kind="FormatAlignTop" Width="32" Height="32"
+                    <materialDesign:PackIcon Kind="AlphaT" Width="32" Height="32"
                                             HorizontalAlignment="Center" Foreground="{StaticResource AccentBrush}"/>
                     <TextBlock Text="{Binding T[shape_t_profile]}" TextAlignment="Center" FontSize="9" Foreground="{StaticResource TextPrimary}"/>
                 </StackPanel>
@@ -184,7 +184,7 @@
                     CommandParameter="thread_cyl"
                     ToolTip="{Binding T[shape_thread_cyl]}">
                 <StackPanel>
-                    <materialDesign:PackIcon Kind="Screw" Width="32" Height="32"
+                    <materialDesign:PackIcon Kind="Cog" Width="32" Height="32"
                                             HorizontalAlignment="Center" Foreground="{StaticResource AccentBrush}"/>
                     <TextBlock Text="{Binding T[shape_thread_cyl]}" TextAlignment="Center" FontSize="9" Foreground="{StaticResource TextPrimary}"/>
                 </StackPanel>
@@ -224,7 +224,7 @@
                 IsEnabled="{Binding HasTwoSelections}"
                 HorizontalAlignment="Stretch" Margin="4,2">
             <StackPanel Orientation="Horizontal">
-                <materialDesign:PackIcon Kind="SetAll" Margin="0,0,6,0"/>
+                <materialDesign:PackIcon Kind="Plus" Margin="0,0,6,0"/>
                 <TextBlock Text="{Binding T[op_union]}"/>
             </StackPanel>
         </Button>
@@ -234,7 +234,7 @@
                 IsEnabled="{Binding HasTwoSelections}"
                 HorizontalAlignment="Stretch" Margin="4,2">
             <StackPanel Orientation="Horizontal">
-                <materialDesign:PackIcon Kind="SetLeft" Margin="0,0,6,0"/>
+                <materialDesign:PackIcon Kind="Minus" Margin="0,0,6,0"/>
                 <TextBlock Text="{Binding T[op_subtract]}"/>
             </StackPanel>
         </Button>
@@ -244,7 +244,7 @@
                 IsEnabled="{Binding HasTwoSelections}"
                 HorizontalAlignment="Stretch" Margin="4,2">
             <StackPanel Orientation="Horizontal">
-                <materialDesign:PackIcon Kind="SetCenter" Margin="0,0,6,0"/>
+                <materialDesign:PackIcon Kind="Asterisk" Margin="0,0,6,0"/>
                 <TextBlock Text="{Binding T[op_intersect]}"/>
             </StackPanel>
         </Button>

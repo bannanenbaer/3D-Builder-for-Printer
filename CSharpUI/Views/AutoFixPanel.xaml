@@ -316,7 +316,7 @@
                 Style="{StaticResource MaterialDesignRaisedButton}"
                 Cursor="Hand">
             <StackPanel Orientation="Horizontal">
-                <materialDesign:PackIcon Kind="RobotHappy" Width="20" Height="20" Margin="0,0,8,0"/>
+                <materialDesign:PackIcon Kind="Robot" Width="20" Height="20" Margin="0,0,8,0"/>
                 <TextBlock Text="🤖 AutoFix starten!"/>
             </StackPanel>
         </Button>
