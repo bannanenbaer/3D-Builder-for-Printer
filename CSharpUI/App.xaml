@@ -19,6 +19,15 @@
             <local:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter"/>
             <local:InvertBoolConverter             x:Key="InvertBoolConverter"/>
             <local:BoolToColorConverter            x:Key="BoolToColorConverter"/>
+            <local:CountToVisibilityConverter       x:Key="CountToVisibilityConverter"/>
+
+            <!-- Effects -->
+            <DropShadowEffect x:Key="DropShadowEffect"
+                              Color="#000000"
+                              Direction="270"
+                              ShadowDepth="4"
+                              BlurRadius="12"
+                              Opacity="0.5"/>
 
             <!-- App-wide colors - Premium Dark Theme -->
             <SolidColorBrush x:Key="PanelBackground"  Color="#0F1419"/>

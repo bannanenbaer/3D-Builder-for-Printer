@@ -98,6 +98,17 @@ public class DoubleToThicknessConverter : IValueConverter
         => value is Thickness t ? t.Left : 0.0;
 }
 
+/// <summary>Converts integer count to Visibility — 0 → Collapsed, >0 → Visible.</summary>
+[ValueConversion(typeof(int), typeof(Visibility))]
+public class CountToVisibilityConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        => value is int count && count > 0 ? Visibility.Visible : Visibility.Collapsed;
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        => throw new NotSupportedException();
+}
+
 /// <summary>Converts integer to percentage string.</summary>
 [ValueConversion(typeof(int), typeof(string))]
 public class PercentageConverter : IValueConverter
