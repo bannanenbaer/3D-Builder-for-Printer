@@ -6,90 +6,66 @@ namespace ThreeDBuilder.Views
 {
     public partial class MascotAnimationView : UserControl
     {
-        private Storyboard _currentStoryboard;
+        private Storyboard? _currentAnim;
+        private Storyboard? _idleFloat;
+        private Storyboard? _blink;
+
+        public enum ToolType { None, Brush, Hammer, Tape }
 
         public MascotAnimationView()
         {
             InitializeComponent();
+            Loaded += (_, _) => StartIdleAnimations();
         }
 
-        public enum ToolType
+        // ── Idle animations (always playing) ─────────────────────────────
+
+        private void StartIdleAnimations()
         {
-            None,
-            Brush,      // Für Analyse/Farbkodierung
-            Hammer,     // Für Reparatur/Optimierung
-            Tape        // Für Zusammenkleben/Fixieren
+            _idleFloat = (Storyboard)Resources["IdleFloat"];
+            _blink     = (Storyboard)Resources["BlinkAnimation"];
+            _idleFloat?.Begin();
+            _blink?.Begin();
         }
 
-        /// <summary>
-        /// Startet die Mascot-Animation mit dem angegebenen Werkzeug
-        /// </summary>
+        // ── Tool-specific animations ──────────────────────────────────────
+
         public void StartAnimation(ToolType tool)
         {
-            // Stop current animation
-            _currentStoryboard?.Stop();
+            _currentAnim?.Stop();
 
-            // Hide all tools
-            BrushTool.Visibility = Visibility.Collapsed;
-            HammerTool.Visibility = Visibility.Collapsed;
-            TapeTool.Visibility = Visibility.Collapsed;
-
-            // Show selected tool and start animation
-            switch (tool)
+            var key = tool switch
             {
-                case ToolType.Brush:
-                    BrushTool.Visibility = Visibility.Visible;
-                    _currentStoryboard = (Storyboard)Resources["BrushAnimation"];
-                    break;
+                ToolType.Brush  => "BrushAnimation",
+                ToolType.Hammer => "HammerAnimation",
+                ToolType.Tape   => "TapeAnimation",
+                _               => "WalkAnimation",
+            };
 
-                case ToolType.Hammer:
-                    HammerTool.Visibility = Visibility.Visible;
-                    _currentStoryboard = (Storyboard)Resources["HammerAnimation"];
-                    break;
-
-                case ToolType.Tape:
-                    TapeTool.Visibility = Visibility.Visible;
-                    _currentStoryboard = (Storyboard)Resources["TapeAnimation"];
-                    break;
-
-                case ToolType.None:
-                default:
-                    _currentStoryboard = (Storyboard)Resources["WalkAnimation"];
-                    break;
-            }
-
-            _currentStoryboard?.Begin();
+            _currentAnim = (Storyboard)Resources[key];
+            _currentAnim?.Begin();
         }
 
-        /// <summary>
-        /// Stoppt die aktuelle Animation
-        /// </summary>
         public void StopAnimation()
         {
-            _currentStoryboard?.Stop();
-            BrushTool.Visibility = Visibility.Collapsed;
-            HammerTool.Visibility = Visibility.Collapsed;
-            TapeTool.Visibility = Visibility.Collapsed;
+            _currentAnim?.Stop();
+            _currentAnim = null;
         }
 
-        /// <summary>
-        /// Setzt die Animation zurück
-        /// </summary>
         public void ResetAnimation()
         {
             StopAnimation();
-            MascotCanvas.SetValue(Canvas.LeftProperty, 0.0);
+            RootTranslate.X = 0;
+            RootTranslate.Y = 0;
         }
 
-        /// <summary>
-        /// Dependency Property für die Werkzeugauswahl
-        /// </summary>
+        // ── DependencyProperties ──────────────────────────────────────────
+
         public static readonly DependencyProperty CurrentToolProperty =
-            DependencyProperty.Register(
-                "CurrentTool",
-                typeof(ToolType),
+            DependencyProperty.Register(nameof(CurrentTool), typeof(ToolType),
                 typeof(MascotAnimationView),
-                new PropertyMetadata(ToolType.None, OnCurrentToolChanged));
+                new PropertyMetadata(ToolType.None, (d, e) =>
+                    ((MascotAnimationView)d).StartAnimation((ToolType)e.NewValue)));
 
         public ToolType CurrentTool
         {
@@ -97,39 +73,19 @@ namespace ThreeDBuilder.Views
             set => SetValue(CurrentToolProperty, value);
         }
 
-        private static void OnCurrentToolChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is MascotAnimationView view && e.NewValue is ToolType tool)
-            {
-                view.StartAnimation(tool);
-            }
-        }
-
-        /// <summary>
-        /// Dependency Property für die Animationsgeschwindigkeit
-        /// </summary>
         public static readonly DependencyProperty AnimationSpeedProperty =
-            DependencyProperty.Register(
-                "AnimationSpeed",
-                typeof(double),
+            DependencyProperty.Register(nameof(AnimationSpeed), typeof(double),
                 typeof(MascotAnimationView),
-                new PropertyMetadata(1.0, OnAnimationSpeedChanged));
+                new PropertyMetadata(1.0, (d, e) =>
+                {
+                    if (((MascotAnimationView)d)._currentAnim is { } sb)
+                        sb.SpeedRatio = (double)e.NewValue;
+                }));
 
         public double AnimationSpeed
         {
             get => (double)GetValue(AnimationSpeedProperty);
             set => SetValue(AnimationSpeedProperty, value);
-        }
-
-        private static void OnAnimationSpeedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is MascotAnimationView view && e.NewValue is double speed)
-            {
-                if (view._currentStoryboard != null)
-                {
-                    view._currentStoryboard.SpeedRatio = speed;
-                }
-            }
         }
     }
 }
