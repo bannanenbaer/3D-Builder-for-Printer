@@ -219,6 +219,16 @@
                             </StackPanel>
                         </Border>
 
+                        <!-- ── Mascot viewport overlay (AutoFix walk animation) ── -->
+                        <Canvas x:Name="ViewportMascotLayer"
+                                IsHitTestVisible="False"
+                                Background="Transparent">
+                            <local:MascotAnimationView x:Name="ViewportMascot"
+                                                       Width="90" Height="110"
+                                                       Canvas.Bottom="18"
+                                                       Visibility="Collapsed"/>
+                        </Canvas>
+
                         <!-- KI-Assistent floating Panel (unten rechts) -->
                         <local:AssistantPanel x:Name="AssistantPanelControl"
                                               HorizontalAlignment="Right"

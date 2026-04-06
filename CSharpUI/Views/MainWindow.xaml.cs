@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Media3D;
 using HelixToolkit.Wpf;
 using ThreeDBuilder.Models;
@@ -29,6 +30,9 @@ public partial class MainWindow : Window
         _vm.ObjectUpdated += obj => Dispatcher.InvokeAsync(() => { RemoveFromViewport(obj.Id); AddStlToViewport(obj); });
         _vm.ObjectRemoved += obj => Dispatcher.InvokeAsync(() => RemoveFromViewport(obj.Id));
         _vm.SceneCleared  += ()  => Dispatcher.InvokeAsync(ClearViewport);
+
+        // Wire viewport mascot animation
+        _vm.MascotAnimationRequested += AnimateViewportMascotAsync;
     }
 
     // ── 3D Viewport ───────────────────────────────────────────────────────
@@ -145,6 +149,52 @@ public partial class MainWindow : Window
             cam.UpDirection = new Vector3D(0, 0, 1);
             Viewport3D.ZoomExtents(500);
         }
+    }
+
+    // ── Viewport mascot animation ─────────────────────────────────────────
+
+    private async Task AnimateViewportMascotAsync(MascotToolType toolType, TimeSpan duration)
+    {
+        await Dispatcher.InvokeAsync(() =>
+        {
+            var tool = toolType switch
+            {
+                MascotToolType.Brush  => MascotAnimationView.ToolType.Brush,
+                MascotToolType.Hammer => MascotAnimationView.ToolType.Hammer,
+                MascotToolType.Tape   => MascotAnimationView.ToolType.Tape,
+                _                     => MascotAnimationView.ToolType.None,
+            };
+
+            ViewportMascot.StopAnimation();
+            ViewportMascot.StartAnimation(tool);
+            ViewportMascot.Visibility = Visibility.Visible;
+
+            double vpWidth = ViewportMascotLayer.ActualWidth;
+            Canvas.SetLeft(ViewportMascot, -100);
+            Canvas.SetBottom(ViewportMascot, 18);
+
+            var sb = new Storyboard();
+            var anim = new DoubleAnimation
+            {
+                From               = -100,
+                To                 = vpWidth + 20,
+                Duration           = duration,
+                AccelerationRatio  = 0.2,
+                DecelerationRatio  = 0.2,
+            };
+            Storyboard.SetTarget(anim, ViewportMascot);
+            Storyboard.SetTargetProperty(anim, new PropertyPath(Canvas.LeftProperty));
+            sb.Children.Add(anim);
+
+            sb.Completed += (_, _) =>
+            {
+                ViewportMascot.Visibility = Visibility.Collapsed;
+                ViewportMascot.StopAnimation();
+            };
+            sb.Begin();
+        });
+
+        await Task.Delay(duration + TimeSpan.FromMilliseconds(100));
     }
 
     // ── Tutorial (Mascot-gesteuert) ───────────────────────────────────────

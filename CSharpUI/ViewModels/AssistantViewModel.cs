@@ -28,7 +28,7 @@ public class AssistantViewModel : INotifyPropertyChanged
     public string UserInput
     {
         get => _userInput;
-        set { _userInput = value; OnPropertyChanged(); _sendCommand?.RaiseCanExecuteChanged(); }
+        set { _userInput = value; OnPropertyChanged(); _sendCmd?.RaiseCanExecuteChanged(); }
     }
 
     public ObservableCollection<ChatMessage> Messages { get; } = new();
@@ -42,8 +42,8 @@ public class AssistantViewModel : INotifyPropertyChanged
 
     // ── Commands ──────────────────────────────────────────────────────────
 
-    private RelayCommand? _sendCommand;
-    public ICommand SendCommand => _sendCommand!;
+    private RelayCommand? _sendCmd;
+    public ICommand SendCommand => _sendCmd!;
 
     // ── Constructor ───────────────────────────────────────────────────────
 
@@ -52,15 +52,20 @@ public class AssistantViewModel : INotifyPropertyChanged
         _bridge = bridge;
         _mainVm = mainVm;
 
-        _sendCommand = new RelayCommand(
+        _sendCmd = new RelayCommand(
             _ => _ = SendAsync(),
             _ => !string.IsNullOrWhiteSpace(UserInput) && !IsTyping
         );
 
-        // Greet on first open
-        AddBotMessage("Hallo! 👋 Ich bin Brixl, dein 3D-Assistent! Ich kann:\n• Fragen zur Bedienung beantworten\n• Formen aus Beschreibungen erstellen\n• Objekte überarbeiten und optimieren\n• Modelle auf Druckfehler analysieren\n\nTipp: Trage in den Einstellungen einen Anthropic API-Schlüssel ein für volle KI-Power! 🚀");
+        AddBot("Hallo! 👋 Ich bin Brixl, dein 3D-Assistent!\n\n" +
+               "Ich kann:\n" +
+               "• Fragen zur Bedienung beantworten\n" +
+               "• Formen aus Beschreibungen erstellen (z.B. \"Erstelle einen Zylinder 30mm Radius\")\n" +
+               "• Objekte überarbeiten (z.B. \"Mache den Radius 20mm\")\n" +
+               "• Modelle analysieren (\"Analysiere mein Modell für Prusa\")\n" +
+               "• AutoFix ausführen (\"Optimiere mein Modell\")\n\n" +
+               "Tipp: API-Schlüssel in Einstellungen für volle KI-Power! 🚀");
 
-        // Tea break reminder after 2 hours
         StartTeaBreakTimer();
     }
 
@@ -72,34 +77,134 @@ public class AssistantViewModel : INotifyPropertyChanged
         if (string.IsNullOrEmpty(text)) return;
 
         UserInput = "";
-        AddUserMessage(text);
+        AddUser(text);
         IsTyping = true;
-        _sendCommand?.RaiseCanExecuteChanged();
+        _sendCmd?.RaiseCanExecuteChanged();
 
         try
         {
-            // Build scene context for Claude
-            var contextMsg = BuildSceneContext(text);
+            // Check for special local commands first (no API needed)
+            if (await TryHandleLocalCommandAsync(text)) return;
+
+            // Call AI with scene context
+            var contextMsg  = BuildSceneContext(text);
             var rawResponse = await _ai.AskAsync(contextMsg);
-            var (display, action) = ParseActionFromResponse(rawResponse);
+            var (display, action) = ParseAction(rawResponse);
 
-            AddBotMessage(display);
-
-            if (action != null)
-                await ExecuteActionAsync(action);
+            AddBot(display);
+            if (action != null) await ExecuteActionAsync(action);
         }
         catch (Exception ex)
         {
-            AddBotMessage($"Ups, da ist was schiefgelaufen 😅 — {ex.Message}");
+            AddBot($"Ups, da ist was schiefgelaufen 😅 — {ex.Message}");
         }
         finally
         {
             IsTyping = false;
-            _sendCommand?.RaiseCanExecuteChanged();
+            _sendCmd?.RaiseCanExecuteChanged();
         }
     }
 
-    // ── Scene context ─────────────────────────────────────────────────────
+    // ── Local command handling (no API required) ──────────────────────────
+
+    private static readonly string[] _autofixKeywords =
+        ["autofix", "optimiere", "repariere", "fix", "verbessere", "druckoptimier"];
+
+    private static readonly string[] _analyzeKeywords =
+        ["analysiere", "analyse", "prüfe", "qualität", "druckbar", "score", "bewerte", "check"];
+
+    private async Task<bool> TryHandleLocalCommandAsync(string input)
+    {
+        var q = input.ToLowerInvariant();
+
+        // ── AutoFix ──────────────────────────────────────────────────────
+        if (Array.Exists(_autofixKeywords, k => q.Contains(k)))
+        {
+            await RunAutoFixAsync(input);
+            return true;
+        }
+
+        // ── Quality analysis ─────────────────────────────────────────────
+        if (Array.Exists(_analyzeKeywords, k => q.Contains(k)))
+        {
+            RunQualityAnalysis(input);
+            return true;
+        }
+
+        return false;
+    }
+
+    // ── AutoFix ───────────────────────────────────────────────────────────
+
+    private async Task RunAutoFixAsync(string input)
+    {
+        var obj = _mainVm.SelectedObject;
+        if (obj == null)
+        {
+            AddBot("Bitte wähle zuerst ein Objekt in der Szene aus, dann kann ich es optimieren! 🎯");
+            return;
+        }
+
+        AddBot($"Ich analysiere und optimiere '{obj.Name}' für den 3D-Druck… 🔍✨");
+
+        // Phase 1 – Brush: analysis
+        await _mainVm.RequestMascotAnimation(MascotToolType.Brush, TimeSpan.FromSeconds(2.5));
+
+        // Run quality check first
+        var profile = DetectPrinterProfile(input);
+        var report  = PrintQualityAnalyzer.Analyze(obj, profile);
+        AddBot($"Analyse für {profile.Name} abgeschlossen:\n{report.Summary()}");
+
+        // Phase 2 – Hammer: apply fillet if score not perfect
+        await _mainVm.RequestMascotAnimation(MascotToolType.Hammer, TimeSpan.FromSeconds(3.0));
+
+        bool fixed_ = false;
+        if (_bridge?.IsRunning == true)
+        {
+            // Apply a conservative fillet to round sharp edges
+            try
+            {
+                _mainVm.FilletRadius = 1.5;
+                await Application.Current.Dispatcher.InvokeAsync(
+                    async () => await _mainVm.ApplyFilletAsync());
+                fixed_ = true;
+            }
+            catch { /* fillet can fail on simple shapes – ignore */ }
+        }
+
+        // Phase 3 – Tape: finish
+        await _mainVm.RequestMascotAnimation(MascotToolType.Tape, TimeSpan.FromSeconds(2.0));
+
+        AddBot(fixed_
+            ? "✅ Fertig! Scharfe Kanten wurden abgerundet (Fillet 1.5mm). Dein Modell ist jetzt druckoptimiert! 🎉"
+            : "✅ Analyse abgeschlossen! Das Backend ist nicht aktiv, daher wurden keine automatischen Änderungen vorgenommen.");
+    }
+
+    // ── Quality analysis ──────────────────────────────────────────────────
+
+    private void RunQualityAnalysis(string input)
+    {
+        var obj = _mainVm.SelectedObject;
+        if (obj == null)
+        {
+            AddBot("Bitte wähle ein Objekt aus, dann analysiere ich es! 🔍");
+            return;
+        }
+
+        var profile = DetectPrinterProfile(input);
+        var report  = PrintQualityAnalyzer.Analyze(obj, profile);
+        AddBot($"📊 Qualitätsbericht für '{obj.Name}' ({profile.Name}):\n\n{report.Summary()}");
+    }
+
+    private static PrinterProfile DetectPrinterProfile(string input)
+    {
+        var q = input.ToLowerInvariant();
+        if (q.Contains("bambu"))   return PrinterProfile.Bambu;
+        if (q.Contains("creality") || q.Contains("ender")) return PrinterProfile.Creality;
+        return PrinterProfile.Prusa;
+    }
+
+    // ── Scene context for AI ──────────────────────────────────────────────
 
     private string BuildSceneContext(string userMessage)
     {
@@ -108,137 +213,115 @@ public class AssistantViewModel : INotifyPropertyChanged
         if (_mainVm.SceneObjects.Count > 0)
         {
             var names = new List<string>();
-            foreach (var obj in _mainVm.SceneObjects)
-                names.Add($"{obj.Name} ({obj.ShapeType})");
-            parts.Add($"[Szene: {_mainVm.SceneObjects.Count} Objekte: {string.Join(", ", names)}]");
+            foreach (var o in _mainVm.SceneObjects)
+                names.Add($"{o.Name}({o.ShapeType})");
+            parts.Add($"[Szene: {string.Join(", ", names)}]");
         }
 
-        if (_mainVm.SelectedObject != null)
+        if (_mainVm.SelectedObject is { } sel)
         {
-            var sel = _mainVm.SelectedObject;
-            var paramStr = new List<string>();
+            var ps = new List<string>();
             foreach (var kv in sel.Params)
-                paramStr.Add($"{kv.Key}={kv.Value}");
-            parts.Add($"[Ausgewählt: {sel.Name} ({sel.ShapeType}), Parameter: {string.Join(", ", paramStr)}]");
+                ps.Add($"{kv.Key}={kv.Value}");
+            parts.Add($"[Ausgewählt: {sel.Name} | {string.Join(", ", ps)}]");
         }
 
-        if (parts.Count > 0)
-            return string.Join(" ", parts) + "\n" + userMessage;
-
-        return userMessage;
+        return parts.Count > 0
+            ? string.Join(" ", parts) + "\n" + userMessage
+            : userMessage;
     }
 
     // ── Action parsing ────────────────────────────────────────────────────
-    // Claude can include an action block at the end:
-    //   [AKTION:{"cmd":"create","shape":"box","params":{"width":20,"height":20,"depth":20}}]
 
-    private static readonly Regex _actionRegex =
-        new(@"\[AKTION:(\{.*?\})\]", RegexOptions.Singleline);
+    private static readonly Regex _actionRx = new(@"\[AKTION:(\{.*?\})\]", RegexOptions.Singleline);
 
-    private static (string Display, JObject? Action) ParseActionFromResponse(string raw)
+    private static (string Display, JObject? Action) ParseAction(string raw)
     {
-        var m = _actionRegex.Match(raw);
+        var m = _actionRx.Match(raw);
         if (!m.Success) return (raw.Trim(), null);
-
-        var display = _actionRegex.Replace(raw, "").Trim();
-        try
-        {
-            var action = JObject.Parse(m.Groups[1].Value);
-            return (display, action);
-        }
+        var display = _actionRx.Replace(raw, "").Trim();
+        try   { return (display, JObject.Parse(m.Groups[1].Value)); }
         catch { return (raw.Trim(), null); }
     }
 
-    // ── Execute scene actions from Claude ─────────────────────────────────
+    // ── Execute scene actions ─────────────────────────────────────────────
 
     private async Task ExecuteActionAsync(JObject action)
     {
-        var cmd = action["cmd"]?.ToString();
-        switch (cmd)
+        switch (action["cmd"]?.ToString())
         {
             case "create":
             {
                 var shapeType = action["shape"]?.ToString() ?? "box";
-                var paramsNode = action["params"] as JObject;
-                var @params = new Dictionary<string, object>();
-                if (paramsNode != null)
-                    foreach (var kv in paramsNode)
-                        if (kv.Value != null)
-                            @params[kv.Key] = ((JValue)kv.Value).Value ?? 0.0;
-                await Application.Current.Dispatcher.InvokeAsync(async () =>
-                    await _mainVm.AddShapeAsync(shapeType, @params));
-                AddBotMessage("✅ Form wurde in die Szene eingefügt!");
+                var @params   = ExtractParams(action["params"] as JObject);
+                await Application.Current.Dispatcher.InvokeAsync(
+                    async () => await _mainVm.AddShapeAsync(shapeType, @params));
+                AddBot("✅ Form wurde in die Szene eingefügt!");
                 break;
             }
             case "update":
             {
-                var paramsNode = action["params"] as JObject;
-                if (paramsNode != null && _mainVm.SelectedObject != null)
-                {
-                    foreach (var kv in paramsNode)
-                        if (kv.Value != null)
-                            _mainVm.SelectedObject.Params[kv.Key] = ((JValue)kv.Value).Value ?? 0.0;
-                    await Application.Current.Dispatcher.InvokeAsync(async () =>
-                        await _mainVm.UpdateSelectedShapeAsync());
-                    AddBotMessage("✅ Objekt wurde aktualisiert!");
-                }
+                if (_mainVm.SelectedObject == null) break;
+                foreach (var (k, v) in ExtractParams(action["params"] as JObject))
+                    _mainVm.SelectedObject.Params[k] = v;
+                await Application.Current.Dispatcher.InvokeAsync(
+                    async () => await _mainVm.UpdateSelectedShapeAsync());
+                AddBot("✅ Objekt wurde aktualisiert!");
                 break;
             }
             case "fillet":
-            {
-                if (double.TryParse(action["radius"]?.ToString(), out var r))
+                if (double.TryParse(action["radius"]?.ToString(), out var fr))
                 {
-                    _mainVm.FilletRadius = r;
-                    await Application.Current.Dispatcher.InvokeAsync(async () =>
-                        await _mainVm.ApplyFilletAsync());
-                    AddBotMessage($"✅ Fillet mit Radius {r}mm angewendet!");
+                    _mainVm.FilletRadius = fr;
+                    await Application.Current.Dispatcher.InvokeAsync(
+                        async () => await _mainVm.ApplyFilletAsync());
+                    AddBot($"✅ Fillet {fr}mm angewendet!");
                 }
                 break;
-            }
             case "chamfer":
-            {
-                if (double.TryParse(action["size"]?.ToString(), out var s))
+                if (double.TryParse(action["size"]?.ToString(), out var cs))
                 {
-                    _mainVm.ChamferSize = s;
-                    await Application.Current.Dispatcher.InvokeAsync(async () =>
-                        await _mainVm.ApplyChamferAsync());
-                    AddBotMessage($"✅ Chamfer mit Größe {s}mm angewendet!");
+                    _mainVm.ChamferSize = cs;
+                    await Application.Current.Dispatcher.InvokeAsync(
+                        async () => await _mainVm.ApplyChamferAsync());
+                    AddBot($"✅ Chamfer {cs}mm angewendet!");
                 }
                 break;
-            }
             case "delete":
                 Application.Current.Dispatcher.Invoke(() => _mainVm.DeleteSelected());
-                AddBotMessage("✅ Ausgewähltes Objekt gelöscht!");
+                AddBot("✅ Objekt gelöscht!");
                 break;
         }
     }
 
-    // ── AddShapeAsync overload with optional params ───────────────────────
-    // Calls the MainViewModel method passing custom params
+    private static Dictionary<string, object> ExtractParams(JObject? node)
+    {
+        var d = new Dictionary<string, object>();
+        if (node == null) return d;
+        foreach (var kv in node)
+            if (kv.Value is JValue jv && jv.Value != null)
+                d[kv.Key] = jv.Value;
+        return d;
+    }
 
-    // ── Tea break timer ───────────────────────────────────────────────────
+    // ── Tea break ─────────────────────────────────────────────────────────
+
+    private Timer? _teaTimer;
 
     private void StartTeaBreakTimer()
     {
-        var timer = new Timer(_ =>
-        {
+        _teaTimer = new Timer(_ =>
             Application.Current.Dispatcher.Invoke(() =>
-                AddBotMessage("☕ Du arbeitest schon 2 Stunden! Ich glaube du verdienst eine Tee-Pause. Dein Modell läuft nicht weg, versprochen! 🫖✨")
-            );
-        }, null, TimeSpan.FromHours(2), Timeout.InfiniteTimeSpan);
-
-        // Keep reference so GC doesn't collect it
-        GC.KeepAlive(timer);
+                AddBot("☕ Du arbeitest schon 2 Stunden! Du verdienst eine Tee-Pause — " +
+                       "dein Modell läuft nicht weg! 🫖✨")),
+            null, TimeSpan.FromHours(2), Timeout.InfiniteTimeSpan);
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────
 
-    private void AddBotMessage(string text) =>
-        Messages.Add(new ChatMessage { Text = text, IsUser = false });
+    private void AddBot(string text)  => Messages.Add(new ChatMessage { Text = text, IsUser = false });
+    private void AddUser(string text) => Messages.Add(new ChatMessage { Text = text, IsUser = true });
 
-    private void AddUserMessage(string text) =>
-        Messages.Add(new ChatMessage { Text = text, IsUser = true });
-
-    protected void OnPropertyChanged([CallerMemberName] string? name = null) =>
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+    protected void OnPropertyChanged([CallerMemberName] string? name = null)
+        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 }
