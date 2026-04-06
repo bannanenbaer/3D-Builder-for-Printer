@@ -140,14 +140,55 @@ def handle_import_stl(req: dict) -> dict:
     file_path = req["file_path"]
     if not os.path.isfile(file_path):
         raise FileNotFoundError(f"STL file not found: {file_path}")
-    # Copy to temp location so we control the path
+    import shutil
     tmp = tempfile.NamedTemporaryFile(
         prefix="3dbuilder_import_", suffix=".stl", delete=False
     )
     tmp.close()
-    import shutil
     shutil.copy2(file_path, tmp.name)
     return {"status": "ok", "stl_path": tmp.name}
+
+
+def handle_import_3mf(req: dict) -> dict:
+    """Import a 3MF file — convert to STL for display."""
+    file_path = req["file_path"]
+    if not os.path.isfile(file_path):
+        raise FileNotFoundError(f"3MF file not found: {file_path}")
+
+    tmp_stl = tempfile.NamedTemporaryFile(
+        prefix="3dbuilder_import_", suffix=".stl", delete=False
+    )
+    tmp_stl.close()
+
+    converted = False
+
+    # Try cadquery first (most reliable)
+    if CQ_AVAILABLE:
+        try:
+            import cadquery as cq
+            result = cq.importers.import3mf(file_path)
+            result.val().exportStl(tmp_stl.name)
+            converted = True
+        except Exception:
+            pass
+
+    # Fallback: try trimesh (lightweight, often available)
+    if not converted:
+        try:
+            import trimesh
+            mesh = trimesh.load(file_path, force="mesh")
+            mesh.export(tmp_stl.name)
+            converted = True
+        except Exception:
+            pass
+
+    if not converted:
+        raise RuntimeError(
+            "Cannot convert 3MF to STL: neither cadquery nor trimesh is available. "
+            "Run: pip install trimesh"
+        )
+
+    return {"status": "ok", "stl_path": tmp_stl.name}
 
 
 def handle_compile_scad(req: dict) -> dict:
@@ -191,6 +232,7 @@ HANDLERS = {
     "apply_chamfer":  handle_apply_chamfer,
     "boolean_op":     handle_boolean_op,
     "import_stl":     handle_import_stl,
+    "import_3mf":     handle_import_3mf,
     "compile_scad":   handle_compile_scad,
     "export_scad":    handle_export_scad,
     "shape_to_scad":  handle_shape_to_scad,

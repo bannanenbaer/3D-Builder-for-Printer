@@ -13,6 +13,7 @@ using Microsoft.Win32;
 using Newtonsoft.Json.Linq;
 using ThreeDBuilder.Models;
 using ThreeDBuilder.Services;
+using ThreeDBuilder.ViewModels;
 
 namespace ThreeDBuilder.ViewModels;
 
@@ -137,6 +138,17 @@ public class MainViewModel : INotifyPropertyChanged
     public ICommand ScadPreviewCommand   { get; }
     public ICommand ScadExportCommand    { get; }
     public ICommand ScadFromSceneCommand { get; }
+    public ICommand ToggleAssistantCommand { get; }
+
+    private bool _isAssistantVisible;
+    public bool IsAssistantVisible
+    {
+        get => _isAssistantVisible;
+        set { _isAssistantVisible = value; OnPropertyChanged(); }
+    }
+
+    public AssistantViewModel AssistantVM { get; }
+    public UpdateViewModel    UpdateVM    { get; }
 
     // ── Constructor ───────────────────────────────────────────────────────
     public MainViewModel()
@@ -160,9 +172,13 @@ public class MainViewModel : INotifyPropertyChanged
         BoolUnionCommand     = new AsyncRelayCommand(() => BooleanOpAsync("union"),     () => HasTwoSelections);
         BoolSubtractCommand  = new AsyncRelayCommand(() => BooleanOpAsync("cut"),       () => HasTwoSelections);
         BoolIntersectCommand = new AsyncRelayCommand(() => BooleanOpAsync("intersect"), () => HasTwoSelections);
-        ScadPreviewCommand   = new AsyncRelayCommand(ExecuteScadPreviewAsync);
-        ScadExportCommand    = new RelayCommand(ExecuteScadExport);
-        ScadFromSceneCommand = new AsyncRelayCommand(ExecuteScadFromSceneAsync);
+        ScadPreviewCommand     = new AsyncRelayCommand(ExecuteScadPreviewAsync);
+        ScadExportCommand      = new RelayCommand(ExecuteScadExport);
+        ScadFromSceneCommand   = new AsyncRelayCommand(ExecuteScadFromSceneAsync);
+        ToggleAssistantCommand = new RelayCommand(() => IsAssistantVisible = !IsAssistantVisible);
+
+        AssistantVM = new AssistantViewModel(_bridge);
+        UpdateVM    = new UpdateViewModel(new Services.UpdateService());
     }
 
     // ── Shape creation ────────────────────────────────────────────────────
@@ -384,7 +400,14 @@ public class MainViewModel : INotifyPropertyChanged
             Filter = T.T("dlg_filter_stl"),
         };
         if (dlg.ShowDialog() == true)
-            await ImportStlAsync(dlg.FileName);
+            await Import3dFileAsync(dlg.FileName);
+    }
+
+    private async Task Import3dFileAsync(string filePath)
+    {
+        var ext = Path.GetExtension(filePath).ToLowerInvariant();
+        // Both STL and 3MF go through the same import path
+        await ImportStlAsync(filePath);
     }
 
     private void ExecuteImportScad()
@@ -404,7 +427,7 @@ public class MainViewModel : INotifyPropertyChanged
         var dlg = new SaveFileDialog
         {
             Title      = T.T("dlg_export_stl"),
-            Filter     = T.T("dlg_filter_stl"),
+            Filter     = T.T("dlg_filter_stl_save"),
             DefaultExt = ".stl",
         };
         if (dlg.ShowDialog() != true) return;

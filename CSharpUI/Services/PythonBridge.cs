@@ -70,8 +70,8 @@ public class PythonBridge : IDisposable
             _ = ReadLoopAsync(_cts.Token);
             _ = ReadErrorLoopAsync(_cts.Token);
 
-            // Wait for "ready" signal (up to 30s)
-            using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+            // Wait for "ready" signal (up to 90s — cadquery first import can be slow)
+            using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(90));
             var ready = await WaitForReadyAsync(timeout.Token);
             return ready;
         }
@@ -197,7 +197,11 @@ public class PythonBridge : IDisposable
         => SendAsync("boolean_op", new { op, object_a = objA, object_b = objB });
 
     public Task<JObject> ImportStlAsync(string filePath)
-        => SendAsync("import_stl", new { file_path = filePath });
+    {
+        var ext = Path.GetExtension(filePath).ToLowerInvariant();
+        var command = ext == ".3mf" ? "import_3mf" : "import_stl";
+        return SendAsync(command, new { file_path = filePath });
+    }
 
     public Task<JObject> CompileScadAsync(string scadCode)
         => SendAsync("compile_scad", new { scad_code = scadCode }, timeoutMs: 90000);
@@ -237,6 +241,32 @@ public class PythonBridge : IDisposable
 
     private static string FindPython()
     {
+        // Check explicit paths first — PATH may not be updated after fresh install
+        var localApp = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        var explicit_paths = new[]
+        {
+            // System-wide install (InstallAllUsers=1 → C:\Program Files\)
+            @"C:\Program Files\Python313\python.exe",
+            @"C:\Program Files\Python312\python.exe",
+            @"C:\Program Files\Python311\python.exe",
+            @"C:\Program Files\Python310\python.exe",
+            // Per-user install
+            Path.Combine(localApp, @"Programs\Python\Python313\python.exe"),
+            Path.Combine(localApp, @"Programs\Python\Python312\python.exe"),
+            Path.Combine(localApp, @"Programs\Python\Python311\python.exe"),
+            Path.Combine(localApp, @"Programs\Python\Python310\python.exe"),
+        };
+
+        foreach (var path in explicit_paths)
+        {
+            if (File.Exists(path))
+            {
+                App.WriteLog($"Python found at: {path}");
+                return path;
+            }
+        }
+
+        // Fallback: try by name via PATH
         string[] candidates = ["python", "python3", "py"];
         foreach (var c in candidates)
         {
@@ -250,10 +280,16 @@ public class PythonBridge : IDisposable
                     CreateNoWindow = true,
                 });
                 p?.WaitForExit(2000);
-                if (p?.ExitCode == 0) return c;
+                if (p?.ExitCode == 0)
+                {
+                    App.WriteLog($"Python found via PATH: {c}");
+                    return c;
+                }
             }
             catch { }
         }
+
+        App.WriteLog("Python not found — backend will not start");
         return "python"; // Last resort
     }
 }

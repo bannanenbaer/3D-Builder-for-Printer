@@ -21,6 +21,9 @@ public partial class MainWindow : Window
         _vm = new MainViewModel();
         DataContext = _vm;
 
+        // Show tutorial on first launch
+        CheckAndShowTutorial();
+
         // Wire viewport events
         _vm.ObjectAdded   += obj => Dispatcher.InvokeAsync(() => AddStlToViewport(obj));
         _vm.ObjectUpdated += obj => Dispatcher.InvokeAsync(() => { RemoveFromViewport(obj.Id); AddStlToViewport(obj); });
@@ -142,5 +145,28 @@ public partial class MainWindow : Window
             cam.UpDirection = new Vector3D(0, 0, 1);
             Viewport3D.ZoomExtents(500);
         }
+    }
+
+    // ── Tutorial ──────────────────────────────────────────────────────────
+
+    private void CheckAndShowTutorial()
+    {
+        string flagFile = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "3DBuilderPro", "tutorial_shown.flag");
+        if (!File.Exists(flagFile))
+        {
+            TutorialOverlay.Visibility = Visibility.Visible;
+        }
+    }
+
+    private void OnTutorialDismiss(object sender, RoutedEventArgs e)
+    {
+        TutorialOverlay.Visibility = Visibility.Collapsed;
+        string dir = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "3DBuilderPro");
+        Directory.CreateDirectory(dir);
+        File.WriteAllText(Path.Combine(dir, "tutorial_shown.flag"), DateTime.Now.ToString());
     }
 }

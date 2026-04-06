@@ -1,0 +1,51 @@
+name: Build & Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install WiX Toolset
+        run: |
+          dotnet tool install --global wix --version 4.0.5
+          wix extension add WixToolset.UI.wixext/4.0.5
+          wix extension add WixToolset.Bal.wixext/4.0.5
+          wix extension add WixToolset.Util.wixext/4.0.5
+
+      - name: Build Setup.exe
+        run: .\build.ps1 -SkipTests
+        shell: pwsh
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: Installer/bin/Release/3DBuilderPro-Setup.exe
+          name: "3D Builder Pro ${{ github.ref_name }}"
+          body: |
+            ## 3D Builder Pro ${{ github.ref_name }}
+
+            **Automatisch erstellter Release.**
+
+            ### Installation
+            1. `3DBuilderPro-Setup.exe` herunterladen
+            2. Doppelklick → alles installiert sich automatisch
+
+            Enthält: Python 3.12, alle Abhängigkeiten, 3D Builder Pro
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
