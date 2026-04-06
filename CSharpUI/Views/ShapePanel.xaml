@@ -64,7 +64,7 @@
                     CommandParameter="torus"
                     ToolTip="{Binding T[shape_torus]}">
                 <StackPanel>
-                    <materialDesign:PackIcon Kind="DonutLarge" Width="32" Height="32"
+                    <materialDesign:PackIcon Kind="CircleDouble" Width="32" Height="32"
                                             HorizontalAlignment="Center" Foreground="{StaticResource AccentBrush}"/>
                     <TextBlock Text="{Binding T[shape_torus]}" TextAlignment="Center" FontSize="9" Foreground="{StaticResource TextPrimary}"/>
                 </StackPanel>
