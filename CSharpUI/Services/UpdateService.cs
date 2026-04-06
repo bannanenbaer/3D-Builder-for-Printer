@@ -79,13 +79,13 @@ namespace ThreeDBuilder.Services
                 var releaseNotes = root.GetProperty("body").GetString() ?? "";
                 var publishedAt = DateTime.Parse(root.GetProperty("published_at").GetString() ?? DateTime.Now.ToString());
 
-                // Finde das .msi Installer
+                // Finde den Setup.exe Installer
                 string downloadUrl = null;
                 var assets = root.GetProperty("assets");
                 foreach (var asset in assets.EnumerateArray())
                 {
                     var name = asset.GetProperty("name").GetString();
-                    if (name?.EndsWith(".msi") == true)
+                    if (name?.EndsWith("-Setup.exe") == true || name?.EndsWith("Setup.exe") == true)
                     {
                         downloadUrl = asset.GetProperty("browser_download_url").GetString();
                         break;
@@ -127,7 +127,7 @@ namespace ThreeDBuilder.Services
             {
                 RaiseUpdateProgress("Lade Installer herunter...", 0, UpdateStatus.DownloadingInstaller);
 
-                var tempPath = Path.Combine(Path.GetTempPath(), "3DBuilderPro.msi");
+                var tempPath = Path.Combine(Path.GetTempPath(), "3DBuilderPro-Setup.exe");
 
                 using (var response = await _httpClient.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead))
                 {
@@ -183,14 +183,8 @@ namespace ThreeDBuilder.Services
                     Verb = "runas" // Führe mit Admin-Rechten aus
                 };
 
-                using (var process = Process.Start(processInfo))
-                {
-                    if (process != null)
-                    {
-                        await Task.Run(() => process.WaitForExit());
-                        RaiseUpdateProgress("Installation abgeschlossen", 100, UpdateStatus.Complete);
-                    }
-                }
+                Process.Start(processInfo);
+                System.Windows.Application.Current.Dispatcher.Invoke(() => System.Windows.Application.Current.Shutdown());
             }
             catch (Exception ex)
             {
