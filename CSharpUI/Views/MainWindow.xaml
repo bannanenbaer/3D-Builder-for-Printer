@@ -249,130 +249,106 @@
             </Border>
             </Grid>
 
-            <!-- ═══ TUTORIAL OVERLAY (first launch) ═══════════════════════════ -->
+            <!-- ═══ TUTORIAL OVERLAY (Mascot-gesteuert, erster Start) ════════ -->
             <Border x:Name="TutorialOverlay"
                     Visibility="Collapsed"
-                    Background="#CC000000"
+                    Background="#BB000000"
                     Panel.ZIndex="100">
-                <Border Background="#1A1F2E"
-                        BorderBrush="#3B82F6"
-                        BorderThickness="2"
-                        CornerRadius="16"
-                        Padding="40,32"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        MaxWidth="600">
-                    <StackPanel>
-                        <!-- Title -->
-                        <TextBlock Text="Willkommen bei 3D Builder Pro!"
-                                   FontSize="22" FontWeight="Bold"
-                                   Foreground="#F8FAFC"
-                                   HorizontalAlignment="Center"
-                                   Margin="0,0,0,8"/>
-                        <TextBlock Text="Hier ist eine kurze Einführung in die wichtigsten Funktionen:"
-                                   FontSize="12" Foreground="#94A3B8"
-                                   HorizontalAlignment="Center"
-                                   Margin="0,0,0,24"/>
+                <Grid>
 
-                        <!-- Tips Grid -->
+                    <!-- Schritt-Punkte oben Mitte -->
+                    <ItemsControl x:Name="TutorialDotsList"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Top"
+                                  Margin="0,18,0,0">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+
+                    <!-- Untere Leiste: Maskottchen + Sprechblase -->
+                    <Border VerticalAlignment="Bottom"
+                            Background="#0F1419"
+                            BorderBrush="#3B82F6"
+                            BorderThickness="0,2,0,0">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="160"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
 
-                            <!-- Tip 1 -->
-                            <Border Grid.Row="0" Grid.Column="0" Background="#0F1419" CornerRadius="8" Padding="14,10" Margin="4">
-                                <StackPanel>
-                                    <TextBlock Text="🖱️ Rechtsklick + Ziehen" FontWeight="SemiBold" Foreground="#60A5FA" FontSize="12"/>
-                                    <TextBlock Text="3D-Ansicht drehen" Foreground="#94A3B8" FontSize="11" Margin="0,2,0,0"/>
-                                </StackPanel>
+                            <!-- Maskottchen -->
+                            <Border Grid.Column="0"
+                                    Padding="20,16"
+                                    Background="#1A1F2E">
+                                <local:MascotAnimationView x:Name="TutorialMascot"
+                                                           Width="110" Height="130"
+                                                           VerticalAlignment="Bottom"/>
                             </Border>
 
-                            <!-- Tip 2 -->
-                            <Border Grid.Row="0" Grid.Column="1" Background="#0F1419" CornerRadius="8" Padding="14,10" Margin="4">
-                                <StackPanel>
-                                    <TextBlock Text="🖱️ Mausrad" FontWeight="SemiBold" Foreground="#60A5FA" FontSize="12"/>
-                                    <TextBlock Text="Rein-/Rauszoomen" Foreground="#94A3B8" FontSize="11" Margin="0,2,0,0"/>
-                                </StackPanel>
-                            </Border>
+                            <!-- Sprechblase -->
+                            <Grid Grid.Column="1" Margin="24,20,28,20">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
 
-                            <!-- Tip 3 -->
-                            <Border Grid.Row="1" Grid.Column="0" Background="#0F1419" CornerRadius="8" Padding="14,10" Margin="4">
-                                <StackPanel>
-                                    <TextBlock Text="◀ Linke Leiste" FontWeight="SemiBold" Foreground="#60A5FA" FontSize="12"/>
-                                    <TextBlock Text="Formen hinzufügen (Würfel, Kugel, ...)" Foreground="#94A3B8" FontSize="11" Margin="0,2,0,0" TextWrapping="Wrap"/>
-                                </StackPanel>
-                            </Border>
+                                <TextBlock x:Name="TutorialStepTitle"
+                                           Grid.Row="0"
+                                           FontSize="17" FontWeight="Bold"
+                                           Foreground="#F8FAFC"
+                                           Margin="0,0,0,8"/>
 
-                            <!-- Tip 4 -->
-                            <Border Grid.Row="1" Grid.Column="1" Background="#0F1419" CornerRadius="8" Padding="14,10" Margin="4">
-                                <StackPanel>
-                                    <TextBlock Text="▶ Rechte Leiste" FontWeight="SemiBold" Foreground="#60A5FA" FontSize="12"/>
-                                    <TextBlock Text="Eigenschaften &amp; Größe anpassen" Foreground="#94A3B8" FontSize="11" Margin="0,2,0,0" TextWrapping="Wrap"/>
-                                </StackPanel>
-                            </Border>
+                                <TextBlock x:Name="TutorialStepText"
+                                           Grid.Row="1"
+                                           FontSize="13"
+                                           Foreground="#CBD5E1"
+                                           TextWrapping="Wrap"
+                                           LineHeight="22"/>
 
-                            <!-- Tip 5 -->
-                            <Border Grid.Row="2" Grid.Column="0" Background="#0F1419" CornerRadius="8" Padding="14,10" Margin="4">
-                                <StackPanel>
-                                    <TextBlock Text="📂 Ordner-Symbol" FontWeight="SemiBold" Foreground="#60A5FA" FontSize="12"/>
-                                    <TextBlock Text="STL oder 3MF-Datei importieren" Foreground="#94A3B8" FontSize="11" Margin="0,2,0,0"/>
+                                <StackPanel Grid.Row="2"
+                                            Orientation="Horizontal"
+                                            HorizontalAlignment="Right"
+                                            Margin="0,18,0,0">
+                                    <Button x:Name="TutorialPrevBtn"
+                                            Content="◀ Zurück"
+                                            Click="OnTutorialPrev"
+                                            Visibility="Collapsed"
+                                            Padding="16,8"
+                                            Margin="0,0,10,0"
+                                            FontSize="12"
+                                            Background="#2D3748"
+                                            Foreground="#F8FAFC"
+                                            BorderThickness="0"
+                                            Cursor="Hand"/>
+                                    <Button x:Name="TutorialNextBtn"
+                                            Content="Weiter ▶"
+                                            Click="OnTutorialNext"
+                                            Padding="22,8"
+                                            FontSize="12"
+                                            Background="#3B82F6"
+                                            Foreground="White"
+                                            BorderThickness="0"
+                                            Cursor="Hand"/>
+                                    <Button x:Name="TutorialFinishBtn"
+                                            Content="Los geht's! 🚀"
+                                            Click="OnTutorialDismiss"
+                                            Visibility="Collapsed"
+                                            Padding="28,8"
+                                            FontSize="13"
+                                            FontWeight="SemiBold"
+                                            Background="#10B981"
+                                            Foreground="White"
+                                            BorderThickness="0"
+                                            Cursor="Hand"/>
                                 </StackPanel>
-                            </Border>
-
-                            <!-- Tip 6 -->
-                            <Border Grid.Row="2" Grid.Column="1" Background="#0F1419" CornerRadius="8" Padding="14,10" Margin="4">
-                                <StackPanel>
-                                    <TextBlock Text="🤖 Assistent-Button" FontWeight="SemiBold" Foreground="#60A5FA" FontSize="12"/>
-                                    <TextBlock Text="KI-Hilfe bei Fragen &amp; Befehlen" Foreground="#94A3B8" FontSize="11" Margin="0,2,0,0"/>
-                                </StackPanel>
-                            </Border>
-
-                            <!-- Tip 7 -->
-                            <Border Grid.Row="3" Grid.Column="0" Background="#0F1419" CornerRadius="8" Padding="14,10" Margin="4">
-                                <StackPanel>
-                                    <TextBlock Text="⌨️ Ctrl+Z / Ctrl+Y" FontWeight="SemiBold" Foreground="#60A5FA" FontSize="12"/>
-                                    <TextBlock Text="Rückgängig / Wiederholen" Foreground="#94A3B8" FontSize="11" Margin="0,2,0,0"/>
-                                </StackPanel>
-                            </Border>
-
-                            <!-- Tip 8 -->
-                            <Border Grid.Row="3" Grid.Column="1" Background="#0F1419" CornerRadius="8" Padding="14,10" Margin="4">
-                                <StackPanel>
-                                    <TextBlock Text="☁️ Update-Button" FontWeight="SemiBold" Foreground="#60A5FA" FontSize="12"/>
-                                    <TextBlock Text="Neue Version automatisch laden" Foreground="#94A3B8" FontSize="11" Margin="0,2,0,0"/>
-                                </StackPanel>
-                            </Border>
+                            </Grid>
                         </Grid>
-
-                        <!-- Dismiss button -->
-                        <Button x:Name="TutorialDismissButton"
-                                Content="Los geht's! 🚀"
-                                Click="OnTutorialDismiss"
-                                HorizontalAlignment="Center"
-                                Margin="0,28,0,0"
-                                Padding="32,12"
-                                FontSize="14"
-                                FontWeight="SemiBold"
-                                Background="#3B82F6"
-                                Foreground="White"
-                                BorderThickness="0"
-                                Cursor="Hand">
-                            <Button.Resources>
-                                <Style TargetType="Border">
-                                    <Setter Property="CornerRadius" Value="8"/>
-                                </Style>
-                            </Button.Resources>
-                        </Button>
-                    </StackPanel>
-                </Border>
+                    </Border>
+                </Grid>
             </Border>
         </Grid>
     </DockPanel>
