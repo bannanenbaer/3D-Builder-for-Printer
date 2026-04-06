@@ -156,7 +156,7 @@ public class MainViewModel : INotifyPropertyChanged
         _bridge = App.PythonBridge;
         StatusText = T.T("status_ready");
 
-        AddShapeCommand      = new AsyncRelayCommand(p => AddShapeAsync(p?.ToString() ?? "box"));
+        AddShapeCommand      = new AsyncRelayCommand(p => AddShapeAsync(p?.ToString() ?? "box", (Dictionary<string, object>?)null));
         ImportStlCommand     = new AsyncRelayCommand(ExecuteImportStlAsync);
         ImportScadCommand    = new RelayCommand(ExecuteImportScad);
         ExportStlCommand     = new AsyncRelayCommand(ExecuteExportStlAsync);
@@ -177,24 +177,38 @@ public class MainViewModel : INotifyPropertyChanged
         ScadFromSceneCommand   = new AsyncRelayCommand(ExecuteScadFromSceneAsync);
         ToggleAssistantCommand = new RelayCommand(() => IsAssistantVisible = !IsAssistantVisible);
 
-        AssistantVM = new AssistantViewModel(_bridge);
+        AssistantVM = new AssistantViewModel(_bridge, this);
         UpdateVM    = new UpdateViewModel(new Services.UpdateService());
     }
 
     // ── Shape creation ────────────────────────────────────────────────────
 
+    public Task AddShapeAsync(string shapeType, Dictionary<string, object> customParams)
+    {
+        return AddShapeAsync(shapeType, (Dictionary<string, object>?)customParams);
+    }
+
     public async Task AddShapeAsync(string shapeType)
+    {
+        await AddShapeAsync(shapeType, (Dictionary<string, object>?)null);
+    }
+
+    private async Task AddShapeAsync(string shapeType, Dictionary<string, object>? customParams)
     {
         IsBusy = true;
         StatusText = T.T("status_loading");
         try
         {
             SaveUndoState();
+            var defaultP = GetDefaultParams(shapeType);
+            if (customParams != null)
+                foreach (var kv in customParams)
+                    defaultP[kv.Key] = kv.Value;
             var obj = new SceneObject
             {
                 Name      = $"{T.T($"shape_{shapeType}")} {SceneObjects.Count + 1}",
                 ShapeType = shapeType,
-                Params    = GetDefaultParams(shapeType),
+                Params    = defaultP,
             };
 
             if (_bridge?.IsRunning == true)

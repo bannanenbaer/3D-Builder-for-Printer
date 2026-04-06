@@ -147,7 +147,7 @@
         <TextBlock Style="{StaticResource SectionHeader}"
                    Text="KI-Integration (Optional)"/>
 
-        <TextBlock Text="Um den Assistenten mit KI-Features zu nutzen, benötigst du einen OpenAI API-Schlüssel."
+        <TextBlock Text="Brixl nutzt die Claude API (Anthropic) für intelligente Antworten. Ohne Schlüssel läuft er im Basis-Modus."
                    Foreground="{StaticResource TextSecondary}"
                    FontSize="10"
                    TextWrapping="Wrap"
@@ -160,16 +160,16 @@
                      BorderThickness="1"
                      Padding="8,6"
                      Margin="4,4"
-                     materialDesign:HintAssist.Hint="OpenAI API Key"/>
+                     materialDesign:HintAssist.Hint="Anthropic API Key (sk-ant-...)"/>
 
-        <TextBlock Text="Dein API-Schlüssel wird lokal gespeichert und nicht weitergegeben."
+        <TextBlock Text="Schlüssel kostenlos unter console.anthropic.com erstellen. Wird lokal gespeichert."
                    Foreground="{StaticResource TextSecondary}"
                    FontSize="9"
                    FontStyle="Italic"
                    Margin="4,2"/>
 
         <Button Content="API-Schlüssel speichern"
-                Command="{Binding SaveApiKeyCommand}"
+                Click="OnSaveApiKey"
                 Style="{StaticResource ActionButton}"
                 HorizontalAlignment="Stretch"
                 Margin="4,4"/>
