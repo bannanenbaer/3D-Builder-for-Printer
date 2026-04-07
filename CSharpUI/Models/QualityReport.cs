@@ -63,4 +63,7 @@ public class PrinterProfile
         var n when n.Contains("creality") || n.Contains("ender") => Creality,
         _ => Prusa
     };
+
+    public static List<PrinterProfile> GetCommonPrinters() =>
+        new() { Prusa, Bambu, Creality };
 }

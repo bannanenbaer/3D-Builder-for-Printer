@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using System.Windows.Media;
+using ThreeDBuilder.Models;
 using ThreeDBuilder.Services;
 using ThreeDBuilder.Views;
 
