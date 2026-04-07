@@ -118,6 +118,15 @@ public class MainViewModel : INotifyPropertyChanged
     public event Action<SceneObject>? ObjectRemoved;
     public event Action? SceneCleared;
 
+    /// <summary>Fired when the mascot should walk across the 3D viewport.</summary>
+    public event Func<MascotToolType, TimeSpan, Task>? MascotAnimationRequested;
+
+    public async Task RequestMascotAnimation(MascotToolType tool, TimeSpan duration)
+    {
+        if (MascotAnimationRequested != null)
+            await MascotAnimationRequested(tool, duration);
+    }
+
     // ── Commands ──────────────────────────────────────────────────────────
     public ICommand AddShapeCommand      { get; }
     public ICommand ImportStlCommand     { get; }
@@ -654,6 +663,9 @@ public class MainViewModel : INotifyPropertyChanged
     protected void OnPropertyChanged([CallerMemberName] string? name = null)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 }
+
+/// <summary>Maps to MascotAnimationView.ToolType without a direct dependency.</summary>
+public enum MascotToolType { None, Brush, Hammer, Tape }
 
 /// <summary>Represents one editable parameter in the properties panel.</summary>
 public class ParameterRow : INotifyPropertyChanged

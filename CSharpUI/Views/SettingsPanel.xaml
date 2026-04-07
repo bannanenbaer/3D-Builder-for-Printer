@@ -143,36 +143,24 @@
 
         <Separator Style="{StaticResource PanelSeparator}"/>
 
-        <!-- ── API-Einstellungen ──────────────────────────────────────── -->
+        <!-- ── KI-Info ───────────────────────────────────────────────── -->
         <TextBlock Style="{StaticResource SectionHeader}"
-                   Text="KI-Integration (Optional)"/>
+                   Text="KI-Assistent"/>
 
-        <TextBlock Text="Brixl nutzt die Claude API (Anthropic) für intelligente Antworten. Ohne Schlüssel läuft er im Basis-Modus."
-                   Foreground="{StaticResource TextSecondary}"
-                   FontSize="10"
-                   TextWrapping="Wrap"
-                   Margin="4,4"/>
-
-        <PasswordBox x:Name="ApiKeyBox"
-                     Background="#1F2937"
-                     Foreground="{StaticResource TextPrimary}"
-                     BorderBrush="#374151"
-                     BorderThickness="1"
-                     Padding="8,6"
-                     Margin="4,4"
-                     materialDesign:HintAssist.Hint="Anthropic API Key (sk-ant-...)"/>
-
-        <TextBlock Text="Schlüssel kostenlos unter console.anthropic.com erstellen. Wird lokal gespeichert."
-                   Foreground="{StaticResource TextSecondary}"
-                   FontSize="9"
-                   FontStyle="Italic"
-                   Margin="4,2"/>
-
-        <Button Content="API-Schlüssel speichern"
-                Click="OnSaveApiKey"
-                Style="{StaticResource ActionButton}"
-                HorizontalAlignment="Stretch"
-                Margin="4,4"/>
+        <Border Background="#0F1419" CornerRadius="4" Padding="8" Margin="4,4">
+            <StackPanel>
+                <TextBlock Text="🤖 Brixl läuft vollständig lokal — kein Internet, kein API-Schlüssel nötig!"
+                           Foreground="#10B981"
+                           FontSize="11"
+                           FontWeight="SemiBold"
+                           TextWrapping="Wrap"/>
+                <TextBlock Text="Brixl versteht natürliche Sprache für: Form-Erstellung, Objekt-Bearbeitung, AutoFix, Qualitätsanalyse und Bedienungsfragen."
+                           Foreground="{StaticResource TextSecondary}"
+                           FontSize="10"
+                           TextWrapping="Wrap"
+                           Margin="0,4,0,0"/>
+            </StackPanel>
+        </Border>
 
         <Separator Style="{StaticResource PanelSeparator}"/>
 
