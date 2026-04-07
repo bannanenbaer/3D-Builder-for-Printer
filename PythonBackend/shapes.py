@@ -4,6 +4,7 @@ CadQuery shape definitions for the 3D Builder.
 All dimensions are in millimeters.
 Each shape has a PARAMS dict defining parameter names, defaults, min, max, and type.
 """
+from __future__ import annotations  # keep cq.Workplane annotations as strings – safe when cq=None
 
 import math
 

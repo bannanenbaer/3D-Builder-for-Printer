@@ -67,11 +67,6 @@
                 <MenuItem Header="{Binding T[action_side_view]}"   Click="OnSideView"/>
                 <MenuItem Header="{Binding T[action_iso_view]}"    Click="OnIsometricView"/>
             </MenuItem>
-            <!-- Language -->
-            <MenuItem Header="{Binding T[menu_language]}" Foreground="{StaticResource TextPrimary}">
-                <MenuItem Header="Deutsch" Click="OnSetDe"/>
-                <MenuItem Header="English" Click="OnSetEn"/>
-            </MenuItem>
             <!-- Settings -->
             <MenuItem Header="Einstellungen" Click="OnOpenSettings"
                       Foreground="{StaticResource TextPrimary}"/>
