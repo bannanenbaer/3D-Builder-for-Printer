@@ -84,6 +84,24 @@ public partial class MainWindow : Window
 
     private void OnQuit(object sender, RoutedEventArgs e) => Close();
 
+    private void OnOpenSettings(object sender, RoutedEventArgs e)
+    {
+        var win = new Window
+        {
+            Title             = "Einstellungen",
+            Width             = 420,
+            Height            = 680,
+            Background        = System.Windows.Media.Brushes.Transparent,
+            WindowStyle       = WindowStyle.ToolWindow,
+            ResizeMode        = ResizeMode.NoResize,
+            Owner             = this,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+        };
+        var panel = new SettingsPanel { DataContext = _vm.SettingsVM };
+        win.Content = panel;
+        win.ShowDialog();
+    }
+
     private void OnAbout(object sender, RoutedEventArgs e) =>
         MessageBox.Show(
             "3D-Builder für 3D-Druck\n\n" +

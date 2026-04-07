@@ -72,6 +72,9 @@
                 <MenuItem Header="Deutsch" Click="OnSetDe"/>
                 <MenuItem Header="English" Click="OnSetEn"/>
             </MenuItem>
+            <!-- Settings -->
+            <MenuItem Header="Einstellungen" Click="OnOpenSettings"
+                      Foreground="{StaticResource TextPrimary}"/>
             <!-- Help -->
             <MenuItem Header="{Binding T[menu_help]}" Foreground="{StaticResource TextPrimary}">
                 <MenuItem Header="{Binding T[help_about]}" Click="OnAbout"/>
@@ -177,11 +180,26 @@
                 <ColumnDefinition Width="300" MinWidth="250"/>
             </Grid.ColumnDefinitions>
 
-            <!-- ─ LEFT SIDEBAR: Shape Library ─ -->
+            <!-- ─ LEFT SIDEBAR: Shape Library + Settings ─ -->
             <Border Grid.Column="0" Background="{StaticResource SidebarBackground}">
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <local:ShapePanel x:Name="ShapePanelControl" DataContext="{Binding}"/>
-                </ScrollViewer>
+                <TabControl Background="{StaticResource SidebarBackground}"
+                            BorderThickness="0"
+                            TabStripPlacement="Top">
+                    <TabItem Header="Formen"
+                             Foreground="{StaticResource TextPrimary}"
+                             Background="{StaticResource SidebarBackground}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <local:ShapePanel x:Name="ShapePanelControl" DataContext="{Binding}"/>
+                        </ScrollViewer>
+                    </TabItem>
+                    <TabItem Header="&#x2699; Einstellungen"
+                             Foreground="{StaticResource TextPrimary}"
+                             Background="{StaticResource SidebarBackground}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <local:SettingsPanel x:Name="SettingsPanelControl" DataContext="{Binding SettingsVM}"/>
+                        </ScrollViewer>
+                    </TabItem>
+                </TabControl>
             </Border>
 
             <GridSplitter Grid.Column="1" Background="#2D3748"
