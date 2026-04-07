@@ -5,8 +5,14 @@ All dimensions are in millimeters.
 Each shape has a PARAMS dict defining parameter names, defaults, min, max, and type.
 """
 
-import cadquery as cq
 import math
+
+try:
+    import cadquery as cq
+    CQ_AVAILABLE = True
+except ImportError:
+    cq = None
+    CQ_AVAILABLE = False
 
 # Shape parameter definitions: used to auto-generate UI controls
 SHAPE_DEFS = {
@@ -114,8 +120,12 @@ SHAPE_DEFS = {
 }
 
 
-def make_shape(shape_type: str, params: dict) -> cq.Workplane:
+def make_shape(shape_type: str, params: dict):
     """Create a CadQuery shape from type and parameter dict."""
+    if not CQ_AVAILABLE:
+        raise RuntimeError(
+            "CadQuery ist nicht installiert. Bitte 'pip install cadquery' ausführen."
+        )
     makers = {
         "box":        _make_box,
         "sphere":     _make_sphere,

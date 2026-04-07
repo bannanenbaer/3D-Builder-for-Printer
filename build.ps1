@@ -200,26 +200,18 @@ if (-not $BuildOnly) {
 # Schritt 2: Abhängigkeiten wiederherstellen
 Write-Step "Stelle Abhängigkeiten wieder her" 2 6
 
-try {
-    Write-Host "Führe 'dotnet restore' aus..."
-    dotnet restore CSharpUI/ThreeDBuilder.csproj --verbosity minimal
-    Write-Success "Abhängigkeiten wiederhergestellt"
-} catch {
-    Write-Error-Custom "Fehler beim Restore: $_"
-    exit 1
-}
+Write-Host "Führe 'dotnet restore' aus..."
+dotnet restore CSharpUI/ThreeDBuilder.csproj --verbosity minimal
+if ($LASTEXITCODE -ne 0) { Write-Error-Custom "Fehler beim Restore"; exit 1 }
+Write-Success "Abhängigkeiten wiederhergestellt"
 
 # Schritt 3: Hauptprojekt kompilieren
 Write-Step "Kompiliere Hauptprojekt (CSharpUI)" 3 6
 
-try {
-    Write-Host "Führe 'dotnet build' aus mit Konfiguration: $Configuration..."
-    dotnet build CSharpUI/ThreeDBuilder.csproj -c $Configuration --verbosity minimal
-    Write-Success "Hauptprojekt erfolgreich kompiliert"
-} catch {
-    Write-Error-Custom "Build fehlgeschlagen: $_"
-    exit 1
-}
+Write-Host "Führe 'dotnet build' aus mit Konfiguration: $Configuration..."
+dotnet build CSharpUI/ThreeDBuilder.csproj -c $Configuration --verbosity minimal
+if ($LASTEXITCODE -ne 0) { Write-Error-Custom "Build fehlgeschlagen – siehe Fehler oben"; exit 1 }
+Write-Success "Hauptprojekt erfolgreich kompiliert"
 
 # Schritt 4: Tests (optional)
 if (-not $SkipTests) {
@@ -254,14 +246,10 @@ if ($BuildOnly) {
     Write-Step "Erstelle Publish-Paket und Installer (WiX v4)" 5 6
 
     # Schritt 5a: Anwendung publizieren (erzeugt alle DLLs + Python-Backend in publish/)
-    try {
-        Write-Host "Publiziere Anwendung nach publish/..."
-        dotnet publish CSharpUI/ThreeDBuilder.csproj -c $Configuration -r win-x64 --self-contained true -o publish/ --verbosity minimal
-        Write-Success "Anwendung erfolgreich publiziert"
-    } catch {
-        Write-Error-Custom "Publish fehlgeschlagen: $_"
-        exit 1
-    }
+    Write-Host "Publiziere Anwendung nach publish/..."
+    dotnet publish CSharpUI/ThreeDBuilder.csproj -c $Configuration -r win-x64 --self-contained true -o publish/ --verbosity minimal
+    if ($LASTEXITCODE -ne 0) { Write-Error-Custom "Publish fehlgeschlagen – siehe Fehler oben"; exit 1 }
+    Write-Success "Anwendung erfolgreich publiziert"
 
     # Schritt 5a.2: AppFiles.wxs aus publish/ generieren (wird von Installer.wixproj eingebunden)
     try {

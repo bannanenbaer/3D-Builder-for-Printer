@@ -4,7 +4,12 @@ Geometry operations: fillet, chamfer, boolean operations.
 All inputs/outputs are CadQuery Workplane objects.
 """
 
-import cadquery as cq
+try:
+    import cadquery as cq
+    CQ_AVAILABLE = True
+except ImportError:
+    cq = None
+    CQ_AVAILABLE = False
 
 
 def apply_fillet(shape: cq.Workplane, radius: float) -> cq.Workplane:
