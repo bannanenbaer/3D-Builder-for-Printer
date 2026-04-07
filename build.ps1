@@ -27,10 +27,17 @@ function Generate-AppFilesWxs {
     foreach ($file in $allFiles) {
         $rel    = $file.FullName.Substring($publishRoot.Length).TrimStart('\','/')
         $compId = 'comp_' + ($rel -replace '[^a-zA-Z0-9]','_')
+        $fileId = 'fil_'  + ($rel -replace '[^a-zA-Z0-9]','_')
         $guid   = [System.Guid]::NewGuid().ToString().ToUpper()
         $src    = $rel -replace '/','\'
-        $null = $sb.AppendLine("      <Component Id=""$compId"" Directory=""INSTALLFOLDER"" Guid=""{$guid}"">")
-        $null = $sb.AppendLine("        <File Source=""..\publish\$src"" KeyPath=""yes"" />")
+        $subdir = [System.IO.Path]::GetDirectoryName($rel)
+        if ([string]::IsNullOrEmpty($subdir)) {
+            $null = $sb.AppendLine("      <Component Id=""$compId"" Directory=""INSTALLFOLDER"" Guid=""{$guid}"">")
+        } else {
+            $subdir = $subdir -replace '/','\'
+            $null = $sb.AppendLine("      <Component Id=""$compId"" Directory=""INSTALLFOLDER"" Subdirectory=""$subdir"" Guid=""{$guid}"">")
+        }
+        $null = $sb.AppendLine("        <File Id=""$fileId"" Source=""..\publish\$src"" KeyPath=""yes"" />")
         $null = $sb.AppendLine("      </Component>")
     }
 
