@@ -4,9 +4,6 @@ namespace ThreeDBuilder.Views
 {
     public partial class SettingsPanel : UserControl
     {
-        public SettingsPanel()
-        {
-            InitializeComponent();
-        }
+        public SettingsPanel() => InitializeComponent();
     }
 }

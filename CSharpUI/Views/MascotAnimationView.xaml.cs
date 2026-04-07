@@ -9,8 +9,9 @@ namespace ThreeDBuilder.Views
         private Storyboard? _currentAnim;
         private Storyboard? _idleFloat;
         private Storyboard? _blink;
+        private Storyboard? _tailSwing;
 
-        public enum ToolType { None, Brush, Hammer, Tape }
+        public enum ToolType { None, Brush, Hammer, Tape, Jump, Excited, Thinking, Happy }
 
         public MascotAnimationView()
         {
@@ -24,8 +25,10 @@ namespace ThreeDBuilder.Views
         {
             _idleFloat = (Storyboard)Resources["IdleFloat"];
             _blink     = (Storyboard)Resources["BlinkAnimation"];
+            _tailSwing = (Storyboard)Resources["SwingAnimation"];
             _idleFloat?.Begin();
             _blink?.Begin();
+            _tailSwing?.Begin();
         }
 
         // ── Tool-specific animations ──────────────────────────────────────
@@ -36,10 +39,14 @@ namespace ThreeDBuilder.Views
 
             var key = tool switch
             {
-                ToolType.Brush  => "BrushAnimation",
-                ToolType.Hammer => "HammerAnimation",
-                ToolType.Tape   => "TapeAnimation",
-                _               => "WalkAnimation",
+                ToolType.Brush    => "BrushAnimation",
+                ToolType.Hammer   => "HammerAnimation",
+                ToolType.Tape     => "TapeAnimation",
+                ToolType.Jump     => "JumpAnimation",
+                ToolType.Excited  => "ExcitedAnimation",
+                ToolType.Thinking => "ThinkingAnimation",
+                ToolType.Happy    => "HappyAnimation",
+                _                 => "WalkAnimation",
             };
 
             _currentAnim = (Storyboard)Resources[key];

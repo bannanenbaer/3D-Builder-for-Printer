@@ -3,173 +3,371 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
 
-    <StackPanel Margin="8">
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="8" Background="{StaticResource SidebarBackground}">
 
-        <!-- ── Allgemeine Einstellungen ────────────────────────────────── -->
-        <TextBlock Style="{StaticResource SectionHeader}"
-                   Text="Allgemeine Einstellungen"/>
+            <!-- ══ UPDATE ══════════════════════════════════════════════════ -->
+            <TextBlock Style="{StaticResource SectionHeader}" Text="Update"/>
 
-        <Grid Margin="4,6">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-
-            <TextBlock Grid.Column="0"
-                       Text="Sprache:"
-                       Foreground="{StaticResource TextPrimary}"
-                       VerticalAlignment="Center"
-                       FontSize="11"/>
-
-            <ComboBox Grid.Column="1"
-                      SelectedItem="{Binding SelectedLanguage}"
-                      ItemsSource="{Binding AvailableLanguages}"
-                      Width="120"
-                      Background="#1F2937"
-                      Foreground="{StaticResource TextPrimary}"
-                      BorderBrush="#374151"/>
-        </Grid>
-
-        <Grid Margin="4,6">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-
-            <TextBlock Grid.Column="0"
-                       Text="Theme:"
-                       Foreground="{StaticResource TextPrimary}"
-                       VerticalAlignment="Center"
-                       FontSize="11"/>
-
-            <ComboBox Grid.Column="1"
-                      SelectedItem="{Binding SelectedTheme}"
-                      ItemsSource="{Binding AvailableThemes}"
-                      Width="120"
-                      Background="#1F2937"
-                      Foreground="{StaticResource TextPrimary}"
-                      BorderBrush="#374151"/>
-        </Grid>
-
-        <Separator Style="{StaticResource PanelSeparator}"/>
-
-        <!-- ── Assistent-Einstellungen ────────────────────────────────── -->
-        <TextBlock Style="{StaticResource SectionHeader}"
-                   Text="3D-Assistent"/>
-
-        <Border Background="#0F1419" 
-                BorderBrush="#374151" 
-                BorderThickness="1"
-                CornerRadius="4"
-                Padding="8"
-                Margin="4,6">
-            <StackPanel>
-                <Grid Margin="0,4">
+            <Border Background="#0F1419"
+                    BorderBrush="#374151"
+                    BorderThickness="1"
+                    CornerRadius="4"
+                    Padding="8"
+                    Margin="4,4">
+                <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-
-                    <StackPanel Grid.Column="0">
-                        <TextBlock Text="Assistenten aktivieren"
-                                   Foreground="{StaticResource TextPrimary}"
-                                   FontSize="11"
-                                   FontWeight="SemiBold"/>
-                        <TextBlock Text="Aktiviere den süßen KI-Assistenten für Hilfe und Tipps"
-                                   Foreground="{StaticResource TextSecondary}"
-                                   FontSize="9"
-                                   Margin="0,2,0,0"/>
-                    </StackPanel>
-
-                    <ToggleButton Grid.Column="1"
-                                  IsChecked="{Binding IsAssistantEnabled}"
-                                  Style="{StaticResource MaterialDesignToggleButton}"
-                                  VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="0"
+                               Text="Version v1.0.0"
+                               Foreground="{StaticResource TextSecondary}"
+                               VerticalAlignment="Center"
+                               FontSize="11"/>
+                    <Button Grid.Column="1"
+                            Content="Auf Updates prüfen"
+                            Command="{Binding DataContext.UpdateVM.CheckUpdateCommand,
+                                      RelativeSource={RelativeSource AncestorType=Window}}"
+                            Style="{StaticResource ActionButton}"
+                            FontSize="10"
+                            Height="28"
+                            Padding="8,0"/>
                 </Grid>
+            </Border>
 
-                <Separator Background="#2D3748" Margin="0,6"/>
+            <Separator Style="{StaticResource PanelSeparator}"/>
 
-                <Grid Margin="0,4">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
+            <!-- ══ ERSCHEINUNGSBILD ════════════════════════════════════════ -->
+            <TextBlock Style="{StaticResource SectionHeader}" Text="Erscheinungsbild"/>
 
-                    <StackPanel Grid.Column="0">
-                        <TextBlock Text="Automatische Vorschläge"
-                                   Foreground="{StaticResource TextPrimary}"
-                                   FontSize="11"
-                                   FontWeight="SemiBold"/>
-                        <TextBlock Text="Der Assistent macht Vorschläge basierend auf deinen Aktionen"
-                                   Foreground="{StaticResource TextSecondary}"
-                                   FontSize="9"
-                                   Margin="0,2,0,0"/>
-                    </StackPanel>
+            <!-- Farbmodus -->
+            <Grid Margin="4,4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="130"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0"
+                           Text="Farbmodus:"
+                           Foreground="{StaticResource TextPrimary}"
+                           VerticalAlignment="Center"
+                           FontSize="11"/>
+                <ComboBox Grid.Column="1"
+                          ItemsSource="{Binding AvailableThemes}"
+                          SelectedItem="{Binding ThemeMode}"
+                          Background="#1F2937"
+                          Foreground="{StaticResource TextPrimary}"
+                          BorderBrush="#374151"
+                          FontSize="11"/>
+            </Grid>
 
-                    <ToggleButton Grid.Column="1"
-                                  IsChecked="{Binding AutoSuggestionsEnabled}"
-                                  IsEnabled="{Binding IsAssistantEnabled}"
-                                  Style="{StaticResource MaterialDesignToggleButton}"
-                                  VerticalAlignment="Center"/>
-                </Grid>
-
-                <Separator Background="#2D3748" Margin="0,6"/>
-
-                <Grid Margin="0,4">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-
-                    <StackPanel Grid.Column="0">
-                        <TextBlock Text="Animationen"
-                                   Foreground="{StaticResource TextPrimary}"
-                                   FontSize="11"
-                                   FontWeight="SemiBold"/>
-                        <TextBlock Text="Süße Animationen des Assistenten"
-                                   Foreground="{StaticResource TextSecondary}"
-                                   FontSize="9"
-                                   Margin="0,2,0,0"/>
-                    </StackPanel>
-
-                    <ToggleButton Grid.Column="1"
-                                  IsChecked="{Binding AnimationsEnabled}"
-                                  IsEnabled="{Binding IsAssistantEnabled}"
-                                  Style="{StaticResource MaterialDesignToggleButton}"
-                                  VerticalAlignment="Center"/>
-                </Grid>
-            </StackPanel>
-        </Border>
-
-        <Separator Style="{StaticResource PanelSeparator}"/>
-
-        <!-- ── KI-Info ───────────────────────────────────────────────── -->
-        <TextBlock Style="{StaticResource SectionHeader}"
-                   Text="KI-Assistent"/>
-
-        <Border Background="#0F1419" CornerRadius="4" Padding="8" Margin="4,4">
-            <StackPanel>
-                <TextBlock Text="🤖 Brixl läuft vollständig lokal — kein Internet, kein API-Schlüssel nötig!"
-                           Foreground="#10B981"
-                           FontSize="11"
-                           FontWeight="SemiBold"
-                           TextWrapping="Wrap"/>
-                <TextBlock Text="Brixl versteht natürliche Sprache für: Form-Erstellung, Objekt-Bearbeitung, AutoFix, Qualitätsanalyse und Bedienungsfragen."
+            <!-- Schriftgröße -->
+            <Grid Margin="4,4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="40"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0"
+                           Text="Schriftgröße:"
+                           Foreground="{StaticResource TextPrimary}"
+                           VerticalAlignment="Center"
+                           FontSize="11"/>
+                <TextBlock Grid.Column="1"
+                           Text="{Binding FontScalePercent, StringFormat='{}{0}%'}"
                            Foreground="{StaticResource TextSecondary}"
-                           FontSize="10"
-                           TextWrapping="Wrap"
-                           Margin="0,4,0,0"/>
-            </StackPanel>
-        </Border>
+                           VerticalAlignment="Center"
+                           FontSize="11"
+                           HorizontalAlignment="Right"/>
+            </Grid>
+            <Slider Margin="4,2,4,6"
+                    Minimum="80" Maximum="150"
+                    Value="{Binding FontScalePercent}"
+                    SmallChange="5" LargeChange="10"
+                    Foreground="{StaticResource AccentBrush}"
+                    TickFrequency="10"
+                    IsSnapToTickEnabled="True"/>
 
-        <Separator Style="{StaticResource PanelSeparator}"/>
+            <!-- Farbenblind-Modus -->
+            <Grid Margin="4,4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="130"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0"
+                           Text="Farbenblind-Modus:"
+                           Foreground="{StaticResource TextPrimary}"
+                           VerticalAlignment="Center"
+                           FontSize="11"/>
+                <ComboBox Grid.Column="1"
+                          ItemsSource="{Binding AvailableColorBlindModes}"
+                          SelectedItem="{Binding ColorBlindMode}"
+                          Background="#1F2937"
+                          Foreground="{StaticResource TextPrimary}"
+                          BorderBrush="#374151"
+                          FontSize="11"/>
+            </Grid>
 
-        <!-- ── Info ──────────────────────────────────────────────────── -->
-        <TextBlock Text="3D Builder Pro v1.0"
-                   Foreground="{StaticResource TextSecondary}"
-                   FontSize="10"
-                   TextAlignment="Center"
-                   Margin="4,8"/>
+            <Separator Style="{StaticResource PanelSeparator}"/>
 
-    </StackPanel>
+            <!-- ══ SPRACHE ═════════════════════════════════════════════════ -->
+            <TextBlock Style="{StaticResource SectionHeader}" Text="Sprache"/>
+
+            <Grid Margin="4,4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="130"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0"
+                           Text="Sprache:"
+                           Foreground="{StaticResource TextPrimary}"
+                           VerticalAlignment="Center"
+                           FontSize="11"/>
+                <ComboBox Grid.Column="1"
+                          ItemsSource="{Binding AvailableLanguages}"
+                          SelectedItem="{Binding Language}"
+                          Background="#1F2937"
+                          Foreground="{StaticResource TextPrimary}"
+                          BorderBrush="#374151"
+                          FontSize="11"/>
+            </Grid>
+
+            <Separator Style="{StaticResource PanelSeparator}"/>
+
+            <!-- ══ DRUCKBETT ═══════════════════════════════════════════════ -->
+            <TextBlock Style="{StaticResource SectionHeader}" Text="Druckbett"/>
+
+            <!-- Drucker-Voreinstellung -->
+            <Grid Margin="4,4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="130"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0"
+                           Text="Voreinstellung:"
+                           Foreground="{StaticResource TextPrimary}"
+                           VerticalAlignment="Center"
+                           FontSize="11"/>
+                <ComboBox Grid.Column="1"
+                          ItemsSource="{Binding AvailablePrinterPresets}"
+                          SelectedItem="{Binding PrinterPreset}"
+                          Background="#1F2937"
+                          Foreground="{StaticResource TextPrimary}"
+                          BorderBrush="#374151"
+                          FontSize="11"/>
+            </Grid>
+
+            <!-- Breite -->
+            <Grid Margin="4,4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="90"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0"
+                           Text="Breite (mm):"
+                           Foreground="{StaticResource TextPrimary}"
+                           VerticalAlignment="Center"
+                           FontSize="11"/>
+                <TextBox Grid.Column="1"
+                         Text="{Binding PrinterBedWidth, UpdateSourceTrigger=LostFocus}"
+                         Style="{StaticResource NumericInput}"
+                         FontSize="11"/>
+            </Grid>
+
+            <!-- Tiefe -->
+            <Grid Margin="4,4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="90"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0"
+                           Text="Tiefe (mm):"
+                           Foreground="{StaticResource TextPrimary}"
+                           VerticalAlignment="Center"
+                           FontSize="11"/>
+                <TextBox Grid.Column="1"
+                         Text="{Binding PrinterBedDepth, UpdateSourceTrigger=LostFocus}"
+                         Style="{StaticResource NumericInput}"
+                         FontSize="11"/>
+            </Grid>
+
+            <Separator Style="{StaticResource PanelSeparator}"/>
+
+            <!-- ══ AUTOSAVE ════════════════════════════════════════════════ -->
+            <TextBlock Style="{StaticResource SectionHeader}" Text="Autosave"/>
+
+            <!-- Toggle -->
+            <Grid Margin="4,4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0"
+                           Text="Automatisch speichern:"
+                           Foreground="{StaticResource TextPrimary}"
+                           VerticalAlignment="Center"
+                           FontSize="11"/>
+                <ToggleButton Grid.Column="1"
+                              IsChecked="{Binding AutoSaveEnabled}"
+                              Style="{StaticResource MaterialDesignToggleButton}"
+                              VerticalAlignment="Center"/>
+            </Grid>
+
+            <!-- Pfad -->
+            <TextBlock Text="Speicherpfad:"
+                       Foreground="{StaticResource TextPrimary}"
+                       FontSize="11"
+                       Margin="4,6,4,2"/>
+            <Grid Margin="4,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0"
+                         Text="{Binding AutoSavePath, UpdateSourceTrigger=LostFocus}"
+                         Background="#1F2937"
+                         Foreground="{StaticResource TextPrimary}"
+                         BorderBrush="#374151"
+                         FontSize="10"
+                         Padding="4,3"
+                         IsEnabled="{Binding AutoSaveEnabled}"
+                         VerticalAlignment="Center"/>
+                <Button Grid.Column="1"
+                        Content="Durchsuchen"
+                        Command="{Binding BrowseAutoSavePathCommand}"
+                        IsEnabled="{Binding AutoSaveEnabled}"
+                        Style="{StaticResource ActionButton}"
+                        FontSize="10"
+                        Height="28"
+                        Padding="6,0"
+                        Margin="4,0,0,0"/>
+                <Button Grid.Column="2"
+                        Content="Öffnen"
+                        Command="{Binding OpenAutoSaveFolderCommand}"
+                        IsEnabled="{Binding AutoSaveEnabled}"
+                        Style="{StaticResource ActionButton}"
+                        FontSize="10"
+                        Height="28"
+                        Padding="6,0"
+                        Margin="4,0,0,0"/>
+            </Grid>
+
+            <!-- Intervall -->
+            <Grid Margin="4,6,4,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="55"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0"
+                           Text="Intervall:"
+                           Foreground="{StaticResource TextPrimary}"
+                           VerticalAlignment="Center"
+                           FontSize="11"/>
+                <TextBlock Grid.Column="1"
+                           Text="{Binding AutoSaveIntervalMinutes, StringFormat='{}{0} Min'}"
+                           Foreground="{StaticResource TextSecondary}"
+                           VerticalAlignment="Center"
+                           FontSize="11"
+                           HorizontalAlignment="Right"/>
+            </Grid>
+            <Slider Margin="4,2,4,8"
+                    Minimum="1" Maximum="60"
+                    Value="{Binding AutoSaveIntervalMinutes}"
+                    SmallChange="1" LargeChange="5"
+                    IsEnabled="{Binding AutoSaveEnabled}"
+                    Foreground="{StaticResource AccentBrush}"
+                    TickFrequency="5"
+                    IsSnapToTickEnabled="True"/>
+
+            <Separator Style="{StaticResource PanelSeparator}"/>
+
+            <!-- ══ ASSISTENT (BRIXL) ════════════════════════════════════════ -->
+            <TextBlock Style="{StaticResource SectionHeader}" Text="Assistent (Brixl)"/>
+
+            <Border Background="#0F1419"
+                    BorderBrush="#374151"
+                    BorderThickness="1"
+                    CornerRadius="4"
+                    Padding="8"
+                    Margin="4,4">
+                <StackPanel>
+
+                    <!-- Aktiviert -->
+                    <Grid Margin="0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Aktiviert"
+                                       Foreground="{StaticResource TextPrimary}"
+                                       FontSize="11"
+                                       FontWeight="SemiBold"/>
+                            <TextBlock Text="KI-Assistenten Brixl aktivieren"
+                                       Foreground="{StaticResource TextSecondary}"
+                                       FontSize="9"
+                                       Margin="0,2,0,0"/>
+                        </StackPanel>
+                        <ToggleButton Grid.Column="1"
+                                      IsChecked="{Binding IsAssistantEnabled}"
+                                      Style="{StaticResource MaterialDesignToggleButton}"
+                                      VerticalAlignment="Center"/>
+                    </Grid>
+
+                    <Separator Background="#2D3748" Margin="0,6"/>
+
+                    <!-- Animationen -->
+                    <Grid Margin="0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Animationen"
+                                       Foreground="{StaticResource TextPrimary}"
+                                       FontSize="11"
+                                       FontWeight="SemiBold"/>
+                            <TextBlock Text="Süße Animationen des Assistenten"
+                                       Foreground="{StaticResource TextSecondary}"
+                                       FontSize="9"
+                                       Margin="0,2,0,0"/>
+                        </StackPanel>
+                        <ToggleButton Grid.Column="1"
+                                      IsChecked="{Binding AnimationsEnabled}"
+                                      IsEnabled="{Binding IsAssistantEnabled}"
+                                      Style="{StaticResource MaterialDesignToggleButton}"
+                                      VerticalAlignment="Center"/>
+                    </Grid>
+
+                    <Separator Background="#2D3748" Margin="0,6"/>
+
+                    <!-- Automatische Vorschläge -->
+                    <Grid Margin="0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Automatische Vorschläge"
+                                       Foreground="{StaticResource TextPrimary}"
+                                       FontSize="11"
+                                       FontWeight="SemiBold"/>
+                            <TextBlock Text="Vorschläge basierend auf deinen Aktionen"
+                                       Foreground="{StaticResource TextSecondary}"
+                                       FontSize="9"
+                                       Margin="0,2,0,0"/>
+                        </StackPanel>
+                        <ToggleButton Grid.Column="1"
+                                      IsChecked="{Binding AutoSuggestionsEnabled}"
+                                      IsEnabled="{Binding IsAssistantEnabled}"
+                                      Style="{StaticResource MaterialDesignToggleButton}"
+                                      VerticalAlignment="Center"/>
+                    </Grid>
+
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>
