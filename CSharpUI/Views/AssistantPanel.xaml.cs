@@ -16,14 +16,27 @@ namespace ThreeDBuilder.Views
             DataContextChanged += (_, _) => WireMessages();
         }
 
+        private AssistantViewModel? _wiredVm;
+
         private void WireMessages()
         {
+            // Unwire previous view model to prevent duplicate subscriptions
+            if (_wiredVm != null)
+            {
+                _wiredVm.Messages.CollectionChanged -= OnMessagesChanged;
+                _wiredVm = null;
+            }
+
             if (DataContext is AssistantViewModel vm)
             {
-                vm.Messages.CollectionChanged += (_, _) =>
-                    Dispatcher.InvokeAsync(() =>
-                        ChatScroll.ScrollToBottom());
+                _wiredVm = vm;
+                vm.Messages.CollectionChanged += OnMessagesChanged;
             }
+        }
+
+        private void OnMessagesChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            Dispatcher.InvokeAsync(() => ChatScroll.ScrollToBottom());
         }
 
         // Send on Enter (Shift+Enter = new line, but AcceptsReturn=False so just Enter)
