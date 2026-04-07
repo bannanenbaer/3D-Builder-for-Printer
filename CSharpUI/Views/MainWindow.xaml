@@ -172,26 +172,11 @@
                 <ColumnDefinition Width="300" MinWidth="250"/>
             </Grid.ColumnDefinitions>
 
-            <!-- ─ LEFT SIDEBAR: Shape Library + Settings ─ -->
+            <!-- ─ LEFT SIDEBAR: Shape Library ─ -->
             <Border Grid.Column="0" Background="{DynamicResource SidebarBackground}">
-                <TabControl Background="{DynamicResource SidebarBackground}"
-                            BorderThickness="0"
-                            TabStripPlacement="Top">
-                    <TabItem Header="Formen"
-                             Foreground="{DynamicResource TextPrimary}"
-                             Background="{DynamicResource SidebarBackground}">
-                        <ScrollViewer VerticalScrollBarVisibility="Auto">
-                            <local:ShapePanel x:Name="ShapePanelControl" DataContext="{Binding}"/>
-                        </ScrollViewer>
-                    </TabItem>
-                    <TabItem Header="&#x2699; Einstellungen"
-                             Foreground="{DynamicResource TextPrimary}"
-                             Background="{DynamicResource SidebarBackground}">
-                        <ScrollViewer VerticalScrollBarVisibility="Auto">
-                            <local:SettingsPanel x:Name="SettingsPanelControl" DataContext="{Binding SettingsVM}"/>
-                        </ScrollViewer>
-                    </TabItem>
-                </TabControl>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <local:ShapePanel x:Name="ShapePanelControl" DataContext="{Binding}"/>
+                </ScrollViewer>
             </Border>
 
             <GridSplitter Grid.Column="1" Background="#2D3748"
