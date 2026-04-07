@@ -192,17 +192,12 @@ public class MainViewModel : INotifyPropertyChanged
 
     // ── Shape creation ────────────────────────────────────────────────────
 
-    public Task AddShapeAsync(string shapeType, Dictionary<string, object> customParams)
-    {
-        return AddShapeAsync(shapeType, (Dictionary<string, object>?)customParams);
-    }
-
     public async Task AddShapeAsync(string shapeType)
     {
         await AddShapeAsync(shapeType, (Dictionary<string, object>?)null);
     }
 
-    private async Task AddShapeAsync(string shapeType, Dictionary<string, object>? customParams)
+    public async Task AddShapeAsync(string shapeType, Dictionary<string, object>? customParams)
     {
         IsBusy = true;
         StatusText = T.T("status_loading");
