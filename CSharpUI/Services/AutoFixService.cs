@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using ThreeDBuilder.Models;
 
 namespace ThreeDBuilder.Services
 {
@@ -220,56 +221,12 @@ namespace ThreeDBuilder.Services
         {
             var options = new AutoFixOptions
             {
-                FilletRadius = printer.RecommendedFilletRadius,
-                MinWallThickness = printer.MinWallThickness,
-                MinHoleSize = printer.MinFeatureSize
+                FilletRadius         = (float)(printer.NozzleDiameter * 3.0),
+                MinWallThickness     = (float)printer.MinWallThickness,
+                MinHoleSize          = (float)(printer.NozzleDiameter * 2.0)
             };
 
             return await AutoFixModel(modelId, options);
-        }
-    }
-
-    /// <summary>
-    /// Drucker-Profile mit empfohlenen Einstellungen
-    /// </summary>
-    public class PrinterProfile
-    {
-        public string Name { get; set; }
-        public float MinWallThickness { get; set; }
-        public float MinFeatureSize { get; set; }
-        public float RecommendedFilletRadius { get; set; }
-        public float NozzleDiameter { get; set; }
-
-        public static PrinterProfile Prusa = new()
-        {
-            Name = "Prusa i3 MK3S+",
-            MinWallThickness = 1.2f,
-            MinFeatureSize = 2.0f,
-            RecommendedFilletRadius = 1.5f,
-            NozzleDiameter = 0.4f
-        };
-
-        public static PrinterProfile Creality = new()
-        {
-            Name = "Creality Ender 3 V2",
-            MinWallThickness = 1.5f,
-            MinFeatureSize = 2.5f,
-            RecommendedFilletRadius = 2.0f,
-            NozzleDiameter = 0.4f
-        };
-
-        public static PrinterProfile Bambu = new()
-        {
-            Name = "Bambu Lab X1",
-            MinWallThickness = 1.0f,
-            MinFeatureSize = 1.5f,
-            RecommendedFilletRadius = 1.0f,
-            NozzleDiameter = 0.4f
-        };
-
-        public static List<PrinterProfile> GetCommonPrinters()
-        {
-            return new List<PrinterProfile> { Prusa, Creality, Bambu };
         }
     }
 }
