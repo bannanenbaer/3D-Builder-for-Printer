@@ -133,7 +133,7 @@
                                          Margin="3,0,0,0"
                                          Fill="#94A3B8">
                                     <Ellipse.RenderTransform>
-                                        <TranslateTransform x:Name="ThumbMove" X="0"/>
+                                        <TranslateTransform/>
                                     </Ellipse.RenderTransform>
                                 </Ellipse>
                             </Border>
@@ -144,18 +144,20 @@
                                     <Trigger.EnterActions>
                                         <BeginStoryboard>
                                             <Storyboard>
-                                                <DoubleAnimation Storyboard.TargetName="ThumbMove"
-                                                                 Storyboard.TargetProperty="X"
-                                                                 To="20" Duration="0:0:0.15"/>
+                                                <DoubleAnimation
+                                                    Storyboard.TargetName="Thumb"
+                                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
+                                                    To="20" Duration="0:0:0.15"/>
                                             </Storyboard>
                                         </BeginStoryboard>
                                     </Trigger.EnterActions>
                                     <Trigger.ExitActions>
                                         <BeginStoryboard>
                                             <Storyboard>
-                                                <DoubleAnimation Storyboard.TargetName="ThumbMove"
-                                                                 Storyboard.TargetProperty="X"
-                                                                 To="0" Duration="0:0:0.15"/>
+                                                <DoubleAnimation
+                                                    Storyboard.TargetName="Thumb"
+                                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
+                                                    To="0" Duration="0:0:0.15"/>
                                             </Storyboard>
                                         </BeginStoryboard>
                                     </Trigger.ExitActions>
