@@ -158,6 +158,7 @@ public class MainViewModel : INotifyPropertyChanged
 
     public AssistantViewModel AssistantVM { get; }
     public UpdateViewModel    UpdateVM    { get; }
+    public SettingsViewModel  SettingsVM  { get; }
 
     // ── Constructor ───────────────────────────────────────────────────────
     public MainViewModel()
@@ -188,6 +189,7 @@ public class MainViewModel : INotifyPropertyChanged
 
         AssistantVM = new AssistantViewModel(_bridge, this);
         UpdateVM    = new UpdateViewModel(new Services.UpdateService());
+        SettingsVM  = new SettingsViewModel();
     }
 
     // ── Shape creation ────────────────────────────────────────────────────

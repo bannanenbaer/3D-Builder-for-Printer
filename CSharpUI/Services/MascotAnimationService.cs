@@ -139,5 +139,61 @@ namespace ThreeDBuilder.Services
             _mascotView.ResetAnimation();
             _mascotView.AnimationSpeed = 1.0;
         }
+
+        /// <summary>
+        /// Brixl hüpft fröhlich — 2s
+        /// </summary>
+        public async Task PlayJumpAnimation()
+        {
+            _mascotView.StartAnimation(MascotAnimationView.ToolType.Jump);
+            await Task.Delay(2000);
+            _mascotView.StopAnimation();
+        }
+
+        /// <summary>
+        /// Brixl ist aufgeregt — beide Arme hoch, hüpfen — 3s
+        /// </summary>
+        public async Task PlayExcitedAnimation()
+        {
+            _mascotView.StartAnimation(MascotAnimationView.ToolType.Excited);
+            await Task.Delay(3000);
+            _mascotView.StopAnimation();
+        }
+
+        /// <summary>
+        /// Brixl denkt nach — Arm an Kinn, langsames Wippen — 4s
+        /// </summary>
+        public async Task PlayThinkingAnimation()
+        {
+            _mascotView.StartAnimation(MascotAnimationView.ToolType.Thinking);
+            await Task.Delay(4000);
+            _mascotView.StopAnimation();
+        }
+
+        /// <summary>
+        /// Brixl tanzt vor Freude — Tanzbewegung — 3s
+        /// </summary>
+        public async Task PlayHappyAnimation()
+        {
+            _mascotView.StartAnimation(MascotAnimationView.ToolType.Happy);
+            await Task.Delay(3000);
+            _mascotView.StopAnimation();
+        }
+
+        /// <summary>
+        /// Begrüßungsanimation — Wave dann Jump
+        /// </summary>
+        public async Task PlayGreetingAnimation()
+        {
+            // Phase 1: Winken
+            _mascotView.StartAnimation(MascotAnimationView.ToolType.None); // Walk = freundliches Laufen
+            await Task.Delay(1200);
+
+            // Phase 2: Hüpfen
+            _mascotView.StartAnimation(MascotAnimationView.ToolType.Jump);
+            await Task.Delay(1500);
+
+            _mascotView.StopAnimation();
+        }
     }
 }
