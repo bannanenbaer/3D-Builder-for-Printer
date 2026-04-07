@@ -257,10 +257,10 @@
 
         <ListBox ItemsSource="{Binding SceneObjects}"
                  SelectedItem="{Binding SelectedObject}"
-                 Background="#1F2937"
+                 Background="{DynamicResource InputBackground}"
                  Foreground="{DynamicResource TextPrimary}"
                  BorderThickness="1"
-                 BorderBrush="#374151"
+                 BorderBrush="{DynamicResource InputBorder}"
                  MaxHeight="250"
                  Padding="2">
             <ListBox.ItemTemplate>

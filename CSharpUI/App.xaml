@@ -30,34 +30,38 @@
                               Opacity="0.5"/>
 
             <!-- App-wide colors - Premium Dark Theme -->
-            <SolidColorBrush x:Key="PanelBackground"  Color="#0F1419"/>
-            <SolidColorBrush x:Key="SidebarBackground" Color="#1A1F2E"/>
-            <SolidColorBrush x:Key="ButtonHighlight"  Color="#3B82F6"/>
-            <SolidColorBrush x:Key="AccentBrush"      Color="#60A5FA"/>
-            <SolidColorBrush x:Key="TextPrimary"      Color="#F8FAFC"/>
-            <SolidColorBrush x:Key="TextSecondary"    Color="#94A3B8"/>
-            <SolidColorBrush x:Key="SeparatorBrush"   Color="#2D3748"/>
-            <SolidColorBrush x:Key="SuccessBrush"     Color="#10B981"/>
-            <SolidColorBrush x:Key="WarningBrush"     Color="#F59E0B"/>
-            <SolidColorBrush x:Key="ErrorBrush"       Color="#EF4444"/>
-            <SolidColorBrush x:Key="InfoBrush"        Color="#06B6D4"/>
+            <SolidColorBrush x:Key="PanelBackground"   Color="#0F1419"/>
+            <SolidColorBrush x:Key="SidebarBackground"  Color="#1A1F2E"/>
+            <SolidColorBrush x:Key="CardBackground"     Color="#1F2937"/>
+            <SolidColorBrush x:Key="CardHover"          Color="#2D3748"/>
+            <SolidColorBrush x:Key="InputBackground"    Color="#1F2937"/>
+            <SolidColorBrush x:Key="InputBorder"        Color="#374151"/>
+            <SolidColorBrush x:Key="ButtonHighlight"    Color="#3B82F6"/>
+            <SolidColorBrush x:Key="AccentBrush"        Color="#60A5FA"/>
+            <SolidColorBrush x:Key="TextPrimary"        Color="#F8FAFC"/>
+            <SolidColorBrush x:Key="TextSecondary"      Color="#94A3B8"/>
+            <SolidColorBrush x:Key="SeparatorBrush"     Color="#2D3748"/>
+            <SolidColorBrush x:Key="SuccessBrush"       Color="#10B981"/>
+            <SolidColorBrush x:Key="WarningBrush"       Color="#F59E0B"/>
+            <SolidColorBrush x:Key="ErrorBrush"         Color="#EF4444"/>
+            <SolidColorBrush x:Key="InfoBrush"          Color="#06B6D4"/>
 
-            <!-- Shape button style - Modern with smooth transitions -->
+            <!-- Shape button style - uses DynamicResource so theme switching works -->
             <Style x:Key="ShapeButtonStyle" TargetType="Button"
                    BasedOn="{StaticResource MaterialDesignFlatButton}">
-                <Setter Property="Foreground"   Value="{DynamicResource TextPrimary}"/>
-                <Setter Property="Background"   Value="#1F2937"/>
-                <Setter Property="BorderBrush"  Value="#374151"/>
+                <Setter Property="Foreground"      Value="{DynamicResource TextPrimary}"/>
+                <Setter Property="Background"      Value="{DynamicResource CardBackground}"/>
+                <Setter Property="BorderBrush"     Value="{DynamicResource InputBorder}"/>
                 <Setter Property="BorderThickness" Value="1"/>
-                <Setter Property="Margin"       Value="3"/>
-                <Setter Property="Height"       Value="70"/>
-                <Setter Property="Width"        Value="100"/>
-                <Setter Property="FontSize"     Value="10"/>
-                <Setter Property="Cursor"       Value="Hand"/>
-                <Setter Property="Padding"      Value="4"/>
+                <Setter Property="Margin"          Value="3"/>
+                <Setter Property="Height"          Value="70"/>
+                <Setter Property="Width"           Value="100"/>
+                <Setter Property="FontSize"        Value="10"/>
+                <Setter Property="Cursor"          Value="Hand"/>
+                <Setter Property="Padding"         Value="4"/>
                 <Style.Triggers>
                     <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Background" Value="#2D3748"/>
+                        <Setter Property="Background"  Value="{DynamicResource CardHover}"/>
                         <Setter Property="BorderBrush" Value="{DynamicResource ButtonHighlight}"/>
                     </Trigger>
                     <Trigger Property="IsPressed" Value="True">
@@ -89,11 +93,11 @@
                 <Setter Property="Width"       Value="85"/>
                 <Setter Property="FontSize"    Value="12"/>
                 <Setter Property="Foreground"  Value="{DynamicResource TextPrimary}"/>
-                <Setter Property="Background"  Value="#1F2937"/>
+                <Setter Property="Background"  Value="{DynamicResource InputBackground}"/>
                 <Setter Property="HorizontalContentAlignment" Value="Right"/>
                 <Setter Property="Padding"     Value="8,4"/>
                 <Setter Property="BorderThickness" Value="1"/>
-                <Setter Property="BorderBrush" Value="#374151"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource InputBorder}"/>
             </Style>
 
             <!-- Action button style - Premium with hover effects -->

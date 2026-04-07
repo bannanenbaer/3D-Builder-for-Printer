@@ -17,6 +17,10 @@ public static class ThemeApplier
     {
         ("PanelBackground",  "#0F1419"),
         ("SidebarBackground","#1A1F2E"),
+        ("CardBackground",   "#1F2937"),
+        ("CardHover",        "#2D3748"),
+        ("InputBackground",  "#1F2937"),
+        ("InputBorder",      "#374151"),
         ("ButtonHighlight",  "#3B82F6"),
         ("AccentBrush",      "#60A5FA"),
         ("TextPrimary",      "#F8FAFC"),
@@ -32,6 +36,10 @@ public static class ThemeApplier
     {
         ("PanelBackground",  "#F1F5F9"),
         ("SidebarBackground","#E2E8F0"),
+        ("CardBackground",   "#FFFFFF"),
+        ("CardHover",        "#EEF2FF"),
+        ("InputBackground",  "#FFFFFF"),
+        ("InputBorder",      "#CBD5E1"),
         ("ButtonHighlight",  "#2563EB"),
         ("AccentBrush",      "#3B82F6"),
         ("TextPrimary",      "#0F172A"),

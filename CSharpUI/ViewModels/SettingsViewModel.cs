@@ -118,12 +118,16 @@ public class SettingsViewModel : INotifyPropertyChanged
         }
     }
 
+    /// <summary>Fired whenever the user changes the font scale so MainWindow can update its LayoutTransform.</summary>
+    public static event Action<double>? FontScaleChanged;
+
     public int FontScalePercent
     {
         get => (int)Math.Round(_svc.Current.FontScale * 100);
         set
         {
             _svc.Current.FontScale = Math.Clamp(value / 100.0, 0.8, 1.5);
+            FontScaleChanged?.Invoke(_svc.Current.FontScale);
             SaveAndNotify();
             OnPropertyChanged(nameof(FontScale));
         }

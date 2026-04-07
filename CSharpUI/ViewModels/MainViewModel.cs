@@ -226,6 +226,12 @@ public class MainViewModel : INotifyPropertyChanged
                 );
                 if (result["status"]?.ToString() == "ok")
                     obj.StlPath = result["stl_path"]?.ToString();
+                else
+                    StatusText = result["message"]?.ToString() ?? "Fehler beim Erstellen der Form";
+            }
+            else if (_bridge == null || !_bridge.IsRunning)
+            {
+                StatusText = "Python-Backend nicht verfügbar (cadquery via pip installieren)";
             }
 
             SceneObjects.Add(obj);

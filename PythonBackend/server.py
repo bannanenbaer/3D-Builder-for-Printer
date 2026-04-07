@@ -80,24 +80,86 @@ def _load_object(obj: dict) -> "cq.Workplane":
     return shape
 
 
+def _fallback_stl(shape_type: str, params: dict) -> str:
+    """Pure-Python fallback STL when neither CadQuery nor OpenSCAD is available.
+    Generates a correctly-sized box approximation so the user sees *something*."""
+    import math as _math
+
+    # Determine bounding dimensions from shape params
+    w = float(params.get("width",  params.get("radius", params.get("outer_r", 20))))
+    d = float(params.get("depth",  params.get("radius", params.get("outer_r", w))))
+    h = float(params.get("height", params.get("radius", w)))
+    # For sphere / torus use diameter
+    if shape_type in ("sphere", "hemisphere"):
+        r = float(params.get("radius", 10))
+        w = d = h = r * 2
+    elif shape_type == "torus":
+        r = float(params.get("radius_major", 15)) + float(params.get("radius_minor", 4))
+        w = d = r * 2; h = float(params.get("radius_minor", 4)) * 2
+
+    hw, hd = w / 2, d / 2
+    verts = [
+        (-hw, -hd, 0), (hw, -hd, 0), (hw,  hd, 0), (-hw,  hd, 0),
+        (-hw, -hd, h), (hw, -hd, h), (hw,  hd, h), (-hw,  hd, h),
+    ]
+    tris = [
+        (0,2,1),(0,3,2),   # bottom
+        (4,5,6),(4,6,7),   # top
+        (0,1,5),(0,5,4),   # front
+        (3,7,6),(3,6,2),   # back
+        (0,4,7),(0,7,3),   # left
+        (1,2,6),(1,6,5),   # right
+    ]
+    lines = ["solid fallback"]
+    for t in tris:
+        v0, v1, v2 = verts[t[0]], verts[t[1]], verts[t[2]]
+        lines += [
+            "  facet normal 0 0 0", "    outer loop",
+            f"      vertex {v0[0]} {v0[1]} {v0[2]}",
+            f"      vertex {v1[0]} {v1[1]} {v1[2]}",
+            f"      vertex {v2[0]} {v2[1]} {v2[2]}",
+            "    endloop", "  endfacet",
+        ]
+    lines.append("endsolid fallback")
+    tmp = tempfile.NamedTemporaryFile(
+        prefix="3dbuilder_fallback_", suffix=".stl", delete=False, mode="w", encoding="ascii"
+    )
+    tmp.write("\n".join(lines))
+    tmp.close()
+    return tmp.name
+
+
 def handle_create_shape(req: dict) -> dict:
     shape_type = req["shape_type"]
     params = req.get("params", shp.get_default_params(shape_type))
     obj_id = req.get("object_id", f"obj_{id(params)}")
-
-    shape = shp.make_shape(shape_type, params)
-
-    # Apply position / rotation if provided
     pos = req.get("pos", [0, 0, 0])
     rot = req.get("rot", [0, 0, 0])
-    if any(rot):
-        shape = ops.rotate_shape(shape, rot[0], rot[1], rot[2])
-    if any(pos):
-        shape = ops.translate_shape(shape, pos[0], pos[1], pos[2])
 
-    _shape_cache[obj_id] = shape
-    stl_path = _stl_from_shape(shape, shape_type)
-    return {"status": "ok", "stl_path": stl_path, "object_id": obj_id}
+    # ── Tier 1: CadQuery ────────────────────────────────────────────────────
+    if CQ_AVAILABLE:
+        shape = shp.make_shape(shape_type, params)
+        if any(rot):
+            shape = ops.rotate_shape(shape, rot[0], rot[1], rot[2])
+        if any(pos):
+            shape = ops.translate_shape(shape, pos[0], pos[1], pos[2])
+        _shape_cache[obj_id] = shape
+        stl_path = _stl_from_shape(shape, shape_type)
+        return {"status": "ok", "stl_path": stl_path, "object_id": obj_id}
+
+    # ── Tier 2: OpenSCAD ────────────────────────────────────────────────────
+    if scad_bridge.is_available():
+        scad_code = scad_bridge.shape_to_scad(shape_type, params)
+        stl_path, err = scad_bridge.compile_to_stl(scad_code)
+        if stl_path:
+            return {"status": "ok", "stl_path": stl_path, "object_id": obj_id,
+                    "engine": "openscad"}
+
+    # ── Tier 3: Pure-Python box approximation ───────────────────────────────
+    stl_path = _fallback_stl(shape_type, params)
+    return {"status": "ok", "stl_path": stl_path, "object_id": obj_id,
+            "engine": "fallback",
+            "warning": "CadQuery und OpenSCAD nicht verfuegbar – vereinfachte Darstellung"}
 
 
 def handle_apply_fillet(req: dict) -> dict:

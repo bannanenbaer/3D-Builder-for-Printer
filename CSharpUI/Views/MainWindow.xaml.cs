@@ -32,8 +32,19 @@ public partial class MainWindow : Window
         _vm.ObjectRemoved += obj => Dispatcher.InvokeAsync(() => RemoveFromViewport(obj.Id));
         _vm.SceneCleared  += ()  => Dispatcher.InvokeAsync(ClearViewport);
 
+        // Apply saved font scale immediately and whenever user changes it
+        ApplyFontScale(Services.SettingsService.Instance.Current.FontScale);
+        SettingsViewModel.FontScaleChanged += scale => Dispatcher.InvokeAsync(() => ApplyFontScale(scale));
+
         // Wire viewport mascot animation
         _vm.MascotAnimationRequested += AnimateViewportMascotAsync;
+    }
+
+    private void ApplyFontScale(double scale)
+    {
+        RootContentGrid.LayoutTransform = Math.Abs(scale - 1.0) < 0.01
+            ? Transform.Identity
+            : new ScaleTransform(scale, scale);
     }
 
     // ── 3D Viewport ───────────────────────────────────────────────────────

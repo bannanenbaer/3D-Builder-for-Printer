@@ -32,9 +32,13 @@ public partial class App : Application
         WriteLog("OnStartup called");
         base.OnStartup(e);
 
-        // Apply saved theme + colorblind mode before the window appears
+        // Only apply non-default themes on startup.
+        // Dark is already defined in App.xaml — applying it again via ThemeApplier
+        // would replace brushes with the same values but risk picking up a wrong
+        // System-light detection before the window is fully loaded.
         var settings = Services.SettingsService.Instance.Current;
-        Services.ThemeApplier.Apply(settings);
+        if (settings.ThemeMode != "Dark")
+            Services.ThemeApplier.Apply(settings);
 
         StartPythonAsync();
     }
