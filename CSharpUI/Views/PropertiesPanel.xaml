@@ -7,7 +7,7 @@
 
         <!-- No selection hint -->
         <TextBlock Text="{Binding T[msg_no_selection]}"
-                   Foreground="{StaticResource TextSecondary}"
+                   Foreground="{DynamicResource TextSecondary}"
                    FontSize="12" Margin="6,12" TextAlignment="Center" FontStyle="Italic"
                    Visibility="{Binding HasSelection,
                        Converter={StaticResource InverseBoolToVisibilityConverter}}"/>
@@ -20,7 +20,7 @@
             <TextBox Text="{Binding SelectedObject.Name, UpdateSourceTrigger=PropertyChanged}"
                      materialDesign:HintAssist.Hint="Name"
                      Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                     Foreground="{StaticResource TextPrimary}"
+                     Foreground="{DynamicResource TextPrimary}"
                      Background="#1F2937"
                      BorderBrush="#374151"
                      Margin="4,4"/>
@@ -41,7 +41,7 @@
                                 <ColumnDefinition Width="95"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Text="{Binding Label}" Grid.Column="0"
-                                       Foreground="{StaticResource TextPrimary}"
+                                       Foreground="{DynamicResource TextPrimary}"
                                        VerticalAlignment="Center" FontSize="11"/>
                             <TextBox Grid.Column="1"
                                      Text="{Binding Value, UpdateSourceTrigger=LostFocus,
@@ -179,7 +179,7 @@
                     <ColumnDefinition Width="95"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding T[op_fillet_radius]}" Grid.Column="0"
-                           Foreground="{StaticResource TextPrimary}"
+                           Foreground="{DynamicResource TextPrimary}"
                            VerticalAlignment="Center" FontSize="11"/>
                 <TextBox Grid.Column="1"
                          Text="{Binding FilletRadius, UpdateSourceTrigger=LostFocus,
@@ -210,7 +210,7 @@
                     <ColumnDefinition Width="95"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding T[op_chamfer_size]}" Grid.Column="0"
-                           Foreground="{StaticResource TextPrimary}"
+                           Foreground="{DynamicResource TextPrimary}"
                            VerticalAlignment="Center" FontSize="11"/>
                 <TextBox Grid.Column="1"
                          Text="{Binding ChamferSize, UpdateSourceTrigger=LostFocus,

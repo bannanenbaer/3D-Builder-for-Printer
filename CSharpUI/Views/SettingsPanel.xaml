@@ -5,7 +5,7 @@
 
     <ScrollViewer VerticalScrollBarVisibility="Auto"
                   HorizontalScrollBarVisibility="Disabled">
-        <StackPanel Margin="8" Background="{StaticResource SidebarBackground}">
+        <StackPanel Margin="8" Background="{DynamicResource SidebarBackground}">
 
             <!-- ══ UPDATE ══════════════════════════════════════════════════ -->
             <TextBlock Style="{StaticResource SectionHeader}" Text="Update"/>
@@ -26,7 +26,7 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" VerticalAlignment="Center">
                             <TextBlock Text="{Binding UpdateVM.CurrentVersion, StringFormat='Installiert: v{0}'}"
-                                       Foreground="{StaticResource TextSecondary}"
+                                       Foreground="{DynamicResource TextSecondary}"
                                        FontSize="11"/>
                         </StackPanel>
                         <Button Grid.Column="1"
@@ -50,7 +50,7 @@
                         <!-- Dot: visible only while checking -->
                         <Ellipse Grid.Column="0"
                                  Width="8" Height="8"
-                                 Fill="{StaticResource AccentBrush}"
+                                 Fill="{DynamicResource AccentBrush}"
                                  Margin="0,0,6,0"
                                  VerticalAlignment="Center"
                                  Visibility="{Binding UpdateVM.IsCheckingForUpdates,
@@ -58,7 +58,7 @@
 
                         <TextBlock Grid.Column="1"
                                    Text="{Binding UpdateVM.StatusMessage}"
-                                   Foreground="{StaticResource TextSecondary}"
+                                   Foreground="{DynamicResource TextSecondary}"
                                    FontSize="10"
                                    TextWrapping="Wrap"
                                    VerticalAlignment="Center"/>
@@ -69,7 +69,7 @@
                                  Minimum="0" Maximum="100"
                                  Height="4"
                                  Margin="0,2,0,4"
-                                 Foreground="{StaticResource AccentBrush}"
+                                 Foreground="{DynamicResource AccentBrush}"
                                  Background="#374151">
                         <ProgressBar.Visibility>
                             <Binding Path="UpdateVM.IsDownloading"
@@ -113,7 +113,7 @@
                     <TextBlock Grid.Column="1"
                                Text="{Binding PythonStatusText}"
                                FontSize="10"
-                               Foreground="{StaticResource TextSecondary}"
+                               Foreground="{DynamicResource TextSecondary}"
                                VerticalAlignment="Center"
                                TextWrapping="Wrap"/>
                 </Grid>
@@ -132,14 +132,14 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0"
                            Text="Farbmodus:"
-                           Foreground="{StaticResource TextPrimary}"
+                           Foreground="{DynamicResource TextPrimary}"
                            VerticalAlignment="Center"
                            FontSize="11"/>
                 <ComboBox Grid.Column="1"
                           ItemsSource="{Binding AvailableThemes}"
                           SelectedItem="{Binding ThemeMode}"
                           Background="#1F2937"
-                          Foreground="{StaticResource TextPrimary}"
+                          Foreground="{DynamicResource TextPrimary}"
                           BorderBrush="#374151"
                           FontSize="11"/>
             </Grid>
@@ -152,12 +152,12 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0"
                            Text="Schriftgröße:"
-                           Foreground="{StaticResource TextPrimary}"
+                           Foreground="{DynamicResource TextPrimary}"
                            VerticalAlignment="Center"
                            FontSize="11"/>
                 <TextBlock Grid.Column="1"
                            Text="{Binding FontScalePercent, StringFormat='{}{0}%'}"
-                           Foreground="{StaticResource TextSecondary}"
+                           Foreground="{DynamicResource TextSecondary}"
                            VerticalAlignment="Center"
                            FontSize="11"
                            HorizontalAlignment="Right"/>
@@ -166,7 +166,7 @@
                     Minimum="80" Maximum="150"
                     Value="{Binding FontScalePercent}"
                     SmallChange="5" LargeChange="10"
-                    Foreground="{StaticResource AccentBrush}"
+                    Foreground="{DynamicResource AccentBrush}"
                     TickFrequency="10"
                     IsSnapToTickEnabled="True"/>
 
@@ -178,14 +178,14 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0"
                            Text="Farbenblind-Modus:"
-                           Foreground="{StaticResource TextPrimary}"
+                           Foreground="{DynamicResource TextPrimary}"
                            VerticalAlignment="Center"
                            FontSize="11"/>
                 <ComboBox Grid.Column="1"
                           ItemsSource="{Binding AvailableColorBlindModes}"
                           SelectedItem="{Binding ColorBlindMode}"
                           Background="#1F2937"
-                          Foreground="{StaticResource TextPrimary}"
+                          Foreground="{DynamicResource TextPrimary}"
                           BorderBrush="#374151"
                           FontSize="11"/>
             </Grid>
@@ -202,14 +202,14 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0"
                            Text="Sprache:"
-                           Foreground="{StaticResource TextPrimary}"
+                           Foreground="{DynamicResource TextPrimary}"
                            VerticalAlignment="Center"
                            FontSize="11"/>
                 <ComboBox Grid.Column="1"
                           ItemsSource="{Binding AvailableLanguages}"
                           SelectedItem="{Binding Language}"
                           Background="#1F2937"
-                          Foreground="{StaticResource TextPrimary}"
+                          Foreground="{DynamicResource TextPrimary}"
                           BorderBrush="#374151"
                           FontSize="11"/>
             </Grid>
@@ -227,14 +227,14 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0"
                            Text="Voreinstellung:"
-                           Foreground="{StaticResource TextPrimary}"
+                           Foreground="{DynamicResource TextPrimary}"
                            VerticalAlignment="Center"
                            FontSize="11"/>
                 <ComboBox Grid.Column="1"
                           ItemsSource="{Binding AvailablePrinterPresets}"
                           SelectedItem="{Binding PrinterPreset}"
                           Background="#1F2937"
-                          Foreground="{StaticResource TextPrimary}"
+                          Foreground="{DynamicResource TextPrimary}"
                           BorderBrush="#374151"
                           FontSize="11"/>
             </Grid>
@@ -247,7 +247,7 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0"
                            Text="Breite (mm):"
-                           Foreground="{StaticResource TextPrimary}"
+                           Foreground="{DynamicResource TextPrimary}"
                            VerticalAlignment="Center"
                            FontSize="11"/>
                 <TextBox Grid.Column="1"
@@ -264,7 +264,7 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0"
                            Text="Tiefe (mm):"
-                           Foreground="{StaticResource TextPrimary}"
+                           Foreground="{DynamicResource TextPrimary}"
                            VerticalAlignment="Center"
                            FontSize="11"/>
                 <TextBox Grid.Column="1"
@@ -286,7 +286,7 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0"
                            Text="Automatisch speichern:"
-                           Foreground="{StaticResource TextPrimary}"
+                           Foreground="{DynamicResource TextPrimary}"
                            VerticalAlignment="Center"
                            FontSize="11"/>
                 <ToggleButton Grid.Column="1"
@@ -297,7 +297,7 @@
 
             <!-- Pfad -->
             <TextBlock Text="Speicherpfad:"
-                       Foreground="{StaticResource TextPrimary}"
+                       Foreground="{DynamicResource TextPrimary}"
                        FontSize="11"
                        Margin="4,6,4,2"/>
             <Grid Margin="4,2">
@@ -309,7 +309,7 @@
                 <TextBox Grid.Column="0"
                          Text="{Binding AutoSavePath, UpdateSourceTrigger=LostFocus}"
                          Background="#1F2937"
-                         Foreground="{StaticResource TextPrimary}"
+                         Foreground="{DynamicResource TextPrimary}"
                          BorderBrush="#374151"
                          FontSize="10"
                          Padding="4,3"
@@ -343,12 +343,12 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0"
                            Text="Intervall:"
-                           Foreground="{StaticResource TextPrimary}"
+                           Foreground="{DynamicResource TextPrimary}"
                            VerticalAlignment="Center"
                            FontSize="11"/>
                 <TextBlock Grid.Column="1"
                            Text="{Binding AutoSaveIntervalMinutes, StringFormat='{}{0} Min'}"
-                           Foreground="{StaticResource TextSecondary}"
+                           Foreground="{DynamicResource TextSecondary}"
                            VerticalAlignment="Center"
                            FontSize="11"
                            HorizontalAlignment="Right"/>
@@ -358,7 +358,7 @@
                     Value="{Binding AutoSaveIntervalMinutes}"
                     SmallChange="1" LargeChange="5"
                     IsEnabled="{Binding AutoSaveEnabled}"
-                    Foreground="{StaticResource AccentBrush}"
+                    Foreground="{DynamicResource AccentBrush}"
                     TickFrequency="5"
                     IsSnapToTickEnabled="True"/>
 
@@ -383,11 +383,11 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0">
                             <TextBlock Text="Aktiviert"
-                                       Foreground="{StaticResource TextPrimary}"
+                                       Foreground="{DynamicResource TextPrimary}"
                                        FontSize="11"
                                        FontWeight="SemiBold"/>
                             <TextBlock Text="KI-Assistenten Brixl aktivieren"
-                                       Foreground="{StaticResource TextSecondary}"
+                                       Foreground="{DynamicResource TextSecondary}"
                                        FontSize="9"
                                        Margin="0,2,0,0"/>
                         </StackPanel>
@@ -407,11 +407,11 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0">
                             <TextBlock Text="Animationen"
-                                       Foreground="{StaticResource TextPrimary}"
+                                       Foreground="{DynamicResource TextPrimary}"
                                        FontSize="11"
                                        FontWeight="SemiBold"/>
                             <TextBlock Text="Süße Animationen des Assistenten"
-                                       Foreground="{StaticResource TextSecondary}"
+                                       Foreground="{DynamicResource TextSecondary}"
                                        FontSize="9"
                                        Margin="0,2,0,0"/>
                         </StackPanel>
@@ -432,11 +432,11 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0">
                             <TextBlock Text="Automatische Vorschläge"
-                                       Foreground="{StaticResource TextPrimary}"
+                                       Foreground="{DynamicResource TextPrimary}"
                                        FontSize="11"
                                        FontWeight="SemiBold"/>
                             <TextBlock Text="Vorschläge basierend auf deinen Aktionen"
-                                       Foreground="{StaticResource TextSecondary}"
+                                       Foreground="{DynamicResource TextSecondary}"
                                        FontSize="9"
                                        Margin="0,2,0,0"/>
                         </StackPanel>

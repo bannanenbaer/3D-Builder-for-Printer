@@ -7,8 +7,8 @@
         Title="3D-Builder Pro | Parametrisches 3D-Modellieren"
         Width="1600" Height="1000"
         MinWidth="1200" MinHeight="700"
-        Background="{StaticResource PanelBackground}"
-        Foreground="{StaticResource TextPrimary}"
+        Background="{DynamicResource PanelBackground}"
+        Foreground="{DynamicResource TextPrimary}"
         WindowStartupLocation="CenterScreen"
         FontFamily="Segoe UI"
         FontSize="12">
@@ -22,10 +22,10 @@
 
     <DockPanel>
         <!-- ═══ MENU BAR ═══════════════════════════════════════════════════ -->
-        <Menu DockPanel.Dock="Top" Background="#0F1419" Foreground="{StaticResource TextPrimary}"
+        <Menu DockPanel.Dock="Top" Background="#0F1419" Foreground="{DynamicResource TextPrimary}"
               FontSize="11" FontFamily="Segoe UI">
             <!-- File -->
-            <MenuItem Header="{Binding T[menu_file]}" Foreground="{StaticResource TextPrimary}">
+            <MenuItem Header="{Binding T[menu_file]}" Foreground="{DynamicResource TextPrimary}">
                 <MenuItem Header="{Binding T[action_new]}"
                           Command="{Binding NewSceneCommand}"
                           InputGestureText="Ctrl+N"/>
@@ -44,7 +44,7 @@
                 <MenuItem Header="{Binding T[action_quit]}" Click="OnQuit"/>
             </MenuItem>
             <!-- Edit -->
-            <MenuItem Header="{Binding T[menu_edit]}" Foreground="{StaticResource TextPrimary}">
+            <MenuItem Header="{Binding T[menu_edit]}" Foreground="{DynamicResource TextPrimary}">
                 <MenuItem Header="{Binding T[action_undo]}"
                           Command="{Binding UndoCommand}"
                           InputGestureText="Ctrl+Z"/>
@@ -60,7 +60,7 @@
                           InputGestureText="Ctrl+D"/>
             </MenuItem>
             <!-- View -->
-            <MenuItem Header="{Binding T[menu_view]}" Foreground="{StaticResource TextPrimary}">
+            <MenuItem Header="{Binding T[menu_view]}" Foreground="{DynamicResource TextPrimary}">
                 <MenuItem Header="{Binding T[action_reset_view]}"  Click="OnResetView"/>
                 <MenuItem Header="{Binding T[action_top_view]}"    Click="OnTopView"/>
                 <MenuItem Header="{Binding T[action_front_view]}"  Click="OnFrontView"/>
@@ -69,9 +69,9 @@
             </MenuItem>
             <!-- Settings -->
             <MenuItem Header="Einstellungen" Click="OnOpenSettings"
-                      Foreground="{StaticResource TextPrimary}"/>
+                      Foreground="{DynamicResource TextPrimary}"/>
             <!-- Help -->
-            <MenuItem Header="{Binding T[menu_help]}" Foreground="{StaticResource TextPrimary}">
+            <MenuItem Header="{Binding T[menu_help]}" Foreground="{DynamicResource TextPrimary}">
                 <MenuItem Header="{Binding T[help_about]}" Click="OnAbout"/>
             </MenuItem>
         </Menu>
@@ -81,21 +81,21 @@
             <Button ToolTip="{Binding T[action_new]}"
                     Command="{Binding NewSceneCommand}"
                     Style="{StaticResource MaterialDesignFlatButton}"
-                    Foreground="{StaticResource TextPrimary}"
+                    Foreground="{DynamicResource TextPrimary}"
                     Padding="6,4">
                 <materialDesign:PackIcon Kind="FileOutline" Width="18" Height="18"/>
             </Button>
             <Button ToolTip="{Binding T[action_open_stl]}"
                     Command="{Binding ImportStlCommand}"
                     Style="{StaticResource MaterialDesignFlatButton}"
-                    Foreground="{StaticResource TextPrimary}"
+                    Foreground="{DynamicResource TextPrimary}"
                     Padding="6,4">
                 <materialDesign:PackIcon Kind="FolderOpen" Width="18" Height="18"/>
             </Button>
             <Button ToolTip="{Binding T[action_export_stl]}"
                     Command="{Binding ExportStlCommand}"
                     Style="{StaticResource MaterialDesignFlatButton}"
-                    Foreground="{StaticResource TextPrimary}"
+                    Foreground="{DynamicResource TextPrimary}"
                     Padding="6,4">
                 <materialDesign:PackIcon Kind="ContentSave" Width="18" Height="18"/>
             </Button>
@@ -103,14 +103,14 @@
             <Button ToolTip="{Binding T[action_undo]}"
                     Command="{Binding UndoCommand}"
                     Style="{StaticResource MaterialDesignFlatButton}"
-                    Foreground="{StaticResource TextPrimary}"
+                    Foreground="{DynamicResource TextPrimary}"
                     Padding="6,4">
                 <materialDesign:PackIcon Kind="Undo" Width="18" Height="18"/>
             </Button>
             <Button ToolTip="{Binding T[action_redo]}"
                     Command="{Binding RedoCommand}"
                     Style="{StaticResource MaterialDesignFlatButton}"
-                    Foreground="{StaticResource TextPrimary}"
+                    Foreground="{DynamicResource TextPrimary}"
                     Padding="6,4">
                 <materialDesign:PackIcon Kind="Redo" Width="18" Height="18"/>
             </Button>
@@ -118,20 +118,17 @@
             <Button ToolTip="{Binding T[action_delete]}"
                     Command="{Binding DeleteCommand}"
                     Style="{StaticResource MaterialDesignFlatButton}"
-                    Foreground="{StaticResource TextPrimary}"
+                    Foreground="{DynamicResource TextPrimary}"
                     Padding="6,4">
                 <materialDesign:PackIcon Kind="Delete" Width="18" Height="18"/>
             </Button>
             <Button ToolTip="{Binding T[action_duplicate]}"
                     Command="{Binding DuplicateCommand}"
                     Style="{StaticResource MaterialDesignFlatButton}"
-                    Foreground="{StaticResource TextPrimary}"
+                    Foreground="{DynamicResource TextPrimary}"
                     Padding="6,4">
                 <materialDesign:PackIcon Kind="ContentDuplicate" Width="18" Height="18"/>
             </Button>
-            <Separator Background="#2D3748" Margin="2,4"/>
-            <!-- Update Button -->
-            <local:UpdateToolbarButton DataContext="{Binding UpdateVM}"/>
             <Separator Background="#2D3748" Margin="2,4"/>
             <!-- KI-Assistent Toggle -->
             <Button Command="{Binding ToggleAssistantCommand}"
@@ -147,7 +144,7 @@
         </ToolBar>
 
         <!-- ═══ STATUS BAR ═════════════════════════════════════════════════ -->
-        <StatusBar DockPanel.Dock="Bottom" Background="#1A1F2E" Foreground="{StaticResource TextPrimary}"
+        <StatusBar DockPanel.Dock="Bottom" Background="#1A1F2E" Foreground="{DynamicResource TextPrimary}"
                    BorderThickness="0,1,0,0" BorderBrush="#2D3748">
             <StatusBarItem>
                 <TextBlock Text="{Binding StatusText}" FontSize="12"/>
@@ -176,20 +173,20 @@
             </Grid.ColumnDefinitions>
 
             <!-- ─ LEFT SIDEBAR: Shape Library + Settings ─ -->
-            <Border Grid.Column="0" Background="{StaticResource SidebarBackground}">
-                <TabControl Background="{StaticResource SidebarBackground}"
+            <Border Grid.Column="0" Background="{DynamicResource SidebarBackground}">
+                <TabControl Background="{DynamicResource SidebarBackground}"
                             BorderThickness="0"
                             TabStripPlacement="Top">
                     <TabItem Header="Formen"
-                             Foreground="{StaticResource TextPrimary}"
-                             Background="{StaticResource SidebarBackground}">
+                             Foreground="{DynamicResource TextPrimary}"
+                             Background="{DynamicResource SidebarBackground}">
                         <ScrollViewer VerticalScrollBarVisibility="Auto">
                             <local:ShapePanel x:Name="ShapePanelControl" DataContext="{Binding}"/>
                         </ScrollViewer>
                     </TabItem>
                     <TabItem Header="&#x2699; Einstellungen"
-                             Foreground="{StaticResource TextPrimary}"
-                             Background="{StaticResource SidebarBackground}">
+                             Foreground="{DynamicResource TextPrimary}"
+                             Background="{DynamicResource SidebarBackground}">
                         <ScrollViewer VerticalScrollBarVisibility="Auto">
                             <local:SettingsPanel x:Name="SettingsPanelControl" DataContext="{Binding SettingsVM}"/>
                         </ScrollViewer>
@@ -201,12 +198,12 @@
                           HorizontalAlignment="Stretch" ShowsPreview="False"/>
 
             <!-- ─ CENTER: 3D Viewport + Tab with SCAD Editor ─ -->
-            <TabControl Grid.Column="2" Background="{StaticResource PanelBackground}"
+            <TabControl Grid.Column="2" Background="{DynamicResource PanelBackground}"
                         x:Name="MainTabControl">
 
                 <!-- Tab 1: 3D Builder Viewport -->
-                <TabItem Header="{Binding T[tab_builder]}" Foreground="{StaticResource TextPrimary}"
-                         Background="{StaticResource PanelBackground}">
+                <TabItem Header="{Binding T[tab_builder]}" Foreground="{DynamicResource TextPrimary}"
+                         Background="{DynamicResource PanelBackground}">
                     <Grid>
                         <!-- 3D Viewport -->
                         <helix:HelixViewport3D x:Name="Viewport3D"
@@ -227,7 +224,7 @@
                                 Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}">
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <ProgressBar IsIndeterminate="True" Width="240" Margin="0,0,0,12" Height="4"/>
-                                <TextBlock Text="{Binding StatusText}" Foreground="{StaticResource TextPrimary}"
+                                <TextBlock Text="{Binding StatusText}" Foreground="{DynamicResource TextPrimary}"
                                            HorizontalAlignment="Center" FontSize="13"/>
                             </StackPanel>
                         </Border>
@@ -255,8 +252,8 @@
                 </TabItem>
 
                 <!-- Tab 2: OpenSCAD Editor -->
-                <TabItem Header="{Binding T[tab_scad]}" Foreground="{StaticResource TextPrimary}"
-                         Background="{StaticResource PanelBackground}">
+                <TabItem Header="{Binding T[tab_scad]}" Foreground="{DynamicResource TextPrimary}"
+                         Background="{DynamicResource PanelBackground}">
                     <local:ScadEditorPanel x:Name="ScadPanel" DataContext="{Binding}"/>
                 </TabItem>
             </TabControl>
@@ -265,7 +262,7 @@
                           HorizontalAlignment="Stretch" ShowsPreview="False"/>
 
             <!-- ─ RIGHT SIDEBAR: Properties ─ -->
-            <Border Grid.Column="4" Background="{StaticResource SidebarBackground}">
+            <Border Grid.Column="4" Background="{DynamicResource SidebarBackground}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <local:PropertiesPanel x:Name="PropertiesPanelControl" DataContext="{Binding}"/>
                 </ScrollViewer>

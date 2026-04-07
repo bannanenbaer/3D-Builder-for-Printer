@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
 
-    <Grid Background="{StaticResource PanelBackground}">
+    <Grid Background="{DynamicResource PanelBackground}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -15,7 +15,7 @@
             <Button ToolTip="Vorschau (Ctrl+Shift+P)"
                     Command="{Binding ScadPreviewCommand}"
                     Style="{StaticResource MaterialDesignFlatButton}"
-                    Foreground="{StaticResource TextPrimary}"
+                    Foreground="{DynamicResource TextPrimary}"
                     Padding="8,4">
                 <StackPanel Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="Eye" Width="18" Height="18" Margin="0,0,6,0"/>
@@ -26,7 +26,7 @@
             <Button ToolTip="Exportieren"
                     Command="{Binding ScadExportCommand}"
                     Style="{StaticResource MaterialDesignFlatButton}"
-                    Foreground="{StaticResource TextPrimary}"
+                    Foreground="{DynamicResource TextPrimary}"
                     Padding="8,4">
                 <StackPanel Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="Download" Width="18" Height="18" Margin="0,0,6,0"/>
@@ -39,7 +39,7 @@
             <Button ToolTip="Szene zu SCAD"
                     Command="{Binding ScadFromSceneCommand}"
                     Style="{StaticResource MaterialDesignFlatButton}"
-                    Foreground="{StaticResource TextPrimary}"
+                    Foreground="{DynamicResource TextPrimary}"
                     Padding="8,4">
                 <StackPanel Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="FileExport" Width="18" Height="18" Margin="0,0,6,0"/>

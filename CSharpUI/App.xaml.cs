@@ -31,6 +31,11 @@ public partial class App : Application
     {
         WriteLog("OnStartup called");
         base.OnStartup(e);
+
+        // Apply saved theme + colorblind mode before the window appears
+        var settings = Services.SettingsService.Instance.Current;
+        Services.ThemeApplier.Apply(settings);
+
         StartPythonAsync();
     }
 

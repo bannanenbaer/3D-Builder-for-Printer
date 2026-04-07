@@ -33,15 +33,16 @@ public class SettingsViewModel : INotifyPropertyChanged
     public List<string> AvailableColorBlindModes { get; } = new()
         { "Keine", "Protanopie", "Deuteranopie", "Tritanopie", "Monochromie" };
     public List<string> AvailablePrinterPresets { get; } = new()
-        { "Ender 3", "Prusa MK4", "Bambu X1", "CR-10", "Anycubic Kobra", "Benutzerdefiniert" };
+        { "Ender 3", "Prusa MK4", "Bambu X1", "CR-10", "Anycubic Kobra", "Anycubic Kobra X", "Benutzerdefiniert" };
 
     private static readonly Dictionary<string, (double W, double D)> _presetDimensions = new()
     {
-        ["Ender 3"]          = (220, 220),
-        ["Prusa MK4"]        = (250, 210),
-        ["Bambu X1"]         = (256, 256),
-        ["CR-10"]            = (300, 300),
-        ["Anycubic Kobra"]   = (220, 220),
+        ["Ender 3"]           = (220, 220),
+        ["Prusa MK4"]         = (250, 210),
+        ["Bambu X1"]          = (256, 256),
+        ["CR-10"]             = (300, 300),
+        ["Anycubic Kobra"]    = (220, 220),
+        ["Anycubic Kobra X"]  = (220, 220),
         ["Benutzerdefiniert"] = (0, 0),
     };
 
@@ -87,6 +88,9 @@ public class SettingsViewModel : INotifyPropertyChanged
                 _svc.Current.ThemeMode = m;
             else
                 _svc.Current.ThemeMode = value;
+            ThemeApplier.ApplyBaseTheme(_svc.Current.ThemeMode);
+            // Re-apply colorblind palette on top of new base
+            ThemeApplier.ApplyColorBlindMode(_svc.Current.ColorBlindMode);
             SaveAndNotify();
         }
     }
@@ -204,6 +208,7 @@ public class SettingsViewModel : INotifyPropertyChanged
                 _svc.Current.ColorBlindMode = m;
             else
                 _svc.Current.ColorBlindMode = value;
+            ThemeApplier.ApplyColorBlindMode(_svc.Current.ColorBlindMode);
             SaveAndNotify();
         }
     }

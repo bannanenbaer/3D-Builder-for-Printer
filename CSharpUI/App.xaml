@@ -45,7 +45,7 @@
             <!-- Shape button style - Modern with smooth transitions -->
             <Style x:Key="ShapeButtonStyle" TargetType="Button"
                    BasedOn="{StaticResource MaterialDesignFlatButton}">
-                <Setter Property="Foreground"   Value="{StaticResource TextPrimary}"/>
+                <Setter Property="Foreground"   Value="{DynamicResource TextPrimary}"/>
                 <Setter Property="Background"   Value="#1F2937"/>
                 <Setter Property="BorderBrush"  Value="#374151"/>
                 <Setter Property="BorderThickness" Value="1"/>
@@ -58,17 +58,17 @@
                 <Style.Triggers>
                     <Trigger Property="IsMouseOver" Value="True">
                         <Setter Property="Background" Value="#2D3748"/>
-                        <Setter Property="BorderBrush" Value="{StaticResource ButtonHighlight}"/>
+                        <Setter Property="BorderBrush" Value="{DynamicResource ButtonHighlight}"/>
                     </Trigger>
                     <Trigger Property="IsPressed" Value="True">
-                        <Setter Property="Background" Value="{StaticResource ButtonHighlight}"/>
+                        <Setter Property="Background" Value="{DynamicResource ButtonHighlight}"/>
                     </Trigger>
                 </Style.Triggers>
             </Style>
 
             <!-- Section header style - Premium typography -->
             <Style x:Key="SectionHeader" TargetType="TextBlock">
-                <Setter Property="Foreground"  Value="{StaticResource AccentBrush}"/>
+                <Setter Property="Foreground"  Value="{DynamicResource AccentBrush}"/>
                 <Setter Property="FontSize"    Value="11"/>
                 <Setter Property="FontWeight"  Value="SemiBold"/>
                 <Setter Property="Margin"      Value="6,10,6,5"/>
@@ -78,7 +78,7 @@
 
             <!-- Separator style - Subtle and elegant -->
             <Style x:Key="PanelSeparator" TargetType="Separator">
-                <Setter Property="Background" Value="{StaticResource SeparatorBrush}"/>
+                <Setter Property="Background" Value="{DynamicResource SeparatorBrush}"/>
                 <Setter Property="Margin"     Value="6,6"/>
                 <Setter Property="Height"     Value="1"/>
             </Style>
@@ -88,7 +88,7 @@
                    BasedOn="{StaticResource MaterialDesignTextBox}">
                 <Setter Property="Width"       Value="85"/>
                 <Setter Property="FontSize"    Value="12"/>
-                <Setter Property="Foreground"  Value="{StaticResource TextPrimary}"/>
+                <Setter Property="Foreground"  Value="{DynamicResource TextPrimary}"/>
                 <Setter Property="Background"  Value="#1F2937"/>
                 <Setter Property="HorizontalContentAlignment" Value="Right"/>
                 <Setter Property="Padding"     Value="8,4"/>
@@ -99,7 +99,7 @@
             <!-- Action button style - Premium with hover effects -->
             <Style x:Key="ActionButton" TargetType="Button"
                    BasedOn="{StaticResource MaterialDesignRaisedButton}">
-                <Setter Property="Background"  Value="{StaticResource ButtonHighlight}"/>
+                <Setter Property="Background"  Value="{DynamicResource ButtonHighlight}"/>
                 <Setter Property="Foreground"  Value="White"/>
                 <Setter Property="Margin"      Value="3,2"/>
                 <Setter Property="FontSize"    Value="11"/>

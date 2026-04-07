@@ -14,12 +14,12 @@
                   SelectedItem="{Binding SelectedObjectForOptimization}"
                   DisplayMemberPath="Name"
                   Background="#1F2937"
-                  Foreground="{StaticResource TextPrimary}"
+                  Foreground="{DynamicResource TextPrimary}"
                   BorderBrush="#374151"
                   Margin="4,4"/>
 
         <TextBlock Text="Wähle ein Objekt aus der Szene, um nur dieses zu optimieren"
-                   Foreground="{StaticResource TextSecondary}"
+                   Foreground="{DynamicResource TextSecondary}"
                    FontSize="9"
                    Margin="4,2"/>
 
@@ -69,7 +69,7 @@
         </Grid>
 
         <TextBlock Text="{Binding HistoryInfo}"
-                   Foreground="{StaticResource TextSecondary}"
+                   Foreground="{DynamicResource TextSecondary}"
                    FontSize="9"
                    Margin="4,2"
                    TextAlignment="Center"/>
@@ -81,7 +81,7 @@
                    Text="🤖 AutoFix - Modell-Optimierung"/>
 
         <TextBlock Text="Der Assistent optimiert dein Modell automatisch für optimale Druckergebnisse!"
-                   Foreground="{StaticResource TextSecondary}"
+                   Foreground="{DynamicResource TextSecondary}"
                    FontSize="10"
                    TextWrapping="Wrap"
                    Margin="4,4"/>
@@ -96,7 +96,7 @@
                 Visibility="{Binding HasAnalysisReport, Converter={StaticResource BoolToVisibilityConverter}}">
             <StackPanel>
                 <TextBlock Text="{Binding AnalysisReportTitle}"
-                           Foreground="{StaticResource TextPrimary}"
+                           Foreground="{DynamicResource TextPrimary}"
                            FontSize="11"
                            FontWeight="SemiBold"
                            Margin="0,0,0,4"/>
@@ -110,7 +110,7 @@
 
                     <TextBlock Grid.Column="0"
                                Text="Druckqualität:"
-                               Foreground="{StaticResource TextPrimary}"
+                               Foreground="{DynamicResource TextPrimary}"
                                FontSize="10"/>
 
                     <TextBlock Grid.Column="1"
@@ -158,7 +158,7 @@
                 Margin="4,6">
             <StackPanel>
                 <TextBlock Text="Optimierungsoptionen:"
-                           Foreground="{StaticResource TextPrimary}"
+                           Foreground="{DynamicResource TextPrimary}"
                            FontSize="11"
                            FontWeight="SemiBold"
                            Margin="0,0,0,6"/>
@@ -172,7 +172,7 @@
 
                     <TextBlock Grid.Column="0"
                                Text="Fillet-Radius:"
-                               Foreground="{StaticResource TextPrimary}"
+                               Foreground="{DynamicResource TextPrimary}"
                                VerticalAlignment="Center"
                                FontSize="10"/>
 
@@ -191,7 +191,7 @@
 
                     <TextBlock Grid.Column="0"
                                Text="Min. Wandstärke:"
-                               Foreground="{StaticResource TextPrimary}"
+                               Foreground="{DynamicResource TextPrimary}"
                                VerticalAlignment="Center"
                                FontSize="10"/>
 
@@ -210,7 +210,7 @@
 
                     <TextBlock Grid.Column="0"
                                Text="Min. Lochgröße:"
-                               Foreground="{StaticResource TextPrimary}"
+                               Foreground="{DynamicResource TextPrimary}"
                                VerticalAlignment="Center"
                                FontSize="10"/>
 
@@ -231,7 +231,7 @@
 
                     <TextBlock Grid.Column="0"
                                Text="Kleine Löcher füllen"
-                               Foreground="{StaticResource TextPrimary}"
+                               Foreground="{DynamicResource TextPrimary}"
                                VerticalAlignment="Center"
                                FontSize="10"/>
 
@@ -248,7 +248,7 @@
 
                     <TextBlock Grid.Column="0"
                                Text="Nicht-manifold Geometrie reparieren"
-                               Foreground="{StaticResource TextPrimary}"
+                               Foreground="{DynamicResource TextPrimary}"
                                VerticalAlignment="Center"
                                FontSize="10"/>
 
@@ -265,7 +265,7 @@
 
                     <TextBlock Grid.Column="0"
                                Text="Mesh glätten"
-                               Foreground="{StaticResource TextPrimary}"
+                               Foreground="{DynamicResource TextPrimary}"
                                VerticalAlignment="Center"
                                FontSize="10"/>
 
@@ -285,12 +285,12 @@
                   SelectedItem="{Binding SelectedPrinter}"
                   DisplayMemberPath="Name"
                   Background="#1F2937"
-                  Foreground="{StaticResource TextPrimary}"
+                  Foreground="{DynamicResource TextPrimary}"
                   BorderBrush="#374151"
                   Margin="4,4"/>
 
         <TextBlock Text="Wähle dein Drucker-Modell für optimale Einstellungen"
-                   Foreground="{StaticResource TextSecondary}"
+                   Foreground="{DynamicResource TextSecondary}"
                    FontSize="9"
                    Margin="4,2"/>
 
@@ -329,7 +329,7 @@
                      Foreground="#60A5FA"/>
 
         <TextBlock Text="{Binding OptimizationProgress}"
-                   Foreground="{StaticResource TextSecondary}"
+                   Foreground="{DynamicResource TextSecondary}"
                    FontSize="9"
                    Margin="4,2"
                    TextAlignment="Center"
@@ -357,7 +357,7 @@
                                            CurrentTool="{Binding CurrentMascotTool}"/>
                 
                 <TextBlock Text="{Binding MascotAnimationText}"
-                           Foreground="{StaticResource TextSecondary}"
+                           Foreground="{DynamicResource TextSecondary}"
                            FontSize="9"
                            TextAlignment="Center"
                            Margin="0,4,0,0"/>
