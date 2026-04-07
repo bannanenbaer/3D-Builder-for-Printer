@@ -10,33 +10,33 @@ namespace ThreeDBuilder.Services
     /// <summary>
     /// Service für Versionsprüfung und Anwendungs-Updates
     /// </summary>
-    public class UpdateService
+    public class UpdateService : IDisposable
     {
         private const string GitHubApiUrl = "https://api.github.com/repos/bannanenbaer/3D-Builder-for-Printer/releases/latest";
         private const string CurrentVersion = "1.0.0";
         private readonly HttpClient _httpClient;
 
-        public event EventHandler<UpdateCheckEventArgs> UpdateCheckCompleted;
-        public event EventHandler<UpdateProgressEventArgs> UpdateProgress;
+        public event EventHandler<UpdateCheckEventArgs>? UpdateCheckCompleted;
+        public event EventHandler<UpdateProgressEventArgs>? UpdateProgress;
 
         public class UpdateInfo
         {
-            public string LatestVersion { get; set; }
-            public string DownloadUrl { get; set; }
-            public string ReleaseNotes { get; set; }
+            public string LatestVersion { get; set; } = "";
+            public string? DownloadUrl { get; set; }
+            public string ReleaseNotes { get; set; } = "";
             public DateTime PublishedAt { get; set; }
             public bool IsUpdateAvailable { get; set; }
         }
 
         public class UpdateCheckEventArgs : EventArgs
         {
-            public UpdateInfo UpdateInfo { get; set; }
-            public Exception Error { get; set; }
+            public UpdateInfo? UpdateInfo { get; set; }
+            public Exception? Error { get; set; }
         }
 
         public class UpdateProgressEventArgs : EventArgs
         {
-            public string Message { get; set; }
+            public string Message { get; set; } = "";
             public int ProgressPercentage { get; set; }
             public UpdateStatus Status { get; set; }
         }
@@ -109,12 +109,15 @@ namespace ThreeDBuilder.Services
                     UpdateStatus.Complete
                 );
 
+                UpdateCheckCompleted?.Invoke(this, new UpdateCheckEventArgs { UpdateInfo = updateInfo });
                 return updateInfo;
             }
             catch (Exception ex)
             {
                 RaiseUpdateProgress($"Fehler bei Update-Prüfung: {ex.Message}", 0, UpdateStatus.Error);
-                return new UpdateInfo { IsUpdateAvailable = false };
+                var errorInfo = new UpdateInfo { IsUpdateAvailable = false };
+                UpdateCheckCompleted?.Invoke(this, new UpdateCheckEventArgs { UpdateInfo = errorInfo, Error = ex });
+                return errorInfo;
             }
         }
 
@@ -170,7 +173,7 @@ namespace ThreeDBuilder.Services
         /// <summary>
         /// Startet die Installer-Installation
         /// </summary>
-        public async Task InstallUpdateAsync(string installerPath)
+        public Task InstallUpdateAsync(string installerPath)
         {
             try
             {
@@ -183,14 +186,19 @@ namespace ThreeDBuilder.Services
                     Verb = "runas" // Führe mit Admin-Rechten aus
                 };
 
-                Process.Start(processInfo);
-                System.Windows.Application.Current.Dispatcher.Invoke(() => System.Windows.Application.Current.Shutdown());
+                var proc = Process.Start(processInfo);
+                if (proc == null)
+                    throw new InvalidOperationException("Installer-Prozess konnte nicht gestartet werden.");
+
+                System.Windows.Application.Current.Dispatcher.Invoke(
+                    () => System.Windows.Application.Current.Shutdown());
             }
             catch (Exception ex)
             {
                 RaiseUpdateProgress($"Installations-Fehler: {ex.Message}", 0, UpdateStatus.Error);
                 throw;
             }
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -218,12 +226,12 @@ namespace ThreeDBuilder.Services
         }
 
         /// <summary>
-        /// Vergleicht zwei Versionsnummern
+        /// Vergleicht zwei Versionsnummern. Gibt 0 zurück wenn Parsing fehlschlägt.
         /// </summary>
-        private int CompareVersions(string version1, string version2)
+        private static int CompareVersions(string version1, string version2)
         {
-            var v1 = new Version(version1);
-            var v2 = new Version(version2);
+            if (!Version.TryParse(version1, out var v1)) return 0;
+            if (!Version.TryParse(version2, out var v2)) return 0;
             return v1.CompareTo(v2);
         }
 
@@ -243,6 +251,11 @@ namespace ThreeDBuilder.Services
                 ProgressPercentage = percentage,
                 Status = status
             });
+        }
+
+        public void Dispose()
+        {
+            _httpClient.Dispose();
         }
     }
 }

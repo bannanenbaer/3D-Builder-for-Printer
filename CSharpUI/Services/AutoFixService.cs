@@ -113,7 +113,7 @@ namespace ThreeDBuilder.Services
         /// <summary>
         /// Führt automatische Optimierungen durch
         /// </summary>
-        public async Task<bool> AutoFixModel(string modelId, AutoFixOptions options = null)
+        public async Task<bool> AutoFixModel(string modelId, AutoFixOptions? options = null)
         {
             options ??= new AutoFixOptions();
 

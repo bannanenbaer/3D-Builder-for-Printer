@@ -28,7 +28,7 @@ namespace ThreeDBuilder.ViewModels
         private string _historyInfo = "Keine Änderungen";
         private bool _hasAnalysisReport;
         private float _printQualityScore = 100f;
-        private Brush _printQualityColor;
+        private Brush _printQualityColor = new SolidColorBrush(System.Windows.Media.Color.FromRgb(16, 185, 129));
         private ObservableCollection<string> _issuesFound = new();
         private ObservableCollection<string> _recommendations = new();
         private float _filletRadius = 1.5f;
@@ -56,7 +56,7 @@ namespace ThreeDBuilder.ViewModels
         private RelayCommand _analyzeCommand;
         private RelayCommand _autoFixCommand;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public AutoFixViewModel(AutoFixService autoFixService, UndoRedoService undoRedoService)
         {
@@ -190,8 +190,9 @@ namespace ThreeDBuilder.ViewModels
                 if (success)
                 {
                     OptimizationProgress = $"✓ AutoFix für '{SelectedObjectForOptimization.Name}' abgeschlossen!";
-                    System.Threading.Thread.Sleep(1500);
-                    
+                    // Use async delay instead of blocking Thread.Sleep
+                    await System.Threading.Tasks.Task.Delay(1500);
+
                     // Re-analyze after fix
                     AnalyzeModel();
                 }
@@ -443,7 +444,7 @@ namespace ThreeDBuilder.ViewModels
 
         #endregion
 
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        protected void OnPropertyChanged([CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }

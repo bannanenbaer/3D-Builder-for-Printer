@@ -66,13 +66,15 @@ public class PythonBridge : IDisposable
             _stdin = _process.StandardInput;
             _stdin.AutoFlush = true;
 
-            // Start reading responses in background
+            // Wait for "ready" signal BEFORE starting the read loop, so the ready
+            // line is not consumed by ReadLoopAsync first (race condition fix).
+            using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(90));
+            var ready = await WaitForReadyAsync(timeout.Token);
+
+            // Start reading responses in background only after the ready handshake
             _ = ReadLoopAsync(_cts.Token);
             _ = ReadErrorLoopAsync(_cts.Token);
 
-            // Wait for "ready" signal (up to 90s — cadquery first import can be slow)
-            using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(90));
-            var ready = await WaitForReadyAsync(timeout.Token);
             return ready;
         }
         catch (Exception ex)

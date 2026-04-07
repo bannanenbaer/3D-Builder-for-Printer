@@ -11,20 +11,20 @@ namespace ThreeDBuilder.ViewModels
         private readonly UpdateService _updateService;
         private bool _isCheckingForUpdates;
         private bool _updateAvailable;
-        private string _currentVersion;
-        private string _latestVersion;
-        private string _releaseNotes;
-        private string _statusMessage;
+        private string _currentVersion = "";
+        private string _latestVersion = "";
+        private string _releaseNotes = "";
+        private string _statusMessage = "";
         private int _updateProgress;
         private bool _isDownloading;
-        private UpdateService.UpdateInfo _updateInfo;
+        private UpdateService.UpdateInfo? _updateInfo;
         private bool _showUpdateDialog;
 
         private RelayCommand _checkForUpdatesCommand;
         private RelayCommand _downloadAndInstallCommand;
         private RelayCommand _cancelCommand;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public UpdateViewModel(UpdateService updateService)
         {
@@ -187,7 +187,7 @@ namespace ThreeDBuilder.ViewModels
 
         #endregion
 
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        protected void OnPropertyChanged([CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }

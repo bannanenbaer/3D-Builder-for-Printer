@@ -14,7 +14,7 @@ using ThreeDBuilder.Services;
 
 namespace ThreeDBuilder.ViewModels;
 
-public class AssistantViewModel : INotifyPropertyChanged
+public class AssistantViewModel : INotifyPropertyChanged, IDisposable
 {
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -324,4 +324,10 @@ public class AssistantViewModel : INotifyPropertyChanged
 
     protected void OnPropertyChanged([CallerMemberName] string? name = null)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+    public void Dispose()
+    {
+        _teaTimer?.Dispose();
+        _teaTimer = null;
+    }
 }

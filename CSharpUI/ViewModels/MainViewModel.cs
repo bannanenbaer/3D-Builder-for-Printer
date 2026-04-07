@@ -267,6 +267,7 @@ public class MainViewModel : INotifyPropertyChanged
     public async Task ApplyFilletAsync()
     {
         if (SelectedObject == null) { StatusText = T.T("msg_no_selection"); return; }
+        if (_bridge?.IsRunning != true) { StatusText = T.T("backend_error"); return; }
         IsBusy = true;
         SaveUndoState();
         try
@@ -274,7 +275,7 @@ public class MainViewModel : INotifyPropertyChanged
             foreach (var row in ParameterRows)
                 SelectedObject.Params[row.Key] = row.Value;
 
-            var result = await _bridge!.ApplyFilletAsync(SelectedObject.ToBackendDict(), FilletRadius);
+            var result = await _bridge.ApplyFilletAsync(SelectedObject.ToBackendDict(), FilletRadius);
             if (result["status"]?.ToString() == "ok")
             {
                 SelectedObject.StlPath    = result["stl_path"]?.ToString();
@@ -292,6 +293,7 @@ public class MainViewModel : INotifyPropertyChanged
     public async Task ApplyChamferAsync()
     {
         if (SelectedObject == null) { StatusText = T.T("msg_no_selection"); return; }
+        if (_bridge?.IsRunning != true) { StatusText = T.T("backend_error"); return; }
         IsBusy = true;
         SaveUndoState();
         try
@@ -299,7 +301,7 @@ public class MainViewModel : INotifyPropertyChanged
             foreach (var row in ParameterRows)
                 SelectedObject.Params[row.Key] = row.Value;
 
-            var result = await _bridge!.ApplyChamferAsync(SelectedObject.ToBackendDict(), ChamferSize);
+            var result = await _bridge.ApplyChamferAsync(SelectedObject.ToBackendDict(), ChamferSize);
             if (result["status"]?.ToString() == "ok")
             {
                 SelectedObject.StlPath   = result["stl_path"]?.ToString();
@@ -318,12 +320,13 @@ public class MainViewModel : INotifyPropertyChanged
     {
         var selected = SceneObjects.Where(o => o.IsSelected).ToList();
         if (selected.Count != 2) { StatusText = T.T("msg_select_two"); return; }
+        if (_bridge?.IsRunning != true) { StatusText = T.T("backend_error"); return; }
 
         IsBusy = true;
         SaveUndoState();
         try
         {
-            var result = await _bridge!.BooleanOpAsync(
+            var result = await _bridge.BooleanOpAsync(
                 op,
                 selected[0].ToBackendDict(),
                 selected[1].ToBackendDict()
