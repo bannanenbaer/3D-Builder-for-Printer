@@ -16,6 +16,17 @@ public class SettingsViewModel : INotifyPropertyChanged
 
     private readonly SettingsService _svc = SettingsService.Instance;
 
+    // ── Update + Python status ────────────────────────────────────────────
+    public UpdateViewModel UpdateVM { get; }
+
+    public bool IsPythonRunning => App.PythonBridge?.IsRunning == true;
+    public string PythonStatusText => IsPythonRunning
+        ? "Python-Backend: Verbunden"
+        : "Python-Backend: Nicht verfügbar (cadquery via pip installieren)";
+    public System.Windows.Media.Brush PythonStatusBrush => IsPythonRunning
+        ? new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x10, 0xB9, 0x81))
+        : new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0xEF, 0x44, 0x44));
+
     // ── Available options ─────────────────────────────────────────────────
     public List<string> AvailableThemes { get; } = new() { "Dunkel", "Hell", "System" };
     public List<string> AvailableLanguages { get; } = new() { "Deutsch", "English" };
@@ -233,8 +244,9 @@ public class SettingsViewModel : INotifyPropertyChanged
     public ICommand OpenAutoSaveFolderCommand { get; }
     public ICommand BrowseAutoSavePathCommand { get; }
 
-    public SettingsViewModel()
+    public SettingsViewModel(UpdateViewModel updateVM)
     {
+        UpdateVM = updateVM;
         ApplyThemeCommand = new RelayCommand(ExecuteApplyTheme);
         OpenAutoSaveFolderCommand = new RelayCommand(ExecuteOpenAutoSaveFolder);
         BrowseAutoSavePathCommand = new RelayCommand(ExecuteBrowseAutoSavePath);

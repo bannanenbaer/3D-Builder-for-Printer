@@ -14,26 +14,108 @@
                     BorderBrush="#374151"
                     BorderThickness="1"
                     CornerRadius="4"
-                    Padding="8"
+                    Padding="10"
                     Margin="4,4">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0"
-                               Text="Version v1.0.0"
-                               Foreground="{StaticResource TextSecondary}"
-                               VerticalAlignment="Center"
-                               FontSize="11"/>
-                    <Button Grid.Column="1"
-                            Content="Auf Updates prüfen"
-                            Command="{Binding DataContext.UpdateVM.CheckForUpdatesCommand,
-                                      RelativeSource={RelativeSource AncestorType=Window}}"
+                <StackPanel>
+
+                    <!-- Version row -->
+                    <Grid Margin="0,0,0,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding UpdateVM.CurrentVersion, StringFormat='Installiert: v{0}'}"
+                                       Foreground="{StaticResource TextSecondary}"
+                                       FontSize="11"/>
+                        </StackPanel>
+                        <Button Grid.Column="1"
+                                Content="Auf Updates prüfen"
+                                Command="{Binding UpdateVM.CheckForUpdatesCommand}"
+                                IsEnabled="{Binding UpdateVM.IsCheckingForUpdates,
+                                            Converter={StaticResource InvertBoolConverter}}"
+                                Style="{StaticResource ActionButton}"
+                                FontSize="10"
+                                Height="28"
+                                Padding="8,0"/>
+                    </Grid>
+
+                    <!-- Status row (checking spinner / result message) -->
+                    <Grid Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Dot: visible only while checking -->
+                        <Ellipse Grid.Column="0"
+                                 Width="8" Height="8"
+                                 Fill="{StaticResource AccentBrush}"
+                                 Margin="0,0,6,0"
+                                 VerticalAlignment="Center"
+                                 Visibility="{Binding UpdateVM.IsCheckingForUpdates,
+                                              Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding UpdateVM.StatusMessage}"
+                                   Foreground="{StaticResource TextSecondary}"
+                                   FontSize="10"
+                                   TextWrapping="Wrap"
+                                   VerticalAlignment="Center"/>
+                    </Grid>
+
+                    <!-- Progress bar (only visible when downloading) -->
+                    <ProgressBar Value="{Binding UpdateVM.UpdateProgress}"
+                                 Minimum="0" Maximum="100"
+                                 Height="4"
+                                 Margin="0,2,0,4"
+                                 Foreground="{StaticResource AccentBrush}"
+                                 Background="#374151">
+                        <ProgressBar.Visibility>
+                            <Binding Path="UpdateVM.IsDownloading"
+                                     Converter="{StaticResource BoolToVisibilityConverter}"/>
+                        </ProgressBar.Visibility>
+                    </ProgressBar>
+
+                    <!-- Download/Install button (only when update available) -->
+                    <Button Content="Herunterladen und installieren"
+                            Command="{Binding UpdateVM.DownloadAndInstallCommand}"
                             Style="{StaticResource ActionButton}"
                             FontSize="10"
                             Height="28"
-                            Padding="8,0"/>
+                            HorizontalAlignment="Stretch">
+                        <Button.Visibility>
+                            <Binding Path="UpdateVM.UpdateAvailable"
+                                     Converter="{StaticResource BoolToVisibilityConverter}"/>
+                        </Button.Visibility>
+                    </Button>
+
+                </StackPanel>
+            </Border>
+
+            <!-- Python Backend Status -->
+            <Border Background="#0F1419"
+                    BorderBrush="#374151"
+                    BorderThickness="1"
+                    CornerRadius="4"
+                    Padding="8"
+                    Margin="4,2,4,4">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Ellipse Grid.Column="0"
+                             Width="8" Height="8"
+                             Fill="{Binding PythonStatusBrush}"
+                             Margin="0,0,6,0"
+                             VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="1"
+                               Text="{Binding PythonStatusText}"
+                               FontSize="10"
+                               Foreground="{StaticResource TextSecondary}"
+                               VerticalAlignment="Center"
+                               TextWrapping="Wrap"/>
                 </Grid>
             </Border>
 
@@ -209,7 +291,7 @@
                            FontSize="11"/>
                 <ToggleButton Grid.Column="1"
                               IsChecked="{Binding AutoSaveEnabled}"
-                              Style="{StaticResource MaterialDesignToggleButton}"
+                              Style="{StaticResource ToggleSwitchStyle}"
                               VerticalAlignment="Center"/>
             </Grid>
 
@@ -311,7 +393,7 @@
                         </StackPanel>
                         <ToggleButton Grid.Column="1"
                                       IsChecked="{Binding IsAssistantEnabled}"
-                                      Style="{StaticResource MaterialDesignToggleButton}"
+                                      Style="{StaticResource ToggleSwitchStyle}"
                                       VerticalAlignment="Center"/>
                     </Grid>
 
@@ -336,7 +418,7 @@
                         <ToggleButton Grid.Column="1"
                                       IsChecked="{Binding AnimationsEnabled}"
                                       IsEnabled="{Binding IsAssistantEnabled}"
-                                      Style="{StaticResource MaterialDesignToggleButton}"
+                                      Style="{StaticResource ToggleSwitchStyle}"
                                       VerticalAlignment="Center"/>
                     </Grid>
 
@@ -361,7 +443,7 @@
                         <ToggleButton Grid.Column="1"
                                       IsChecked="{Binding AutoSuggestionsEnabled}"
                                       IsEnabled="{Binding IsAssistantEnabled}"
-                                      Style="{StaticResource MaterialDesignToggleButton}"
+                                      Style="{StaticResource ToggleSwitchStyle}"
                                       VerticalAlignment="Center"/>
                     </Grid>
 

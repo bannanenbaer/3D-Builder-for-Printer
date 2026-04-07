@@ -3,6 +3,7 @@
 Geometry operations: fillet, chamfer, boolean operations.
 All inputs/outputs are CadQuery Workplane objects.
 """
+from __future__ import annotations  # keep type hints as strings so cq=None is safe at import
 
 try:
     import cadquery as cq
