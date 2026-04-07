@@ -242,7 +242,7 @@
                                 IsHitTestVisible="False"
                                 Background="Transparent">
                             <local:MascotAnimationView x:Name="ViewportMascot"
-                                                       Width="90" Height="110"
+                                                       Width="120" Height="150"
                                                        Canvas.Bottom="18"
                                                        Visibility="Collapsed"/>
                         </Canvas>

@@ -28,7 +28,7 @@
                                FontSize="11"/>
                     <Button Grid.Column="1"
                             Content="Auf Updates prüfen"
-                            Command="{Binding DataContext.UpdateVM.CheckUpdateCommand,
+                            Command="{Binding DataContext.UpdateVM.CheckForUpdatesCommand,
                                       RelativeSource={RelativeSource AncestorType=Window}}"
                             Style="{StaticResource ActionButton}"
                             FontSize="10"
