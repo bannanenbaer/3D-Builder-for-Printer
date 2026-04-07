@@ -9,7 +9,7 @@ public class AutoSaveService : IDisposable
 {
     private readonly Func<Task> _saveCallback;
     private readonly SettingsService _settings;
-    private Timer? _timer;
+    private System.Timers.Timer? _timer;
     private bool _disposed;
 
     public AutoSaveService(Func<Task> saveCallback, SettingsService settings)
@@ -26,7 +26,7 @@ public class AutoSaveService : IDisposable
         var intervalMs = _settings.Current.AutoSaveIntervalMinutes * 60_000;
         if (intervalMs <= 0) intervalMs = 600_000; // fallback 10 min
 
-        _timer = new Timer(intervalMs);
+        _timer = new System.Timers.Timer(intervalMs);
         _timer.Elapsed += OnTimerElapsed;
         _timer.AutoReset = true;
         _timer.Start();
