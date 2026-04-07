@@ -74,11 +74,23 @@ class ScadBridge:
                 return stl_file, ""
             else:
                 error = result.stderr or result.stdout or "Unknown compile error"
+                # Clean up the (empty/partial) STL file on error
+                if stl_file and os.path.exists(stl_file):
+                    try:
+                        os.unlink(stl_file)
+                    except OSError:
+                        pass
                 return None, error
 
         except FileNotFoundError:
             return None, "OpenSCAD not found. Please install OpenSCAD."
         except subprocess.TimeoutExpired:
+            # Clean up partial STL on timeout
+            if stl_file and os.path.exists(stl_file):
+                try:
+                    os.unlink(stl_file)
+                except OSError:
+                    pass
             return None, "OpenSCAD compile timed out (>60s)."
         except Exception as e:
             return None, str(e)

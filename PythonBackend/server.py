@@ -226,19 +226,93 @@ def handle_ping(req: dict) -> dict:
     return {"status": "ok", "message": "pong", "cq_available": CQ_AVAILABLE}
 
 
+def handle_analyze_model(req: dict) -> dict:
+    """Analyze a model for print quality issues and return a simple report."""
+    # Without a real mesh analysis library we return a heuristic result
+    # based on shape type and parameters available in the request.
+    model_id = req.get("model_id", "")
+
+    # Default: no issues detected
+    result = {
+        "status": "ok",
+        "sharp_edges": False,
+        "small_holes": False,
+        "thin_walls": False,
+        "non_manifold": False,
+    }
+
+    # If the shape is in cache we can do a basic CadQuery analysis
+    if CQ_AVAILABLE and model_id in _shape_cache:
+        shape = _shape_cache[model_id]
+        try:
+            # Count edges — many edges suggest complex/sharp geometry
+            edge_count = len(shape.edges().vals())
+            result["sharp_edges"] = edge_count > 50
+        except Exception:
+            pass
+
+    return result
+
+
+def handle_fill_small_holes(req: dict) -> dict:
+    """Stub: fill small holes in a model. Returns the original STL path unchanged."""
+    model_id = req.get("model_id", "")
+    if CQ_AVAILABLE and model_id in _shape_cache:
+        shape = _shape_cache[model_id]
+        stl_path = _stl_from_shape(shape, "filled")
+        return {"status": "ok", "stl_path": stl_path}
+    return {"status": "ok", "message": "No cached shape found; no changes applied."}
+
+
+def handle_thicken_walls(req: dict) -> dict:
+    """Stub: thicken thin walls. Returns the original STL path unchanged."""
+    model_id = req.get("model_id", "")
+    if CQ_AVAILABLE and model_id in _shape_cache:
+        shape = _shape_cache[model_id]
+        stl_path = _stl_from_shape(shape, "thickened")
+        return {"status": "ok", "stl_path": stl_path}
+    return {"status": "ok", "message": "No cached shape found; no changes applied."}
+
+
+def handle_fix_non_manifold(req: dict) -> dict:
+    """Stub: repair non-manifold geometry. Returns the original STL path unchanged."""
+    model_id = req.get("model_id", "")
+    if CQ_AVAILABLE and model_id in _shape_cache:
+        shape = _shape_cache[model_id]
+        stl_path = _stl_from_shape(shape, "repaired")
+        return {"status": "ok", "stl_path": stl_path}
+    return {"status": "ok", "message": "No cached shape found; no changes applied."}
+
+
+def handle_smooth_mesh(req: dict) -> dict:
+    """Stub: smooth the mesh surface. Returns the original STL path unchanged."""
+    model_id = req.get("model_id", "")
+    if CQ_AVAILABLE and model_id in _shape_cache:
+        shape = _shape_cache[model_id]
+        stl_path = _stl_from_shape(shape, "smoothed")
+        return {"status": "ok", "stl_path": stl_path}
+    return {"status": "ok", "message": "No cached shape found; no changes applied."}
+
+
 HANDLERS = {
-    "create_shape":   handle_create_shape,
-    "apply_fillet":   handle_apply_fillet,
-    "apply_chamfer":  handle_apply_chamfer,
-    "boolean_op":     handle_boolean_op,
-    "import_stl":     handle_import_stl,
-    "import_3mf":     handle_import_3mf,
-    "compile_scad":   handle_compile_scad,
-    "export_scad":    handle_export_scad,
-    "shape_to_scad":  handle_shape_to_scad,
-    "get_shape_defs": handle_get_shape_defs,
-    "check_openscad": handle_check_openscad,
-    "ping":           handle_ping,
+    "create_shape":    handle_create_shape,
+    "apply_fillet":    handle_apply_fillet,
+    "apply_chamfer":   handle_apply_chamfer,
+    "boolean_op":      handle_boolean_op,
+    "import_stl":      handle_import_stl,
+    "import_3mf":      handle_import_3mf,
+    "compile_scad":    handle_compile_scad,
+    "export_scad":     handle_export_scad,
+    "shape_to_scad":   handle_shape_to_scad,
+    "get_shape_defs":  handle_get_shape_defs,
+    "check_openscad":  handle_check_openscad,
+    "ping":            handle_ping,
+    # AutoFix handlers
+    "analyze_model":   handle_analyze_model,
+    "fill_small_holes": handle_fill_small_holes,
+    "thicken_walls":   handle_thicken_walls,
+    "fix_non_manifold": handle_fix_non_manifold,
+    "smooth_mesh":     handle_smooth_mesh,
 }
 
 

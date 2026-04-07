@@ -20,7 +20,7 @@ namespace ThreeDBuilder.Services
         private readonly Stack<IUndoRedoAction> _redoStack = new();
         private readonly int _maxHistorySize;
 
-        public event EventHandler HistoryChanged;
+        public event EventHandler? HistoryChanged;
 
         public UndoRedoService(int maxHistorySize = 100)
         {
@@ -38,14 +38,16 @@ namespace ThreeDBuilder.Services
             action.Execute();
             _undoStack.Push(action);
 
-            // Limit history size
+            // Limit history size — Stack.ToList() yields newest-first, so we take
+            // the newest _maxHistorySize entries and re-push oldest-first to preserve order.
             if (_undoStack.Count > _maxHistorySize)
             {
-                var temp = _undoStack.ToList();
+                var temp = _undoStack.ToList(); // newest → oldest
                 _undoStack.Clear();
-                foreach (var item in temp.Take(_maxHistorySize))
+                // Reverse so we push oldest first → newest ends up on top
+                for (int i = Math.Min(temp.Count, _maxHistorySize) - 1; i >= 0; i--)
                 {
-                    _undoStack.Push(item);
+                    _undoStack.Push(temp[i]);
                 }
             }
 

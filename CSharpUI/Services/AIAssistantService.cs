@@ -22,7 +22,9 @@ public class AIAssistantService
         _history.Add(("user", input));
         var response = Process(input);
         _history.Add(("assistant", response));
-        if (_history.Count > 30) _history.RemoveAt(0);
+        // Trim oldest entries to stay within the 30-entry limit
+        while (_history.Count > 30)
+            _history.RemoveAt(0);
         return Task.FromResult(response);
     }
 
