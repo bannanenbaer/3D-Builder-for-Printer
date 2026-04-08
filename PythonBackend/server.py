@@ -18,15 +18,18 @@ Commands:
   compile_scad    scad_code → stl_path
   export_scad     objects → scad_code
   check_openscad  → available (bool)
+  delete_stl      stl_path → ok  (explicit cleanup of a temp file)
   ping            → pong
 """
 
 import sys
 import json
 import os
+import time
 import tempfile
 import traceback
 import copy
+from collections import OrderedDict
 
 # Ensure we can import sibling modules
 sys.path.insert(0, os.path.dirname(__file__))
@@ -43,8 +46,50 @@ except ImportError:
 
 scad_bridge = ScadBridge()
 
-# In-memory shape cache: object_id → cq.Workplane (only populated when CQ_AVAILABLE)
-_shape_cache: dict = {}
+# ── Temp-file tracking ────────────────────────────────────────────────────────
+# All temp files created by this server are registered here so they can be
+# cleaned up automatically (age-based) or on explicit delete_stl request.
+_temp_files: set = set()
+
+
+def _register_temp(path: str) -> str:
+    """Register a temp file path for later cleanup and return it."""
+    _temp_files.add(path)
+    return path
+
+
+def _cleanup_temp_files(max_age_seconds: int = 3600) -> None:
+    """Delete registered temp files older than max_age_seconds (default 1 h)."""
+    now = time.time()
+    to_delete = []
+    for path in list(_temp_files):
+        try:
+            if not os.path.exists(path) or (now - os.path.getmtime(path)) > max_age_seconds:
+                to_delete.append(path)
+        except OSError:
+            to_delete.append(path)
+    for path in to_delete:
+        _temp_files.discard(path)
+        try:
+            os.unlink(path)
+        except OSError:
+            pass
+
+
+# ── Shape cache with LRU eviction ────────────────────────────────────────────
+# Keeps at most MAX_CACHE_SIZE CadQuery Workplane objects to prevent unbounded
+# memory growth over long editing sessions.
+MAX_CACHE_SIZE = 50
+_shape_cache: OrderedDict = OrderedDict()
+
+
+def _cache_put(obj_id: str, shape) -> None:
+    """Insert or refresh a shape in the LRU cache, evicting the oldest if full."""
+    if obj_id in _shape_cache:
+        _shape_cache.move_to_end(obj_id)
+    _shape_cache[obj_id] = shape
+    while len(_shape_cache) > MAX_CACHE_SIZE:
+        _shape_cache.popitem(last=False)  # Remove least-recently-used entry
 
 
 def _stl_from_shape(shape: "cq.Workplane", prefix: str = "shape") -> str:
@@ -56,7 +101,7 @@ def _stl_from_shape(shape: "cq.Workplane", prefix: str = "shape") -> str:
     )
     tmp.close()
     cq.exporters.export(shape, tmp.name)
-    return tmp.name
+    return _register_temp(tmp.name)
 
 
 def _load_object(obj: dict) -> "cq.Workplane":
@@ -126,7 +171,7 @@ def _fallback_stl(shape_type: str, params: dict) -> str:
     )
     tmp.write("\n".join(lines))
     tmp.close()
-    return tmp.name
+    return _register_temp(tmp.name)
 
 
 def handle_create_shape(req: dict) -> dict:
@@ -143,7 +188,7 @@ def handle_create_shape(req: dict) -> dict:
             shape = ops.rotate_shape(shape, rot[0], rot[1], rot[2])
         if any(pos):
             shape = ops.translate_shape(shape, pos[0], pos[1], pos[2])
-        _shape_cache[obj_id] = shape
+        _cache_put(obj_id, shape)
         stl_path = _stl_from_shape(shape, shape_type)
         return {"status": "ok", "stl_path": stl_path, "object_id": obj_id}
 
@@ -165,6 +210,9 @@ def handle_create_shape(req: dict) -> dict:
 def handle_apply_fillet(req: dict) -> dict:
     obj = req["object"]
     radius = float(req["radius"])
+    if radius <= 0:
+        return {"status": "error",
+                "message": f"Fillet-Radius muss größer als 0 sein (war: {radius})"}
     shape = _load_object(obj)
     shape = ops.apply_fillet(shape, radius)
     stl_path = _stl_from_shape(shape, "fillet")
@@ -174,6 +222,9 @@ def handle_apply_fillet(req: dict) -> dict:
 def handle_apply_chamfer(req: dict) -> dict:
     obj = req["object"]
     size = float(req["size"])
+    if size <= 0:
+        return {"status": "error",
+                "message": f"Chamfer-Größe muss größer als 0 sein (war: {size})"}
     shape = _load_object(obj)
     shape = ops.apply_chamfer(shape, size)
     stl_path = _stl_from_shape(shape, "chamfer")
@@ -208,7 +259,7 @@ def handle_import_stl(req: dict) -> dict:
     )
     tmp.close()
     shutil.copy2(file_path, tmp.name)
-    return {"status": "ok", "stl_path": tmp.name}
+    return {"status": "ok", "stl_path": _register_temp(tmp.name)}
 
 
 def handle_import_3mf(req: dict) -> dict:
@@ -231,8 +282,8 @@ def handle_import_3mf(req: dict) -> dict:
             result = cq.importers.import3mf(file_path)
             result.val().exportStl(tmp_stl.name)
             converted = True
-        except Exception:
-            pass
+        except Exception as e:
+            sys.stderr.write(f"[3MF import cadquery failed] {e}\n")
 
     # Fallback: try trimesh (lightweight, often available)
     if not converted:
@@ -241,16 +292,21 @@ def handle_import_3mf(req: dict) -> dict:
             mesh = trimesh.load(file_path, force="mesh")
             mesh.export(tmp_stl.name)
             converted = True
-        except Exception:
-            pass
+        except Exception as e:
+            sys.stderr.write(f"[3MF import trimesh failed] {e}\n")
 
     if not converted:
+        # Clean up the unused temp file before raising
+        try:
+            os.unlink(tmp_stl.name)
+        except OSError:
+            pass
         raise RuntimeError(
             "Cannot convert 3MF to STL: neither cadquery nor trimesh is available. "
             "Run: pip install trimesh"
         )
 
-    return {"status": "ok", "stl_path": tmp_stl.name}
+    return {"status": "ok", "stl_path": _register_temp(tmp_stl.name)}
 
 
 def handle_compile_scad(req: dict) -> dict:
@@ -288,6 +344,18 @@ def handle_ping(req: dict) -> dict:
     return {"status": "ok", "message": "pong", "cq_available": CQ_AVAILABLE}
 
 
+def handle_delete_stl(req: dict) -> dict:
+    """Explicit cleanup of a single temp STL file requested by the C# frontend."""
+    path = req.get("stl_path", "")
+    if path and path in _temp_files:
+        _temp_files.discard(path)
+        try:
+            os.unlink(path)
+        except OSError:
+            pass
+    return {"status": "ok"}
+
+
 def handle_analyze_model(req: dict) -> dict:
     """Analyze a model for print quality issues and return a simple report."""
     # Without a real mesh analysis library we return a heuristic result
@@ -322,8 +390,10 @@ def handle_fill_small_holes(req: dict) -> dict:
     if CQ_AVAILABLE and model_id in _shape_cache:
         shape = _shape_cache[model_id]
         stl_path = _stl_from_shape(shape, "filled")
-        return {"status": "ok", "stl_path": stl_path}
-    return {"status": "ok", "message": "No cached shape found; no changes applied."}
+        return {"status": "ok", "stl_path": stl_path,
+                "warning": "Löcher-Füllung noch nicht implementiert – Originalform beibehalten"}
+    return {"status": "ok", "message": "Kein gecachtes Objekt gefunden; keine Änderungen.",
+            "warning": "Löcher-Füllung noch nicht implementiert"}
 
 
 def handle_thicken_walls(req: dict) -> dict:
@@ -332,8 +402,10 @@ def handle_thicken_walls(req: dict) -> dict:
     if CQ_AVAILABLE and model_id in _shape_cache:
         shape = _shape_cache[model_id]
         stl_path = _stl_from_shape(shape, "thickened")
-        return {"status": "ok", "stl_path": stl_path}
-    return {"status": "ok", "message": "No cached shape found; no changes applied."}
+        return {"status": "ok", "stl_path": stl_path,
+                "warning": "Wandverdickung noch nicht implementiert – Originalform beibehalten"}
+    return {"status": "ok", "message": "Kein gecachtes Objekt gefunden; keine Änderungen.",
+            "warning": "Wandverdickung noch nicht implementiert"}
 
 
 def handle_fix_non_manifold(req: dict) -> dict:
@@ -342,8 +414,10 @@ def handle_fix_non_manifold(req: dict) -> dict:
     if CQ_AVAILABLE and model_id in _shape_cache:
         shape = _shape_cache[model_id]
         stl_path = _stl_from_shape(shape, "repaired")
-        return {"status": "ok", "stl_path": stl_path}
-    return {"status": "ok", "message": "No cached shape found; no changes applied."}
+        return {"status": "ok", "stl_path": stl_path,
+                "warning": "Non-Manifold-Reparatur noch nicht implementiert – Originalform beibehalten"}
+    return {"status": "ok", "message": "Kein gecachtes Objekt gefunden; keine Änderungen.",
+            "warning": "Non-Manifold-Reparatur noch nicht implementiert"}
 
 
 def handle_smooth_mesh(req: dict) -> dict:
@@ -352,8 +426,10 @@ def handle_smooth_mesh(req: dict) -> dict:
     if CQ_AVAILABLE and model_id in _shape_cache:
         shape = _shape_cache[model_id]
         stl_path = _stl_from_shape(shape, "smoothed")
-        return {"status": "ok", "stl_path": stl_path}
-    return {"status": "ok", "message": "No cached shape found; no changes applied."}
+        return {"status": "ok", "stl_path": stl_path,
+                "warning": "Mesh-Glättung noch nicht implementiert – Originalform beibehalten"}
+    return {"status": "ok", "message": "Kein gecachtes Objekt gefunden; keine Änderungen.",
+            "warning": "Mesh-Glättung noch nicht implementiert"}
 
 
 HANDLERS = {
@@ -369,6 +445,7 @@ HANDLERS = {
     "get_shape_defs":  handle_get_shape_defs,
     "check_openscad":  handle_check_openscad,
     "ping":            handle_ping,
+    "delete_stl":      handle_delete_stl,
     # AutoFix handlers
     "analyze_model":   handle_analyze_model,
     "fill_small_holes": handle_fill_small_holes,
@@ -379,6 +456,9 @@ HANDLERS = {
 
 
 def process_request(line: str) -> str:
+    # Periodic cleanup of old temp files (age-based, lightweight)
+    _cleanup_temp_files()
+
     try:
         req = json.loads(line)
     except json.JSONDecodeError as e:

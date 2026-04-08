@@ -109,8 +109,9 @@ public class MainViewModel : INotifyPropertyChanged
         _scadMessageIsError ? Brushes.OrangeRed : Brushes.LightGreen;
 
     // ── Undo / Redo ───────────────────────────────────────────────────────
-    private readonly Stack<List<SceneObject>> _undoStack = new();
-    private readonly Stack<List<SceneObject>> _redoStack = new();
+    private const int MaxUndoStates = 50;
+    private readonly List<List<SceneObject>> _undoStack = new();
+    private readonly List<List<SceneObject>> _redoStack = new();
 
     // ── Events to signal viewport ──────────────────────────────────────────
     public event Action<SceneObject>? ObjectUpdated;
@@ -156,9 +157,10 @@ public class MainViewModel : INotifyPropertyChanged
         set { _isAssistantVisible = value; OnPropertyChanged(); }
     }
 
-    public AssistantViewModel AssistantVM { get; }
-    public UpdateViewModel    UpdateVM    { get; }
-    public SettingsViewModel  SettingsVM  { get; }
+    public AssistantViewModel AssistantVM  { get; }
+    public UpdateViewModel    UpdateVM     { get; }
+    public SettingsViewModel  SettingsVM   { get; }
+    public AutoFixViewModel   AutoFixVM    { get; }
 
     // ── Constructor ───────────────────────────────────────────────────────
     public MainViewModel()
@@ -190,6 +192,10 @@ public class MainViewModel : INotifyPropertyChanged
         AssistantVM = new AssistantViewModel(_bridge, this);
         UpdateVM    = new UpdateViewModel(new Services.UpdateService());
         SettingsVM  = new SettingsViewModel(UpdateVM);
+        AutoFixVM   = new AutoFixViewModel(
+            new Services.AutoFixService(_bridge),
+            new Services.UndoRedoService(),
+            SceneObjects);
     }
 
     // ── Shape creation ────────────────────────────────────────────────────
@@ -263,6 +269,8 @@ public class MainViewModel : INotifyPropertyChanged
                 SelectedObject.StlPath = result["stl_path"]?.ToString();
                 ObjectUpdated?.Invoke(SelectedObject);
             }
+            else
+                StatusText = result["message"]?.ToString() ?? T.T("backend_error");
         }
         finally { IsBusy = false; }
     }
@@ -353,6 +361,8 @@ public class MainViewModel : INotifyPropertyChanged
                 ObjectAdded?.Invoke(newObj);
                 StatusText = T.T("status_ready");
             }
+            else
+                StatusText = result["message"]?.ToString() ?? T.T("backend_error");
         }
         finally { IsBusy = false; }
     }
@@ -584,7 +594,9 @@ public class MainViewModel : INotifyPropertyChanged
 
     private void SaveUndoState()
     {
-        _undoStack.Push(SceneObjects.Select(o => o.Clone()).ToList());
+        _undoStack.Add(SceneObjects.Select(o => o.Clone()).ToList());
+        if (_undoStack.Count > MaxUndoStates)
+            _undoStack.RemoveAt(0); // Drop oldest state to keep memory bounded
         _redoStack.Clear();
     }
 
@@ -594,15 +606,19 @@ public class MainViewModel : INotifyPropertyChanged
     public async Task UndoAsync()
     {
         if (!CanUndo) return;
-        _redoStack.Push(SceneObjects.Select(o => o.Clone()).ToList());
-        await RestoreStateAsync(_undoStack.Pop());
+        _redoStack.Add(SceneObjects.Select(o => o.Clone()).ToList());
+        var state = _undoStack[^1];
+        _undoStack.RemoveAt(_undoStack.Count - 1);
+        await RestoreStateAsync(state);
     }
 
     public async Task RedoAsync()
     {
         if (!CanRedo) return;
-        _undoStack.Push(SceneObjects.Select(o => o.Clone()).ToList());
-        await RestoreStateAsync(_redoStack.Pop());
+        _undoStack.Add(SceneObjects.Select(o => o.Clone()).ToList());
+        var state = _redoStack[^1];
+        _redoStack.RemoveAt(_redoStack.Count - 1);
+        await RestoreStateAsync(state);
     }
 
     private async Task RestoreStateAsync(List<SceneObject> state)
