@@ -16,6 +16,8 @@ namespace ThreeDBuilder.Views;
 public partial class MainWindow : Window
 {
     private readonly MainViewModel _vm;
+    // O(1) lookup: object ID → viewport visual (avoids linear search on every update/remove)
+    private readonly Dictionary<string, ModelVisual3D> _visualMap = new();
 
     public MainWindow()
     {
@@ -68,6 +70,7 @@ public partial class MainWindow : Window
 
             var visual = new ModelVisual3D { Content = modelGroup };
             visual.SetValue(TagProperty, $"obj_{obj.Id}");
+            _visualMap[obj.Id] = visual;
             Viewport3D.Children.Add(visual);
             Viewport3D.ZoomExtents(400);
         }
@@ -76,19 +79,18 @@ public partial class MainWindow : Window
 
     private void RemoveFromViewport(string objId)
     {
-        var visual = Viewport3D.Children
-            .OfType<ModelVisual3D>()
-            .FirstOrDefault(v => v.GetValue(TagProperty) is string t && t == $"obj_{objId}");
-        if (visual != null) Viewport3D.Children.Remove(visual);
+        if (_visualMap.TryGetValue(objId, out var visual))
+        {
+            _visualMap.Remove(objId);
+            Viewport3D.Children.Remove(visual);
+        }
     }
 
     private void ClearViewport()
     {
-        var toRemove = Viewport3D.Children
-            .OfType<ModelVisual3D>()
-            .Where(v => v.GetValue(TagProperty) is string t && t.StartsWith("obj_"))
-            .ToList();
-        foreach (var v in toRemove) Viewport3D.Children.Remove(v);
+        foreach (var visual in _visualMap.Values)
+            Viewport3D.Children.Remove(visual);
+        _visualMap.Clear();
     }
 
     // ── Menu / toolbar handlers ───────────────────────────────────────────

@@ -594,7 +594,7 @@ public class MainViewModel : INotifyPropertyChanged
 
     private void SaveUndoState()
     {
-        _undoStack.Add(SceneObjects.Select(o => o.Clone()).ToList());
+        _undoStack.Add(SceneObjects.Select(o => o.Clone(forUndo: true)).ToList());
         if (_undoStack.Count > MaxUndoStates)
             _undoStack.RemoveAt(0); // Drop oldest state to keep memory bounded
         _redoStack.Clear();
@@ -606,7 +606,7 @@ public class MainViewModel : INotifyPropertyChanged
     public async Task UndoAsync()
     {
         if (!CanUndo) return;
-        _redoStack.Add(SceneObjects.Select(o => o.Clone()).ToList());
+        _redoStack.Add(SceneObjects.Select(o => o.Clone(forUndo: true)).ToList());
         var state = _undoStack[^1];
         _undoStack.RemoveAt(_undoStack.Count - 1);
         await RestoreStateAsync(state);
@@ -615,7 +615,7 @@ public class MainViewModel : INotifyPropertyChanged
     public async Task RedoAsync()
     {
         if (!CanRedo) return;
-        _undoStack.Add(SceneObjects.Select(o => o.Clone()).ToList());
+        _undoStack.Add(SceneObjects.Select(o => o.Clone(forUndo: true)).ToList());
         var state = _redoStack[^1];
         _redoStack.RemoveAt(_redoStack.Count - 1);
         await RestoreStateAsync(state);
