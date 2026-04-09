@@ -13,9 +13,9 @@ namespace ThreeDBuilder.ViewModels
 {
     public class AutoFixSceneItem
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public string Type { get; set; }
+        public string Id { get; set; } = "";
+        public string Name { get; set; } = "";
+        public string Type { get; set; } = "";
         public override string ToString() => Name;
     }
 
@@ -45,7 +45,7 @@ namespace ThreeDBuilder.ViewModels
         private bool _isOptimizing;
         private string _optimizationProgress = "";
         private ObservableCollection<AutoFixSceneItem> _availableObjects = new();
-        private AutoFixSceneItem _selectedObjectForOptimization;
+        private AutoFixSceneItem? _selectedObjectForOptimization;
         private bool _hasSelectedObject;
         private string _selectedObjectInfo = "Kein Objekt ausgewählt";
         private string _analyzeButtonText = "Modell analysieren";
@@ -139,7 +139,7 @@ namespace ThreeDBuilder.ViewModels
 
         private async void AnalyzeModel()
         {
-            if (!HasSelectedObject)
+            if (!HasSelectedObject || SelectedObjectForOptimization == null)
                 return;
 
             IsOptimizing = true;
@@ -184,7 +184,7 @@ namespace ThreeDBuilder.ViewModels
 
         private async void ExecuteAutoFix()
         {
-            if (!HasSelectedObject)
+            if (!HasSelectedObject || SelectedObjectForOptimization == null)
                 return;
 
             IsOptimizing = true;
@@ -254,11 +254,12 @@ namespace ThreeDBuilder.ViewModels
 
         private void OnSelectedObjectChanged()
         {
-            HasSelectedObject = SelectedObjectForOptimization != null;
-            if (HasSelectedObject)
+            var selected = SelectedObjectForOptimization;
+            HasSelectedObject = selected != null;
+            if (selected != null)
             {
-                SelectedObjectInfo = $"✓ '{SelectedObjectForOptimization.Name}' ({SelectedObjectForOptimization.Type}) ausgewählt";
-                AnalyzeButtonText = $"'{SelectedObjectForOptimization.Name}' analysieren";
+                SelectedObjectInfo = $"✓ '{selected.Name}' ({selected.Type}) ausgewählt";
+                AnalyzeButtonText = $"'{selected.Name}' analysieren";
                 HasAnalysisReport = false;
                 IssuesFound.Clear();
                 Recommendations.Clear();
@@ -416,17 +417,17 @@ namespace ThreeDBuilder.ViewModels
             set { if (_availableObjects != value) { _availableObjects = value; OnPropertyChanged(); } }
         }
 
-        public AutoFixSceneItem SelectedObjectForOptimization
+        public AutoFixSceneItem? SelectedObjectForOptimization
         {
             get => _selectedObjectForOptimization;
-            set 
-            { 
-                if (_selectedObjectForOptimization != value) 
-                { 
-                    _selectedObjectForOptimization = value; 
+            set
+            {
+                if (_selectedObjectForOptimization != value)
+                {
+                    _selectedObjectForOptimization = value;
                     OnPropertyChanged();
                     OnSelectedObjectChanged();
-                } 
+                }
             }
         }
 

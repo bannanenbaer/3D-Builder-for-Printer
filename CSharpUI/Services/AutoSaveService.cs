@@ -43,6 +43,9 @@ public class AutoSaveService : IDisposable
 
     private async void OnTimerElapsed(object? sender, ElapsedEventArgs e)
     {
+        // Stop the timer to prevent overlapping executions if the callback takes longer
+        // than the timer interval (async void cannot return a Task to the timer).
+        _timer?.Stop();
         try
         {
             var savePath = _settings.Current.AutoSavePath;
@@ -54,6 +57,11 @@ public class AutoSaveService : IDisposable
         catch
         {
             // ignore autosave errors silently
+        }
+        finally
+        {
+            // Restart only if the service has not been stopped/disposed in the meantime.
+            _timer?.Start();
         }
     }
 
