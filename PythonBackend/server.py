@@ -480,11 +480,13 @@ def process_request(line: str) -> str:
         result["id"] = req_id
         return json.dumps(result)
     except Exception as e:
+        # Log the full traceback to stderr for debugging, but don't expose it in
+        # the JSON response sent to the C# frontend (security / information leak).
+        sys.stderr.write(traceback.format_exc())
         return json.dumps({
             "id": req_id,
             "status": "error",
             "message": str(e),
-            "traceback": traceback.format_exc(),
         })
 
 

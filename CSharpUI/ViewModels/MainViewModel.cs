@@ -670,8 +670,9 @@ public class MainViewModel : INotifyPropertyChanged
         if (!_defaultParams.TryGetValue(obj.ShapeType, out var defaults)) return;
         foreach (var kv in defaults)
         {
-            double val = obj.Params.TryGetValue(kv.Key, out var v)
-                ? Convert.ToDouble(v) : kv.Value;
+            double val = kv.Value;
+            if (obj.Params.TryGetValue(kv.Key, out var v) && v != null)
+                try { val = Convert.ToDouble(v); } catch { /* keep default on conversion failure */ }
             ParameterRows.Add(new ParameterRow
             {
                 Key       = kv.Key,

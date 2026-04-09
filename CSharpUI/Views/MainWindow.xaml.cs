@@ -283,6 +283,7 @@ public partial class MainWindow : Window
 
     private void ShowTutorialStep(int step)
     {
+        if (step < 0 || step >= TutorialSteps.Length) return;
         var (title, text, tool) = TutorialSteps[step];
         TutorialStepTitle.Text = title;
         TutorialStepText.Text = text;

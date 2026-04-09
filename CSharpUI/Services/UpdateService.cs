@@ -80,7 +80,7 @@ namespace ThreeDBuilder.Services
                 var publishedAt = DateTime.Parse(root.GetProperty("published_at").GetString() ?? DateTime.Now.ToString());
 
                 // Finde den Setup.exe Installer
-                string downloadUrl = null;
+                string? downloadUrl = null;
                 var assets = root.GetProperty("assets");
                 foreach (var asset in assets.EnumerateArray())
                 {
