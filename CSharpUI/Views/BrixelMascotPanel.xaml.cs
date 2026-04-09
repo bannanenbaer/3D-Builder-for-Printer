@@ -26,33 +26,33 @@ namespace ThreeDBuilder.Views
         /// </summary>
         private void StartAnimations()
         {
-            if (Resources.TryGetValue("BounceAnimation", out var bounceRes))
+            if (Resources.Contains("BounceAnimation"))
             {
-                _bounceAnimation = (Storyboard)bounceRes;
+                _bounceAnimation = (Storyboard)Resources["BounceAnimation"];
                 _bounceAnimation?.Begin();
             }
 
-            if (Resources.TryGetValue("HeadRotationAnimation", out var headRes))
+            if (Resources.Contains("HeadRotationAnimation"))
             {
-                _headRotationAnimation = (Storyboard)headRes;
+                _headRotationAnimation = (Storyboard)Resources["HeadRotationAnimation"];
                 _headRotationAnimation?.Begin();
             }
 
-            if (Resources.TryGetValue("ArmWaveAnimation", out var armRes))
+            if (Resources.Contains("ArmWaveAnimation"))
             {
-                _armWaveAnimation = (Storyboard)armRes;
+                _armWaveAnimation = (Storyboard)Resources["ArmWaveAnimation"];
                 _armWaveAnimation?.Begin();
             }
 
-            if (Resources.TryGetValue("GlowPulseAnimation", out var glowRes))
+            if (Resources.Contains("GlowPulseAnimation"))
             {
-                _glowPulseAnimation = (Storyboard)glowRes;
+                _glowPulseAnimation = (Storyboard)Resources["GlowPulseAnimation"];
                 _glowPulseAnimation?.Begin();
             }
 
-            if (Resources.TryGetValue("StatusPulseAnimation", out var statusRes))
+            if (Resources.Contains("StatusPulseAnimation"))
             {
-                _statusPulseAnimation = (Storyboard)statusRes;
+                _statusPulseAnimation = (Storyboard)Resources["StatusPulseAnimation"];
                 _statusPulseAnimation?.Begin();
             }
         }
