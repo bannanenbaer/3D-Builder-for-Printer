@@ -35,12 +35,11 @@ namespace ThreeDBuilder.Views
         private void OnMessagesChanged(object? sender,
             System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
+            // Auto-scroll the history popup if it is open
             Dispatcher.InvokeAsync(() =>
             {
-                ChatScroll.ScrollToBottom();
-                // Auto-expand chat when a new bot message arrives
-                if (DataContext is AssistantViewModel vm && !vm.IsChatOpen)
-                    vm.IsChatOpen = true;
+                if (HistoryPopup.IsOpen)
+                    HistoryScroll.ScrollToBottom();
             });
         }
 
