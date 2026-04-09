@@ -161,7 +161,7 @@ namespace ThreeDBuilder.Views
             headTilt.KeyFrames.Add(new EasingDoubleKeyFrame(0, KeyTime.FromTimeSpan(System.TimeSpan.FromSeconds(0.8))));
             
             Storyboard.SetTarget(headTilt, BrixelHead);
-            Storyboard.SetTargetProperty(headTilt, new PropertyPath("(Canvas.RenderTransform).(RotateTransform.Angle)"));
+            Storyboard.SetTargetProperty(headTilt, new PropertyPath("(UIElement.RenderTransform).(RotateTransform.Angle)"));
             storyboard.Children.Add(headTilt);
             
             storyboard.Begin();
@@ -180,7 +180,7 @@ namespace ThreeDBuilder.Views
             spin.KeyFrames.Add(new EasingDoubleKeyFrame(360, KeyTime.FromTimeSpan(System.TimeSpan.FromSeconds(1))));
             
             Storyboard.SetTarget(spin, BrixelHead);
-            Storyboard.SetTargetProperty(spin, new PropertyPath("(Canvas.RenderTransform).(RotateTransform.Angle)"));
+            Storyboard.SetTargetProperty(spin, new PropertyPath("(UIElement.RenderTransform).(RotateTransform.Angle)"));
             storyboard.Children.Add(spin);
             
             storyboard.Begin();

@@ -5,6 +5,98 @@
              Width="280" Height="auto"
              Background="Transparent">
 
+    <!-- ═══ ANIMATIONS ═══════════════════════════════════════════════════ -->
+    <UserControl.Resources>
+        <!-- Bounce Animation -->
+        <Storyboard x:Key="BounceAnimation" RepeatBehavior="Forever">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BrixelBody"
+                                           Storyboard.TargetProperty="(Canvas.Top)">
+                <EasingDoubleKeyFrame KeyTime="0:0:0" Value="40"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="50">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CubicEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="0:0:1" Value="40">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CubicEase EasingMode="EaseIn"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <!-- Head Rotation Animation -->
+        <Storyboard x:Key="HeadRotationAnimation" RepeatBehavior="Forever">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BrixelHead"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)">
+                <EasingDoubleKeyFrame KeyTime="0:0:0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:1.5" Value="15">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <SineEase EasingMode="InOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="0:0:3" Value="-15">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <SineEase EasingMode="InOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="0:0:4.5" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <SineEase EasingMode="InOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <!-- Arm Wave Animation -->
+        <Storyboard x:Key="ArmWaveAnimation" RepeatBehavior="Forever">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LeftArm"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)">
+                <EasingDoubleKeyFrame KeyTime="0:0:0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="-30"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.8" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RightArm"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.8" Value="-30"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:1.2" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <!-- Glow Pulse Animation -->
+        <Storyboard x:Key="GlowPulseAnimation" RepeatBehavior="Forever">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BrixelGlow"
+                                           Storyboard.TargetProperty="Opacity">
+                <EasingDoubleKeyFrame KeyTime="0:0:0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0.4"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:1" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <!-- Status Pulse Animation -->
+        <Storyboard x:Key="StatusPulseAnimation" RepeatBehavior="Forever">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="StatusDot1"
+                                           Storyboard.TargetProperty="Opacity">
+                <EasingDoubleKeyFrame KeyTime="0:0:0" Value="1"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.6" Value="0.3"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:1.2" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="StatusDot2"
+                                           Storyboard.TargetProperty="Opacity">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.9" Value="0.3"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:1.5" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="StatusDot3"
+                                           Storyboard.TargetProperty="Opacity">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.6" Value="1"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:1.2" Value="0.3"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:1.8" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </UserControl.Resources>
+
     <Grid>
         <!-- Brixel Container with Animation -->
         <Border Background="{DynamicResource SidebarBackground}"
@@ -14,7 +106,7 @@
                 Padding="16"
                 Effect="{StaticResource DropShadowEffect}">
             <StackPanel VerticalAlignment="Top">
-                
+
                 <!-- ═══ BRIXEL MASCOT ANIMATION ═══════════════════════════════ -->
                 <Canvas Name="BrixelCanvas" Height="180" Background="Transparent" Margin="0,0,0,12">
                     <!-- Body (animated bounce) -->
@@ -174,98 +266,6 @@
 
             </StackPanel>
         </Border>
-
-        <!-- ═══ ANIMATIONS ═══════════════════════════════════════════════════ -->
-        <Border.Resources>
-            <!-- Bounce Animation -->
-            <Storyboard x:Key="BounceAnimation" RepeatBehavior="Forever">
-                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BrixelBody" 
-                                               Storyboard.TargetProperty="(Canvas.Top)">
-                    <EasingDoubleKeyFrame KeyTime="0:0:0" Value="40"/>
-                    <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="50">
-                        <EasingDoubleKeyFrame.EasingFunction>
-                            <CubicEase EasingMode="EaseOut"/>
-                        </EasingDoubleKeyFrame.EasingFunction>
-                    </EasingDoubleKeyFrame>
-                    <EasingDoubleKeyFrame KeyTime="0:0:1" Value="40">
-                        <EasingDoubleKeyFrame.EasingFunction>
-                            <CubicEase EasingMode="EaseIn"/>
-                        </EasingDoubleKeyFrame.EasingFunction>
-                    </EasingDoubleKeyFrame>
-                </DoubleAnimationUsingKeyFrames>
-            </Storyboard>
-
-            <!-- Head Rotation Animation -->
-            <Storyboard x:Key="HeadRotationAnimation" RepeatBehavior="Forever">
-                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BrixelHead" 
-                                               Storyboard.TargetProperty="(Canvas.RenderTransform).(RotateTransform.Angle)">
-                    <EasingDoubleKeyFrame KeyTime="0:0:0" Value="0"/>
-                    <EasingDoubleKeyFrame KeyTime="0:0:1.5" Value="15">
-                        <EasingDoubleKeyFrame.EasingFunction>
-                            <SineEase EasingMode="InOut"/>
-                        </EasingDoubleKeyFrame.EasingFunction>
-                    </EasingDoubleKeyFrame>
-                    <EasingDoubleKeyFrame KeyTime="0:0:3" Value="-15">
-                        <EasingDoubleKeyFrame.EasingFunction>
-                            <SineEase EasingMode="InOut"/>
-                        </EasingDoubleKeyFrame.EasingFunction>
-                    </EasingDoubleKeyFrame>
-                    <EasingDoubleKeyFrame KeyTime="0:0:4.5" Value="0">
-                        <EasingDoubleKeyFrame.EasingFunction>
-                            <SineEase EasingMode="InOut"/>
-                        </EasingDoubleKeyFrame.EasingFunction>
-                    </EasingDoubleKeyFrame>
-                </DoubleAnimationUsingKeyFrames>
-            </Storyboard>
-
-            <!-- Arm Wave Animation -->
-            <Storyboard x:Key="ArmWaveAnimation" RepeatBehavior="Forever">
-                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LeftArm" 
-                                               Storyboard.TargetProperty="(Canvas.RenderTransform).(RotateTransform.Angle)">
-                    <EasingDoubleKeyFrame KeyTime="0:0:0" Value="0"/>
-                    <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="-30"/>
-                    <EasingDoubleKeyFrame KeyTime="0:0:0.8" Value="0"/>
-                </DoubleAnimationUsingKeyFrames>
-                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RightArm" 
-                                               Storyboard.TargetProperty="(Canvas.RenderTransform).(RotateTransform.Angle)">
-                    <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="0"/>
-                    <EasingDoubleKeyFrame KeyTime="0:0:0.8" Value="-30"/>
-                    <EasingDoubleKeyFrame KeyTime="0:0:1.2" Value="0"/>
-                </DoubleAnimationUsingKeyFrames>
-            </Storyboard>
-
-            <!-- Glow Pulse Animation -->
-            <Storyboard x:Key="GlowPulseAnimation" RepeatBehavior="Forever">
-                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BrixelGlow" 
-                                               Storyboard.TargetProperty="Opacity">
-                    <EasingDoubleKeyFrame KeyTime="0:0:0" Value="0"/>
-                    <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0.4"/>
-                    <EasingDoubleKeyFrame KeyTime="0:0:1" Value="0"/>
-                </DoubleAnimationUsingKeyFrames>
-            </Storyboard>
-
-            <!-- Status Pulse Animation -->
-            <Storyboard x:Key="StatusPulseAnimation" RepeatBehavior="Forever">
-                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="StatusDot1" 
-                                               Storyboard.TargetProperty="Opacity">
-                    <EasingDoubleKeyFrame KeyTime="0:0:0" Value="1"/>
-                    <EasingDoubleKeyFrame KeyTime="0:0:0.6" Value="0.3"/>
-                    <EasingDoubleKeyFrame KeyTime="0:0:1.2" Value="1"/>
-                </DoubleAnimationUsingKeyFrames>
-                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="StatusDot2" 
-                                               Storyboard.TargetProperty="Opacity">
-                    <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1"/>
-                    <EasingDoubleKeyFrame KeyTime="0:0:0.9" Value="0.3"/>
-                    <EasingDoubleKeyFrame KeyTime="0:0:1.5" Value="1"/>
-                </DoubleAnimationUsingKeyFrames>
-                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="StatusDot3" 
-                                               Storyboard.TargetProperty="Opacity">
-                    <EasingDoubleKeyFrame KeyTime="0:0:0.6" Value="1"/>
-                    <EasingDoubleKeyFrame KeyTime="0:0:1.2" Value="0.3"/>
-                    <EasingDoubleKeyFrame KeyTime="0:0:1.8" Value="1"/>
-                </DoubleAnimationUsingKeyFrames>
-            </Storyboard>
-        </Border.Resources>
 
     </Grid>
 
