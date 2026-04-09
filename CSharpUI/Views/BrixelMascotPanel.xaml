@@ -156,7 +156,8 @@
                           Stroke="#000000"
                           StrokeThickness="3"
                           Fill="Transparent"
-                          StrokeLineCap="Round"/>
+                          StrokeStartLineCap="Round"
+                          StrokeEndLineCap="Round"/>
 
                     <!-- Left Horn -->
                     <Polygon Points="120,15 115,5 125,20" Fill="#8B7355" Opacity="0.8">
