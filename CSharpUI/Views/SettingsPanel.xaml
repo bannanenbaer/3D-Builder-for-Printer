@@ -10,8 +10,8 @@
             <!-- ══ UPDATE ══════════════════════════════════════════════════ -->
             <TextBlock Style="{StaticResource SectionHeader}" Text="Update"/>
 
-            <Border Background="#0F1419"
-                    BorderBrush="#374151"
+            <Border Background="{DynamicResource PanelBackground}"
+                    BorderBrush="{DynamicResource InputBorder}"
                     BorderThickness="1"
                     CornerRadius="4"
                     Padding="10"
@@ -70,7 +70,7 @@
                                  Height="4"
                                  Margin="0,2,0,4"
                                  Foreground="{DynamicResource AccentBrush}"
-                                 Background="#374151">
+                                 Background="{DynamicResource InputBorder}">
                         <ProgressBar.Visibility>
                             <Binding Path="UpdateVM.IsDownloading"
                                      Converter="{StaticResource BoolToVisibilityConverter}"/>
@@ -94,8 +94,8 @@
             </Border>
 
             <!-- Python Backend Status -->
-            <Border Background="#0F1419"
-                    BorderBrush="#374151"
+            <Border Background="{DynamicResource PanelBackground}"
+                    BorderBrush="{DynamicResource InputBorder}"
                     BorderThickness="1"
                     CornerRadius="4"
                     Padding="8"
@@ -138,9 +138,9 @@
                 <ComboBox Grid.Column="1"
                           ItemsSource="{Binding AvailableThemes}"
                           SelectedItem="{Binding ThemeMode}"
-                          Background="#1F2937"
+                          Background="{DynamicResource InputBackground}"
                           Foreground="{DynamicResource TextPrimary}"
-                          BorderBrush="#374151"
+                          BorderBrush="{DynamicResource InputBorder}"
                           FontSize="11"/>
             </Grid>
 
@@ -184,9 +184,9 @@
                 <ComboBox Grid.Column="1"
                           ItemsSource="{Binding AvailableColorBlindModes}"
                           SelectedItem="{Binding ColorBlindMode}"
-                          Background="#1F2937"
+                          Background="{DynamicResource InputBackground}"
                           Foreground="{DynamicResource TextPrimary}"
-                          BorderBrush="#374151"
+                          BorderBrush="{DynamicResource InputBorder}"
                           FontSize="11"/>
             </Grid>
 
@@ -208,9 +208,9 @@
                 <ComboBox Grid.Column="1"
                           ItemsSource="{Binding AvailableLanguages}"
                           SelectedItem="{Binding Language}"
-                          Background="#1F2937"
+                          Background="{DynamicResource InputBackground}"
                           Foreground="{DynamicResource TextPrimary}"
-                          BorderBrush="#374151"
+                          BorderBrush="{DynamicResource InputBorder}"
                           FontSize="11"/>
             </Grid>
 
@@ -233,9 +233,9 @@
                 <ComboBox Grid.Column="1"
                           ItemsSource="{Binding AvailablePrinterPresets}"
                           SelectedItem="{Binding PrinterPreset}"
-                          Background="#1F2937"
+                          Background="{DynamicResource InputBackground}"
                           Foreground="{DynamicResource TextPrimary}"
-                          BorderBrush="#374151"
+                          BorderBrush="{DynamicResource InputBorder}"
                           FontSize="11"/>
             </Grid>
 
@@ -308,9 +308,9 @@
                 </Grid.ColumnDefinitions>
                 <TextBox Grid.Column="0"
                          Text="{Binding AutoSavePath, UpdateSourceTrigger=LostFocus}"
-                         Background="#1F2937"
+                         Background="{DynamicResource InputBackground}"
                          Foreground="{DynamicResource TextPrimary}"
-                         BorderBrush="#374151"
+                         BorderBrush="{DynamicResource InputBorder}"
                          FontSize="10"
                          Padding="4,3"
                          IsEnabled="{Binding AutoSaveEnabled}"
@@ -367,8 +367,8 @@
             <!-- ══ ASSISTENT (BRIXL) ════════════════════════════════════════ -->
             <TextBlock Style="{StaticResource SectionHeader}" Text="Assistent (Brixl)"/>
 
-            <Border Background="#0F1419"
-                    BorderBrush="#374151"
+            <Border Background="{DynamicResource PanelBackground}"
+                    BorderBrush="{DynamicResource InputBorder}"
                     BorderThickness="1"
                     CornerRadius="4"
                     Padding="8"
@@ -397,7 +397,7 @@
                                       VerticalAlignment="Center"/>
                     </Grid>
 
-                    <Separator Background="#2D3748" Margin="0,6"/>
+                    <Separator Background="{DynamicResource SeparatorBrush}" Margin="0,6"/>
 
                     <!-- Animationen -->
                     <Grid Margin="0,4">
@@ -422,7 +422,7 @@
                                       VerticalAlignment="Center"/>
                     </Grid>
 
-                    <Separator Background="#2D3748" Margin="0,6"/>
+                    <Separator Background="{DynamicResource SeparatorBrush}" Margin="0,6"/>
 
                     <!-- Automatische Vorschläge -->
                     <Grid Margin="0,4">

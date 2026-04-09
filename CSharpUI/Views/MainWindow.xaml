@@ -22,7 +22,7 @@
 
     <DockPanel>
         <!-- ═══ MENU BAR ═══════════════════════════════════════════════════ -->
-        <Menu DockPanel.Dock="Top" Background="#0F1419" Foreground="{DynamicResource TextPrimary}"
+        <Menu DockPanel.Dock="Top" Background="{DynamicResource PanelBackground}" Foreground="{DynamicResource TextPrimary}"
               FontSize="11" FontFamily="Segoe UI">
             <!-- File -->
             <MenuItem Header="{Binding T[menu_file]}" Foreground="{DynamicResource TextPrimary}">
@@ -77,7 +77,7 @@
         </Menu>
 
         <!-- ═══ TOOLBAR ════════════════════════════════════════════════════ -->
-        <ToolBar DockPanel.Dock="Top" Background="#1A1F2E" BorderThickness="0,1,0,0" BorderBrush="#2D3748">
+        <ToolBar DockPanel.Dock="Top" Background="{DynamicResource SidebarBackground}" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource SeparatorBrush}">
             <Button ToolTip="{Binding T[action_new]}"
                     Command="{Binding NewSceneCommand}"
                     Style="{StaticResource MaterialDesignFlatButton}"
@@ -99,7 +99,7 @@
                     Padding="6,4">
                 <materialDesign:PackIcon Kind="ContentSave" Width="18" Height="18"/>
             </Button>
-            <Separator Background="#2D3748" Margin="2,4"/>
+            <Separator Background="{DynamicResource SeparatorBrush}" Margin="2,4"/>
             <Button ToolTip="{Binding T[action_undo]}"
                     Command="{Binding UndoCommand}"
                     Style="{StaticResource MaterialDesignFlatButton}"
@@ -114,7 +114,7 @@
                     Padding="6,4">
                 <materialDesign:PackIcon Kind="Redo" Width="18" Height="18"/>
             </Button>
-            <Separator Background="#2D3748" Margin="2,4"/>
+            <Separator Background="{DynamicResource SeparatorBrush}" Margin="2,4"/>
             <Button ToolTip="{Binding T[action_delete]}"
                     Command="{Binding DeleteCommand}"
                     Style="{StaticResource MaterialDesignFlatButton}"
@@ -129,7 +129,7 @@
                     Padding="6,4">
                 <materialDesign:PackIcon Kind="ContentDuplicate" Width="18" Height="18"/>
             </Button>
-            <Separator Background="#2D3748" Margin="2,4"/>
+            <Separator Background="{DynamicResource SeparatorBrush}" Margin="2,4"/>
             <!-- KI-Assistent Toggle -->
             <Button Command="{Binding ToggleAssistantCommand}"
                     Style="{StaticResource MaterialDesignFlatButton}"
@@ -144,8 +144,8 @@
         </ToolBar>
 
         <!-- ═══ STATUS BAR ═════════════════════════════════════════════════ -->
-        <StatusBar DockPanel.Dock="Bottom" Background="#1A1F2E" Foreground="{DynamicResource TextPrimary}"
-                   BorderThickness="0,1,0,0" BorderBrush="#2D3748">
+        <StatusBar DockPanel.Dock="Bottom" Background="{DynamicResource SidebarBackground}" Foreground="{DynamicResource TextPrimary}"
+                   BorderThickness="0,1,0,0" BorderBrush="{DynamicResource SeparatorBrush}">
             <StatusBarItem>
                 <TextBlock Text="{Binding StatusText}" FontSize="12"/>
             </StatusBarItem>
@@ -179,7 +179,7 @@
                 </ScrollViewer>
             </Border>
 
-            <GridSplitter Grid.Column="1" Background="#2D3748"
+            <GridSplitter Grid.Column="1" Background="{DynamicResource SeparatorBrush}"
                           HorizontalAlignment="Stretch" ShowsPreview="False"/>
 
             <!-- ─ CENTER: 3D Viewport + Tab with SCAD Editor ─ -->
@@ -192,7 +192,7 @@
                     <Grid>
                         <!-- 3D Viewport -->
                         <helix:HelixViewport3D x:Name="Viewport3D"
-                                               Background="#111111"
+                                               Background="{DynamicResource ViewportBackground}"
                                                ShowCoordinateSystem="True"
                                                ShowFrameRate="False"
                                                ZoomExtentsWhenLoaded="True">
@@ -243,7 +243,7 @@
                 </TabItem>
             </TabControl>
 
-            <GridSplitter Grid.Column="3" Background="#2D3748"
+            <GridSplitter Grid.Column="3" Background="{DynamicResource SeparatorBrush}"
                           HorizontalAlignment="Stretch" ShowsPreview="False"/>
 
             <!-- ─ RIGHT SIDEBAR: Properties + AutoFix tabs ─ -->
@@ -288,7 +288,7 @@
 
                     <!-- Untere Leiste: Maskottchen + Sprechblase -->
                     <Border VerticalAlignment="Bottom"
-                            Background="#0F1419"
+                            Background="{DynamicResource PanelBackground}"
                             BorderBrush="#3B82F6"
                             BorderThickness="0,2,0,0">
                         <Grid>
@@ -300,7 +300,7 @@
                             <!-- Maskottchen -->
                             <Border Grid.Column="0"
                                     Padding="20,16"
-                                    Background="#1A1F2E">
+                                    Background="{DynamicResource SidebarBackground}">
                                 <local:MascotAnimationView x:Name="TutorialMascot"
                                                            Width="110" Height="130"
                                                            VerticalAlignment="Bottom"/>
@@ -338,7 +338,7 @@
                                             Padding="16,8"
                                             Margin="0,0,10,0"
                                             FontSize="12"
-                                            Background="#2D3748"
+                                            Background="{DynamicResource SeparatorBrush}"
                                             Foreground="#F8FAFC"
                                             BorderThickness="0"
                                             Cursor="Hand"/>

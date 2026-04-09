@@ -21,9 +21,34 @@
                      materialDesign:HintAssist.Hint="Name"
                      Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                      Foreground="{DynamicResource TextPrimary}"
-                     Background="#1F2937"
-                     BorderBrush="#374151"
+                     Background="{DynamicResource InputBackground}"
+                     BorderBrush="{DynamicResource InputBorder}"
                      Margin="4,4"/>
+
+            <!-- Subtractor mode toggle -->
+            <Border Background="{DynamicResource CardBackground}"
+                    BorderBrush="{DynamicResource InputBorder}"
+                    BorderThickness="1" CornerRadius="4"
+                    Margin="4,4" Padding="8,6">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                        <TextBlock Text="Leerobjekt (Ausschnitt)"
+                                   Foreground="{DynamicResource TextPrimary}"
+                                   FontSize="11" FontWeight="SemiBold"/>
+                        <TextBlock Text="Objekt aushöhlen / als Schneider verwenden"
+                                   Foreground="{DynamicResource TextSecondary}"
+                                   FontSize="9" Margin="0,2,0,0" TextWrapping="Wrap"/>
+                    </StackPanel>
+                    <ToggleButton Grid.Column="1"
+                                  IsChecked="{Binding SelectedObject.IsSubtractor}"
+                                  Style="{StaticResource ToggleSwitchStyle}"
+                                  VerticalAlignment="Center"/>
+                </Grid>
+            </Border>
 
             <Separator Style="{StaticResource PanelSeparator}"/>
 
@@ -58,11 +83,11 @@
                     Style="{StaticResource ActionButton}"
                     HorizontalAlignment="Stretch"
                     Margin="4,6,4,2"
-                    ToolTip="Abmessungen übernehmen und 3D-Ansicht aktualisieren">
+                    ToolTip="Abmessungen übernehmen und 3D-Ansicht aktualisieren (oder Enter drücken)">
                 <Button.Content>
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="Refresh" Margin="0,0,6,0"/>
-                        <TextBlock Text="{Binding T[btn_apply_fillet]}"/>
+                        <TextBlock Text="Übernehmen"/>
                     </StackPanel>
                 </Button.Content>
             </Button>

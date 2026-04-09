@@ -20,6 +20,7 @@ public class SceneObject : INotifyPropertyChanged
     private double _rotX, _rotY, _rotZ;
     private string? _stlPath;
     private bool _isSelected;
+    private bool _isSubtractor;
 
     public string Id { get => _id; init => _id = value; }
 
@@ -61,6 +62,17 @@ public class SceneObject : INotifyPropertyChanged
         set { _isSelected = value; OnPropertyChanged(); }
     }
 
+    /// <summary>
+    /// When true, this object acts as a "cutter" (subtractor).
+    /// It is shown semi-transparent red in the viewport and can be used
+    /// to hollow out other objects via boolean subtraction.
+    /// </summary>
+    public bool IsSubtractor
+    {
+        get => _isSubtractor;
+        set { _isSubtractor = value; OnPropertyChanged(); }
+    }
+
     /// <summary>Serialize to a dict for sending to the Python backend.</summary>
     public Dictionary<string, object?> ToBackendDict() => new()
     {
@@ -82,13 +94,14 @@ public class SceneObject : INotifyPropertyChanged
     /// </summary>
     public SceneObject Clone(bool forUndo = false) => new()
     {
-        Id        = Guid.NewGuid().ToString(),
-        Name      = forUndo ? Name : Name + " (Kopie)",
-        ShapeType = ShapeType,
-        Params    = new Dictionary<string, object>(Params),
+        Id           = Guid.NewGuid().ToString(),
+        Name         = forUndo ? Name : Name + " (Kopie)",
+        ShapeType    = ShapeType,
+        Params       = new Dictionary<string, object>(Params),
         PosX = PosX, PosY = PosY, PosZ = PosZ,
         RotX = RotX, RotY = RotY, RotZ = RotZ,
-        StlPath = StlPath,
+        StlPath      = StlPath,
+        IsSubtractor = IsSubtractor,
     };
 
     protected void OnPropertyChanged([CallerMemberName] string? name = null)
