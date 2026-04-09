@@ -8,8 +8,8 @@
 
     <!--
         Layout (top → bottom):
-          1. Speech bubble  – shows the latest Brixl message
-          2. Brixl mascot   – clickable to toggle the speech bubble / chat
+          1. Speech bubble  – shows the latest Brixl message (× to close)
+          2. Brixl mascot   – clickable to toggle the speech bubble
           3. Input bar      – [○ clock/history]  [text input]  [➡ send]
     -->
     <Grid>
@@ -20,7 +20,7 @@
         </Grid.RowDefinitions>
 
         <!-- ═══════════════════════════════════════════════════════════
-             ROW 0 – Speech bubble (latest bot message)
+             ROW 0 – Speech bubble (latest bot message + × close)
         ════════════════════════════════════════════════════════════ -->
         <Grid Grid.Row="0"
               Visibility="{Binding IsChatOpen,
@@ -36,14 +36,37 @@
                     Margin="0,0,20,0"
                     Effect="{StaticResource DropShadowEffect}">
 
-                <!-- Latest bot message text -->
-                <TextBlock x:Name="LatestBubbleText"
-                           Text="{Binding LatestBotMessage}"
-                           Foreground="#E2E8F0"
-                           FontSize="12.5"
-                           TextWrapping="Wrap"
-                           LineHeight="20"
-                           MaxHeight="130"/>
+                <Grid>
+                    <!-- Latest bot message – right margin leaves room for the × -->
+                    <TextBlock x:Name="LatestBubbleText"
+                               Text="{Binding LatestBotMessage}"
+                               Foreground="#E2E8F0"
+                               FontSize="12.5"
+                               TextWrapping="Wrap"
+                               LineHeight="20"
+                               MaxHeight="130"
+                               Margin="0,0,20,0"/>
+
+                    <!-- × close button – top-right inside bubble -->
+                    <Button Command="{Binding ToggleChatCommand}"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Top"
+                            Background="#1E293B"
+                            BorderThickness="0"
+                            Cursor="Hand"
+                            Padding="0"
+                            Width="18" Height="18"
+                            ToolTip="Schließen">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="9"/>
+                            </Style>
+                        </Button.Resources>
+                        <materialDesign:PackIcon Kind="Close"
+                                                  Width="11" Height="11"
+                                                  Foreground="#64748B"/>
+                    </Button>
+                </Grid>
             </Border>
 
             <!-- Speech-bubble tail: small downward triangle, centred-right -->
@@ -60,7 +83,7 @@
                     </PathGeometry>
                 </Path.Data>
             </Path>
-            <!-- Inner fill of tail (same as bubble background) -->
+            <!-- Inner fill of tail (matches bubble background) -->
             <Path HorizontalAlignment="Right"
                   VerticalAlignment="Bottom"
                   Margin="0,0,53,1"
@@ -118,7 +141,7 @@
                         BorderBrush="#334155"
                         BorderThickness="1"
                         Cursor="Hand"
-                        ToolTip="Verlauf"
+                        ToolTip="Chatverlauf"
                         Padding="0"
                         Margin="2,0,6,0">
                     <Button.Resources>
@@ -186,76 +209,151 @@
         </Border>
 
         <!-- ═══════════════════════════════════════════════════════════
-             History popup (opens on clock click)
+             History popup – classic chat view (opens on clock click)
         ════════════════════════════════════════════════════════════ -->
         <Popup x:Name="HistoryPopup"
                PlacementTarget="{Binding ElementName=HistoryBtn}"
                Placement="Top"
                VerticalOffset="-8"
+               HorizontalOffset="-8"
                StaysOpen="False"
                AllowsTransparency="True">
-            <Border Background="#EE0F1419"
+            <Border Background="#F00F1419"
                     BorderBrush="#3B82F6"
                     BorderThickness="1.5"
-                    CornerRadius="14"
-                    Padding="12,10"
-                    MaxHeight="280"
-                    Width="280"
+                    CornerRadius="16"
+                    MaxHeight="440"
+                    Width="300"
                     Effect="{StaticResource DropShadowEffect}">
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>  <!-- header  -->
+                        <RowDefinition Height="*"/>     <!-- messages -->
                     </Grid.RowDefinitions>
 
-                    <TextBlock Grid.Row="0"
-                               Text="Verlauf 🕐"
-                               Foreground="#60A5FA"
-                               FontSize="12" FontWeight="SemiBold"
-                               Margin="0,0,0,8"/>
+                    <!-- ── Header ── -->
+                    <Border Grid.Row="0"
+                            Background="#1E293B"
+                            CornerRadius="16,16,0,0"
+                            Padding="14,10">
+                        <Grid>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <materialDesign:PackIcon Kind="Robot"
+                                                          Width="16" Height="16"
+                                                          Foreground="#60A5FA"
+                                                          VerticalAlignment="Center"
+                                                          Margin="0,0,7,0"/>
+                                <TextBlock Text="Chatverlauf"
+                                           Foreground="#60A5FA"
+                                           FontSize="12"
+                                           FontWeight="SemiBold"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
 
+                            <!-- × close header button -->
+                            <Button Click="OnHistoryClick"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Cursor="Hand"
+                                    Padding="4"
+                                    Width="26" Height="26"
+                                    ToolTip="Schließen">
+                                <materialDesign:PackIcon Kind="Close"
+                                                          Width="14" Height="14"
+                                                          Foreground="#64748B"/>
+                            </Button>
+                        </Grid>
+                    </Border>
+
+                    <!-- ── Messages list ── -->
                     <ScrollViewer Grid.Row="1"
                                   x:Name="HistoryScroll"
-                                  VerticalScrollBarVisibility="Auto">
+                                  VerticalScrollBarVisibility="Auto"
+                                  Padding="10,8,10,8">
                         <ItemsControl ItemsSource="{Binding Messages}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Margin="0,2"
-                                            CornerRadius="8"
-                                            Padding="8,6">
-                                        <Border.Style>
-                                            <Style TargetType="Border">
-                                                <Setter Property="Background" Value="#1E3A4A"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsUser}" Value="True">
-                                                        <Setter Property="Background" Value="#1D3461"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Border.Style>
-                                        <StackPanel>
-                                            <TextBlock Foreground="#64748B"
-                                                       FontSize="9"
-                                                       Margin="0,0,0,2">
-                                                <TextBlock.Style>
-                                                    <Style TargetType="TextBlock">
-                                                        <Setter Property="Text" Value="Brixl"/>
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding IsUser}" Value="True">
-                                                                <Setter Property="Text" Value="Du"/>
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </TextBlock.Style>
-                                            </TextBlock>
-                                            <TextBlock Text="{Binding Text}"
-                                                       Foreground="#CBD5E1"
-                                                       FontSize="10.5"
-                                                       TextWrapping="Wrap"
-                                                       MaxHeight="44"
-                                                       TextTrimming="CharacterEllipsis"/>
+                                    <Grid Margin="0,4">
+
+                                        <!-- Bot bubble – left-aligned -->
+                                        <StackPanel Orientation="Horizontal"
+                                                    HorizontalAlignment="Left"
+                                                    MaxWidth="248"
+                                                    VerticalAlignment="Bottom">
+                                            <StackPanel.Style>
+                                                <Style TargetType="StackPanel">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsUser}" Value="True">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </StackPanel.Style>
+                                            <!-- Brixl avatar -->
+                                            <Border Width="28" Height="28"
+                                                    Background="#1D4ED8"
+                                                    CornerRadius="14"
+                                                    Margin="0,0,7,0"
+                                                    VerticalAlignment="Bottom">
+                                                <materialDesign:PackIcon Kind="Robot"
+                                                                          Width="15" Height="15"
+                                                                          Foreground="White"
+                                                                          HorizontalAlignment="Center"
+                                                                          VerticalAlignment="Center"/>
+                                            </Border>
+                                            <!-- Bubble -->
+                                            <Border Background="#1A3A50"
+                                                    CornerRadius="14,14,14,3"
+                                                    Padding="11,8">
+                                                <TextBlock Text="{Binding Text}"
+                                                           Foreground="#CBD5E1"
+                                                           FontSize="11.5"
+                                                           TextWrapping="Wrap"/>
+                                            </Border>
                                         </StackPanel>
-                                    </Border>
+
+                                        <!-- User bubble – right-aligned -->
+                                        <StackPanel Orientation="Horizontal"
+                                                    HorizontalAlignment="Right"
+                                                    MaxWidth="248"
+                                                    VerticalAlignment="Bottom">
+                                            <StackPanel.Style>
+                                                <Style TargetType="StackPanel">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsUser}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </StackPanel.Style>
+                                            <!-- Bubble -->
+                                            <Border Background="#1D3461"
+                                                    CornerRadius="14,14,3,14"
+                                                    Padding="11,8">
+                                                <TextBlock Text="{Binding Text}"
+                                                           Foreground="#E2E8F0"
+                                                           FontSize="11.5"
+                                                           TextWrapping="Wrap"/>
+                                            </Border>
+                                            <!-- User avatar -->
+                                            <Border Width="28" Height="28"
+                                                    Background="#2563EB"
+                                                    CornerRadius="14"
+                                                    Margin="7,0,0,0"
+                                                    VerticalAlignment="Bottom">
+                                                <materialDesign:PackIcon Kind="Account"
+                                                                          Width="15" Height="15"
+                                                                          Foreground="White"
+                                                                          HorizontalAlignment="Center"
+                                                                          VerticalAlignment="Center"/>
+                                            </Border>
+                                        </StackPanel>
+
+                                    </Grid>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
