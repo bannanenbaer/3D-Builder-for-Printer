@@ -1,0 +1,272 @@
+<UserControl x:Class="ThreeDBuilder.Views.BrixelMascotPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             Width="280" Height="auto"
+             Background="Transparent">
+
+    <Grid>
+        <!-- Brixel Container with Animation -->
+        <Border Background="{DynamicResource SidebarBackground}"
+                BorderBrush="{DynamicResource BrixelAccent}"
+                BorderThickness="2"
+                CornerRadius="12"
+                Padding="16"
+                Effect="{StaticResource DropShadowEffect}">
+            <StackPanel VerticalAlignment="Top">
+                
+                <!-- ═══ BRIXEL MASCOT ANIMATION ═══════════════════════════════ -->
+                <Canvas Name="BrixelCanvas" Height="180" Background="Transparent" Margin="0,0,0,12">
+                    <!-- Body (animated bounce) -->
+                    <Ellipse Name="BrixelBody"
+                             Canvas.Left="60" Canvas.Top="40"
+                             Width="160" Height="140"
+                             Fill="#14B8A6"
+                             Opacity="0.9">
+                        <Ellipse.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                <TranslateTransform Y="0"/>
+                            </TransformGroup>
+                        </Ellipse.RenderTransform>
+                    </Ellipse>
+
+                    <!-- Head (animated rotation) -->
+                    <Ellipse Name="BrixelHead"
+                             Canvas.Left="80" Canvas.Top="20"
+                             Width="120" Height="120"
+                             Fill="#20B2AA"
+                             Opacity="0.95">
+                        <Ellipse.RenderTransform>
+                            <RotateTransform Angle="0" CenterX="60" CenterY="60"/>
+                        </Ellipse.RenderTransform>
+                    </Ellipse>
+
+                    <!-- Left Eye -->
+                    <Ellipse Canvas.Left="105" Canvas.Top="45" Width="18" Height="24" Fill="White"/>
+                    <Ellipse Name="LeftPupil" Canvas.Left="108" Canvas.Top="50" Width="12" Height="14" Fill="#000000">
+                        <Ellipse.RenderTransform>
+                            <TranslateTransform X="0" Y="0"/>
+                        </Ellipse.RenderTransform>
+                    </Ellipse>
+
+                    <!-- Right Eye -->
+                    <Ellipse Canvas.Left="157" Canvas.Top="45" Width="18" Height="24" Fill="White"/>
+                    <Ellipse Name="RightPupil" Canvas.Left="160" Canvas.Top="50" Width="12" Height="14" Fill="#000000">
+                        <Ellipse.RenderTransform>
+                            <TranslateTransform X="0" Y="0"/>
+                        </Ellipse.RenderTransform>
+                    </Ellipse>
+
+                    <!-- Smile (animated) -->
+                    <Path Name="BrixelSmile"
+                          Data="M 110 85 Q 140 100 170 85"
+                          Stroke="#000000"
+                          StrokeThickness="3"
+                          Fill="Transparent"
+                          StrokeLineCap="Round"/>
+
+                    <!-- Left Horn -->
+                    <Polygon Points="120,15 115,5 125,20" Fill="#8B7355" Opacity="0.8">
+                        <Polygon.RenderTransform>
+                            <RotateTransform Angle="0" CenterX="120" CenterY="15"/>
+                        </Polygon.RenderTransform>
+                    </Polygon>
+
+                    <!-- Right Horn -->
+                    <Polygon Points="160,15 165,5 155,20" Fill="#8B7355" Opacity="0.8">
+                        <Polygon.RenderTransform>
+                            <RotateTransform Angle="0" CenterX="160" CenterY="15"/>
+                        </Polygon.RenderTransform>
+                    </Polygon>
+
+                    <!-- Left Arm (animated wave) -->
+                    <Rectangle Name="LeftArm"
+                               Canvas.Left="50" Canvas.Top="80"
+                               Width="20" Height="80"
+                               Fill="#14B8A6"
+                               Opacity="0.85"
+                               RadiusX="10" RadiusY="10">
+                        <Rectangle.RenderTransform>
+                            <RotateTransform Angle="0" CenterX="10" CenterY="0"/>
+                        </Rectangle.RenderTransform>
+                    </Rectangle>
+
+                    <!-- Right Arm (animated wave) -->
+                    <Rectangle Name="RightArm"
+                               Canvas.Left="230" Canvas.Top="80"
+                               Width="20" Height="80"
+                               Fill="#14B8A6"
+                               Opacity="0.85"
+                               RadiusX="10" RadiusY="10">
+                        <Rectangle.RenderTransform>
+                            <RotateTransform Angle="0" CenterX="10" CenterY="0"/>
+                        </Rectangle.RenderTransform>
+                    </Rectangle>
+
+                    <!-- Glow Effect (animated) -->
+                    <Ellipse Name="BrixelGlow"
+                             Canvas.Left="50" Canvas.Top="30"
+                             Width="180" Height="160"
+                             Stroke="#14B8A6"
+                             StrokeThickness="2"
+                             Fill="Transparent"
+                             Opacity="0">
+                        <Ellipse.RenderTransform>
+                            <ScaleTransform ScaleX="1" ScaleY="1" CenterX="90" CenterY="80"/>
+                        </Ellipse.RenderTransform>
+                    </Ellipse>
+                </Canvas>
+
+                <!-- ═══ CHAT MESSAGES ════════════════════════════════════════ -->
+                <Border Background="{DynamicResource PanelBackground}"
+                        BorderBrush="{DynamicResource BrixelAccent}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="12"
+                        Margin="0,8,0,0"
+                        MinHeight="60">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="120">
+                        <TextBlock Name="BrixelMessage"
+                                   Text="Hallo! Ich bin Brixel, dein 3D-Assistent! 👋"
+                                   Foreground="{DynamicResource TextPrimary}"
+                                   FontSize="12"
+                                   TextWrapping="Wrap"
+                                   LineHeight="18"/>
+                    </ScrollViewer>
+                </Border>
+
+                <!-- ═══ INPUT AREA ══════════════════════════════════════════ -->
+                <Grid Margin="0,8,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox Grid.Column="0"
+                             Name="BrixelInput"
+                             materialDesign:HintAssist.Hint="Beschreibe eine Form..."
+                             Style="{StaticResource MaterialDesignTextBox}"
+                             Foreground="{DynamicResource TextPrimary}"
+                             Background="{DynamicResource PanelAlt}"
+                             BorderBrush="{DynamicResource SeparatorBrush}"
+                             Padding="8,6"
+                             Height="32"
+                             VerticalContentAlignment="Center"/>
+
+                    <Button Grid.Column="1"
+                            Name="SendButton"
+                            Style="{StaticResource MaterialDesignFlatButton}"
+                            Foreground="{DynamicResource BrixelAccent}"
+                            Margin="4,0,0,0"
+                            Padding="6"
+                            Width="32" Height="32">
+                        <materialDesign:PackIcon Kind="Send" Width="16" Height="16"/>
+                    </Button>
+                </Grid>
+
+                <!-- ═══ STATUS INDICATOR ════════════════════════════════════ -->
+                <StackPanel Orientation="Horizontal" Margin="0,8,0,0" HorizontalAlignment="Center">
+                    <Ellipse Name="StatusDot1" Width="8" Height="8" Fill="{DynamicResource BrixelAccent}" Margin="2"/>
+                    <Ellipse Name="StatusDot2" Width="8" Height="8" Fill="{DynamicResource BrixelAccent}" Margin="2" Opacity="0.5"/>
+                    <Ellipse Name="StatusDot3" Width="8" Height="8" Fill="{DynamicResource BrixelAccent}" Margin="2" Opacity="0.3"/>
+                </StackPanel>
+
+            </StackPanel>
+        </Border>
+
+        <!-- ═══ ANIMATIONS ═══════════════════════════════════════════════════ -->
+        <Border.Resources>
+            <!-- Bounce Animation -->
+            <Storyboard x:Key="BounceAnimation" RepeatBehavior="Forever">
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BrixelBody" 
+                                               Storyboard.TargetProperty="(Canvas.Top)">
+                    <EasingDoubleKeyFrame KeyTime="0:0:0" Value="40"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="50">
+                        <EasingDoubleKeyFrame.EasingFunction>
+                            <CubicEase EasingMode="EaseOut"/>
+                        </EasingDoubleKeyFrame.EasingFunction>
+                    </EasingDoubleKeyFrame>
+                    <EasingDoubleKeyFrame KeyTime="0:0:1" Value="40">
+                        <EasingDoubleKeyFrame.EasingFunction>
+                            <CubicEase EasingMode="EaseIn"/>
+                        </EasingDoubleKeyFrame.EasingFunction>
+                    </EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+
+            <!-- Head Rotation Animation -->
+            <Storyboard x:Key="HeadRotationAnimation" RepeatBehavior="Forever">
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BrixelHead" 
+                                               Storyboard.TargetProperty="(Canvas.RenderTransform).(RotateTransform.Angle)">
+                    <EasingDoubleKeyFrame KeyTime="0:0:0" Value="0"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:1.5" Value="15">
+                        <EasingDoubleKeyFrame.EasingFunction>
+                            <SineEase EasingMode="InOut"/>
+                        </EasingDoubleKeyFrame.EasingFunction>
+                    </EasingDoubleKeyFrame>
+                    <EasingDoubleKeyFrame KeyTime="0:0:3" Value="-15">
+                        <EasingDoubleKeyFrame.EasingFunction>
+                            <SineEase EasingMode="InOut"/>
+                        </EasingDoubleKeyFrame.EasingFunction>
+                    </EasingDoubleKeyFrame>
+                    <EasingDoubleKeyFrame KeyTime="0:0:4.5" Value="0">
+                        <EasingDoubleKeyFrame.EasingFunction>
+                            <SineEase EasingMode="InOut"/>
+                        </EasingDoubleKeyFrame.EasingFunction>
+                    </EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+
+            <!-- Arm Wave Animation -->
+            <Storyboard x:Key="ArmWaveAnimation" RepeatBehavior="Forever">
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LeftArm" 
+                                               Storyboard.TargetProperty="(Canvas.RenderTransform).(RotateTransform.Angle)">
+                    <EasingDoubleKeyFrame KeyTime="0:0:0" Value="0"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="-30"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.8" Value="0"/>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RightArm" 
+                                               Storyboard.TargetProperty="(Canvas.RenderTransform).(RotateTransform.Angle)">
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="0"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.8" Value="-30"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:1.2" Value="0"/>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+
+            <!-- Glow Pulse Animation -->
+            <Storyboard x:Key="GlowPulseAnimation" RepeatBehavior="Forever">
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BrixelGlow" 
+                                               Storyboard.TargetProperty="Opacity">
+                    <EasingDoubleKeyFrame KeyTime="0:0:0" Value="0"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0.4"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:1" Value="0"/>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+
+            <!-- Status Pulse Animation -->
+            <Storyboard x:Key="StatusPulseAnimation" RepeatBehavior="Forever">
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="StatusDot1" 
+                                               Storyboard.TargetProperty="Opacity">
+                    <EasingDoubleKeyFrame KeyTime="0:0:0" Value="1"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.6" Value="0.3"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:1.2" Value="1"/>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="StatusDot2" 
+                                               Storyboard.TargetProperty="Opacity">
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.9" Value="0.3"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:1.5" Value="1"/>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="StatusDot3" 
+                                               Storyboard.TargetProperty="Opacity">
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.6" Value="1"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:1.2" Value="0.3"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:1.8" Value="1"/>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+        </Border.Resources>
+
+    </Grid>
+
+</UserControl>
