@@ -171,6 +171,7 @@ namespace ThreeDBuilder.ViewModels
             }
             catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"[AutoFixViewModel] AnalyzeModel error: {ex}");
                 IssuesFound.Clear();
                 IssuesFound.Add($"❌ Fehler: {ex.Message}");
             }
@@ -230,6 +231,7 @@ namespace ThreeDBuilder.ViewModels
             }
             catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"[AutoFixViewModel] ExecuteAutoFix error: {ex}");
                 OptimizationProgress = $"❌ Fehler: {ex.Message}";
             }
             finally

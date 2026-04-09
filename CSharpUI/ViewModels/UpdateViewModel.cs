@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using ThreeDBuilder;
 using ThreeDBuilder.Services;
 
 namespace ThreeDBuilder.ViewModels
@@ -91,6 +92,7 @@ namespace ThreeDBuilder.ViewModels
             }
             catch (Exception ex)
             {
+                App.WriteLog($"[UpdateViewModel] CheckForUpdates error: {ex}");
                 StatusMessage = $"Fehler: {ex.Message}";
                 ShowUpdateDialog = true;
             }
@@ -115,6 +117,7 @@ namespace ThreeDBuilder.ViewModels
             }
             catch (Exception ex)
             {
+                App.WriteLog($"[UpdateViewModel] DownloadAndInstall error: {ex}");
                 StatusMessage = $"Update fehlgeschlagen: {ex.Message}";
             }
         }
