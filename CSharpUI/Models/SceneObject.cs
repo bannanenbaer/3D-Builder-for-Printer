@@ -75,13 +75,17 @@ public class SceneObject : INotifyPropertyChanged
         ["name"]       = Name,
     };
 
-    /// <summary>Create a deep copy of this object (for undo).</summary>
-    public SceneObject Clone() => new()
+    /// <summary>
+    /// Create a deep copy of this object.
+    /// When <paramref name="forUndo"/> is true the original name is preserved;
+    /// for a user-visible duplicate the suffix " (Kopie)" is appended.
+    /// </summary>
+    public SceneObject Clone(bool forUndo = false) => new()
     {
-        Id = Guid.NewGuid().ToString(),
-        Name = Name + " (Kopie)",
+        Id        = Guid.NewGuid().ToString(),
+        Name      = forUndo ? Name : Name + " (Kopie)",
         ShapeType = ShapeType,
-        Params = new Dictionary<string, object>(Params),
+        Params    = new Dictionary<string, object>(Params),
         PosX = PosX, PosY = PosY, PosZ = PosZ,
         RotX = RotX, RotY = RotY, RotZ = RotZ,
         StlPath = StlPath,

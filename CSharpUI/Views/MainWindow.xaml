@@ -246,11 +246,24 @@
             <GridSplitter Grid.Column="3" Background="#2D3748"
                           HorizontalAlignment="Stretch" ShowsPreview="False"/>
 
-            <!-- ─ RIGHT SIDEBAR: Properties ─ -->
+            <!-- ─ RIGHT SIDEBAR: Properties + AutoFix tabs ─ -->
             <Border Grid.Column="4" Background="{DynamicResource SidebarBackground}">
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <local:PropertiesPanel x:Name="PropertiesPanelControl" DataContext="{Binding}"/>
-                </ScrollViewer>
+                <TabControl Background="Transparent" BorderThickness="0"
+                            Foreground="{DynamicResource TextPrimary}">
+                    <TabItem Header="Eigenschaften" Foreground="{DynamicResource TextPrimary}"
+                             Background="Transparent">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <local:PropertiesPanel x:Name="PropertiesPanelControl" DataContext="{Binding}"/>
+                        </ScrollViewer>
+                    </TabItem>
+                    <TabItem Header="AutoFix" Foreground="{DynamicResource TextPrimary}"
+                             Background="Transparent">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <local:AutoFixPanel x:Name="AutoFixPanelControl"
+                                                DataContext="{Binding AutoFixVM}"/>
+                        </ScrollViewer>
+                    </TabItem>
+                </TabControl>
             </Border>
             </Grid>
 

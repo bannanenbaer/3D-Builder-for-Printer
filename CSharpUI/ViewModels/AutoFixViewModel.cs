@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
@@ -59,17 +60,42 @@ namespace ThreeDBuilder.ViewModels
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public AutoFixViewModel(AutoFixService autoFixService, UndoRedoService undoRedoService)
+        public AutoFixViewModel(AutoFixService autoFixService, UndoRedoService undoRedoService,
+            ObservableCollection<SceneObject>? sceneObjects = null)
         {
             _autoFixService = autoFixService;
             _undoRedoService = undoRedoService;
 
             InitializeCommands();
             InitializePrinters();
-            InitializeAutoFixSceneItems();
+
+            if (sceneObjects != null)
+            {
+                SyncFromScene(sceneObjects);
+                sceneObjects.CollectionChanged += (_, _) => SyncFromScene(sceneObjects);
+            }
+            else
+            {
+                // Fallback: populate with placeholder until real scene is connected
+                InitializeAutoFixSceneItems();
+            }
+
             UpdateHistoryInfo();
 
             _undoRedoService.HistoryChanged += (s, e) => UpdateHistoryInfo();
+        }
+
+        /// <summary>Sync the available object list from the live scene collection.</summary>
+        private void SyncFromScene(ObservableCollection<SceneObject> scene)
+        {
+            AvailableObjects.Clear();
+            foreach (var obj in scene)
+                AvailableObjects.Add(new AutoFixSceneItem
+                {
+                    Id   = obj.Id,
+                    Name = obj.Name,
+                    Type = obj.ShapeType,
+                });
         }
 
         private void InitializeCommands()
@@ -145,6 +171,7 @@ namespace ThreeDBuilder.ViewModels
             }
             catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"[AutoFixViewModel] AnalyzeModel error: {ex}");
                 IssuesFound.Clear();
                 IssuesFound.Add($"❌ Fehler: {ex.Message}");
             }
@@ -204,6 +231,7 @@ namespace ThreeDBuilder.ViewModels
             }
             catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"[AutoFixViewModel] ExecuteAutoFix error: {ex}");
                 OptimizationProgress = $"❌ Fehler: {ex.Message}";
             }
             finally

@@ -223,6 +223,12 @@ public class PythonBridge : IDisposable
     public void Stop()
     {
         _cts.Cancel();
+
+        // Resolve all pending requests with an error so callers don't hang forever.
+        foreach (var kvp in _pending)
+            kvp.Value.TrySetResult(ErrorResponse("Backend stopped"));
+        _pending.Clear();
+
         try { _stdin?.Close(); } catch { }
         try { _process?.Kill(); } catch { }
         _process?.Dispose();

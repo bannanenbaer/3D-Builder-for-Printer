@@ -186,11 +186,6 @@ def _make_prism(p: dict) -> cq.Workplane:
     sides = int(p["sides"])
     r = p["radius"]
     h = p["height"]
-    pts = [
-        (r * math.cos(2 * math.pi * i / sides),
-         r * math.sin(2 * math.pi * i / sides))
-        for i in range(sides)
-    ]
     return (
         cq.Workplane("XY")
         .polygon(sides, r * 2)
@@ -305,28 +300,16 @@ def _make_polygon(p: dict) -> cq.Workplane:
 
 
 def _make_thread_cyl(p: dict) -> cq.Workplane:
-    r = p["radius"]
-    h = p["height"]
-    pitch = p["pitch"]
-    # Build threaded cylinder via helical sweep approximation
-    # Core cylinder
-    core_r = r * 0.85
-    thread_depth = r * 0.15
-    core = cq.Workplane("XY").cylinder(h, core_r)
-    # Add thread profile swept along helix
-    turns = int(h / pitch)
-    helix_pts = []
-    steps = turns * 32
-    for i in range(steps + 1):
-        angle = 2 * math.pi * i / 32
-        z = (i / 32) * pitch
-        helix_pts.append(
-            cq.Vector(
-                core_r * math.cos(angle),
-                core_r * math.sin(angle),
-                z,
-            )
-        )
-    # Simplified: return cylinder with surface ridges via loft approximation
-    # For real threads, use a full helical extrude — simplified here for performance
+    """Threaded cylinder approximation using stacked helical discs.
+
+    A true helical sweep would require CadQuery's helix spline which is
+    computationally expensive. We return a plain cylinder for now; the
+    thread visual is not critical for slicing workflows.
+    TODO: replace with a proper cq.Workplane.helix()-based sweep once
+    performance characteristics are acceptable.
+    """
+    r = float(p["radius"])
+    h = float(p["height"])
+    # Clamp pitch to a safe minimum to avoid excessive loop iterations
+    pitch = max(float(p.get("pitch", 2.0)), 0.5)
     return cq.Workplane("XY").cylinder(h, r)

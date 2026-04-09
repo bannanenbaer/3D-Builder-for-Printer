@@ -49,17 +49,11 @@ public class AutoSaveService : IDisposable
             if (string.IsNullOrWhiteSpace(savePath)) return;
 
             Directory.CreateDirectory(savePath);
-
-            // Placeholder: actual serialization provided later
-            var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-            var filePath = Path.Combine(savePath, $"autosave_{timestamp}.json");
-            await File.WriteAllTextAsync(filePath, "{}");
-
             await _saveCallback();
         }
         catch
         {
-            // ignore autosave errors
+            // ignore autosave errors silently
         }
     }
 
