@@ -26,9 +26,9 @@ namespace ThreeDBuilder.Views
             _idleFloat = (Storyboard)Resources["IdleFloat"];
             _blink     = (Storyboard)Resources["BlinkAnimation"];
             _tailSwing = (Storyboard)Resources["SwingAnimation"];
-            _idleFloat?.Begin();
-            _blink?.Begin();
-            _tailSwing?.Begin();
+            _idleFloat?.Begin(this, true);
+            _blink?.Begin(this, true);
+            _tailSwing?.Begin(this, true);
         }
 
         // ── Tool-specific animations ──────────────────────────────────────
@@ -50,7 +50,7 @@ namespace ThreeDBuilder.Views
             };
 
             _currentAnim = (Storyboard)Resources[key];
-            _currentAnim?.Begin();
+            _currentAnim?.Begin(this, true);
         }
 
         public void StopAnimation()
