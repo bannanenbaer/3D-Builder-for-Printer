@@ -221,6 +221,7 @@ public class MainViewModel : INotifyPropertyChanged
                 Name      = $"{T.T($"shape_{shapeType}")} {SceneObjects.Count + 1}",
                 ShapeType = shapeType,
                 Params    = defaultP,
+                PosZ      = GetDefaultPosZ(shapeType, defaultP),
             };
 
             if (_bridge?.IsRunning == true)
@@ -634,6 +635,30 @@ public class MainViewModel : INotifyPropertyChanged
         OnPropertyChanged(nameof(CanUndo));
         OnPropertyChanged(nameof(CanRedo));
         await Task.CompletedTask;
+    }
+
+    // ── Default Z position (place object on top of build plate) ──────────
+
+    /// <summary>
+    /// Returns the Z position that places the bottom of a newly created shape exactly on
+    /// the build plate (Z = 0). CadQuery centres shapes at the origin, so we lift the
+    /// shape by half its height (or radius, for spheres/toruses).
+    /// </summary>
+    private static double GetDefaultPosZ(string shapeType, Dictionary<string, object> @params)
+    {
+        double GetP(string key, double fallback = 10.0)
+        {
+            if (@params.TryGetValue(key, out var v) && v != null)
+                try { return Convert.ToDouble(v); } catch { }
+            return fallback;
+        }
+        return shapeType switch
+        {
+            "sphere"                         => GetP("radius"),
+            "hemisphere"                     => 0,        // flat side already on XY-plane
+            "torus"                          => GetP("radius_minor", 4),
+            _                                => GetP("height", 20) / 2.0,
+        };
     }
 
     // ── Parameter rows ─────────────────────────────────────────────────────

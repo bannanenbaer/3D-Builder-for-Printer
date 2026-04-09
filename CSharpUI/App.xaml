@@ -45,8 +45,9 @@
             <SolidColorBrush x:Key="WarningBrush"       Color="#F59E0B"/>
             <SolidColorBrush x:Key="ErrorBrush"         Color="#EF4444"/>
             <SolidColorBrush x:Key="InfoBrush"          Color="#06B6D4"/>
-            <SolidColorBrush x:Key="BrixelAccent"      Color="#14B8A6"/>
-            <SolidColorBrush x:Key="PanelAlt"          Color="#252D3D"/>
+            <SolidColorBrush x:Key="BrixelAccent"       Color="#14B8A6"/>
+            <SolidColorBrush x:Key="PanelAlt"           Color="#252D3D"/>
+            <SolidColorBrush x:Key="ViewportBackground" Color="#111111"/>
 
             <!-- Shape button style - uses DynamicResource so theme switching works -->
             <Style x:Key="ShapeButtonStyle" TargetType="Button"

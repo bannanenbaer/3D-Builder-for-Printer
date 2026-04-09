@@ -96,12 +96,19 @@ public class SettingsViewModel : INotifyPropertyChanged
     }
 
     // ── Language ──────────────────────────────────────────────────────────
+
+    /// <summary>Fired when the user changes the language so MainWindow can update its title.</summary>
+    public static event Action<string>? LanguageChanged;
+
     public string Language
     {
         get => _svc.Current.Language == "en" ? "English" : "Deutsch";
         set
         {
             _svc.Current.Language = value == "English" ? "en" : "de";
+            // Push change to the live TranslationService so all bound UI updates immediately
+            App.Translations.CurrentLanguage = _svc.Current.Language;
+            LanguageChanged?.Invoke(_svc.Current.Language);
             SaveAndNotify();
         }
     }

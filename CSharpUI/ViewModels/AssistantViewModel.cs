@@ -33,6 +33,17 @@ public class AssistantViewModel : INotifyPropertyChanged, IDisposable
 
     public ObservableCollection<ChatMessage> Messages { get; } = new();
 
+    /// <summary>The text of the most recent bot message – shown in the speech bubble.</summary>
+    public string LatestBotMessage
+    {
+        get
+        {
+            for (int i = Messages.Count - 1; i >= 0; i--)
+                if (!Messages[i].IsUser) return Messages[i].Text;
+            return "";
+        }
+    }
+
     private bool _isTyping;
     public bool IsTyping
     {
@@ -40,10 +51,20 @@ public class AssistantViewModel : INotifyPropertyChanged, IDisposable
         set { _isTyping = value; OnPropertyChanged(); }
     }
 
+    /// <summary>Controls whether the speech-bubble / chat area is expanded.</summary>
+    private bool _isChatOpen = true;
+    public bool IsChatOpen
+    {
+        get => _isChatOpen;
+        set { _isChatOpen = value; OnPropertyChanged(); }
+    }
+
     // ── Commands ──────────────────────────────────────────────────────────
 
     private RelayCommand? _sendCmd;
     public ICommand SendCommand => _sendCmd!;
+
+    public ICommand ToggleChatCommand { get; private set; } = null!;
 
     // ── Constructor ───────────────────────────────────────────────────────
 
@@ -56,6 +77,8 @@ public class AssistantViewModel : INotifyPropertyChanged, IDisposable
             _ => _ = SendAsync(),
             _ => !string.IsNullOrWhiteSpace(UserInput) && !IsTyping
         );
+
+        ToggleChatCommand = new RelayCommand(_ => IsChatOpen = !IsChatOpen);
 
         AddBot("Hallo! 👋 Ich bin Brixl, dein 3D-Assistent!\n\n" +
                "Ich kann:\n" +
@@ -319,7 +342,13 @@ public class AssistantViewModel : INotifyPropertyChanged, IDisposable
 
     // ── Helpers ───────────────────────────────────────────────────────────
 
-    private void AddBot(string text)  => Messages.Add(new ChatMessage { Text = text, IsUser = false });
+    private void AddBot(string text)
+    {
+        Messages.Add(new ChatMessage { Text = text, IsUser = false });
+        OnPropertyChanged(nameof(LatestBotMessage));
+        IsChatOpen = true; // auto-show speech bubble on new bot message
+    }
+
     private void AddUser(string text) => Messages.Add(new ChatMessage { Text = text, IsUser = true });
 
     protected void OnPropertyChanged([CallerMemberName] string? name = null)

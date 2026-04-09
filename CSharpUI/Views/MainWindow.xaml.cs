@@ -29,7 +29,16 @@ public partial class MainWindow : Window
         CheckAndShowTutorial();
 
         // Wire viewport events
-        _vm.ObjectAdded   += obj => Dispatcher.InvokeAsync(() => AddStlToViewport(obj));
+        _vm.ObjectAdded   += obj =>
+        {
+            // Refresh color when IsSubtractor or IsSelected toggles
+            obj.PropertyChanged += (_, e) =>
+            {
+                if (e.PropertyName is nameof(SceneObject.IsSubtractor) or nameof(SceneObject.IsSelected))
+                    Dispatcher.InvokeAsync(() => { RemoveFromViewport(obj.Id); AddStlToViewport(obj); });
+            };
+            Dispatcher.InvokeAsync(() => AddStlToViewport(obj));
+        };
         _vm.ObjectUpdated += obj => Dispatcher.InvokeAsync(() => { RemoveFromViewport(obj.Id); AddStlToViewport(obj); });
         _vm.ObjectRemoved += obj => Dispatcher.InvokeAsync(() => RemoveFromViewport(obj.Id));
         _vm.SceneCleared  += ()  => Dispatcher.InvokeAsync(ClearViewport);
@@ -37,6 +46,9 @@ public partial class MainWindow : Window
         // Apply saved font scale immediately and whenever user changes it
         ApplyFontScale(Services.SettingsService.Instance.Current.FontScale);
         SettingsViewModel.FontScaleChanged += scale => Dispatcher.InvokeAsync(() => ApplyFontScale(scale));
+
+        // Update window title when language changes
+        SettingsViewModel.LanguageChanged += _ => Dispatcher.InvokeAsync(() => Title = App.Translations.T("app_title"));
 
         // Wire viewport mascot animation
         _vm.MascotAnimationRequested += AnimateViewportMascotAsync;
@@ -59,10 +71,18 @@ public partial class MainWindow : Window
             var reader = new StLReader();
             var modelGroup = reader.Read(obj.StlPath);
 
-            var color = obj.IsSelected
-                ? Color.FromRgb(0, 120, 212)
-                : Color.FromRgb(130, 190, 220);
-            var material = new DiffuseMaterial(new SolidColorBrush(color));
+            Color color;
+            if (obj.IsSubtractor)
+                color = obj.IsSelected
+                    ? Color.FromArgb(200, 255, 80, 80)
+                    : Color.FromArgb(140, 239, 68, 68);
+            else
+                color = obj.IsSelected
+                    ? Color.FromRgb(0, 120, 212)
+                    : Color.FromRgb(130, 190, 220);
+
+            var brush    = new SolidColorBrush(color);
+            var material = new DiffuseMaterial(brush);
 
             if (modelGroup is Model3DGroup grp)
                 foreach (GeometryModel3D gm in grp.Children.OfType<GeometryModel3D>())
