@@ -1,3 +1,17 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# PyInstaller output
+dist/
+build/
+
 # Build outputs
 publish/
 bin/
