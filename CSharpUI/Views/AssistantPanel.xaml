@@ -14,7 +14,7 @@
           2. Brixl mascot   – clickable to toggle the speech bubble
           3. Input bar      – [○ clock/history]  [text input]  [➡ send]
     -->
-    <Grid>
+    <Grid VerticalAlignment="Bottom">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" MaxHeight="80"/>   <!-- Speech bubble  -->
             <RowDefinition Height="*"/>   <!-- Mascot (takes remaining space) -->
