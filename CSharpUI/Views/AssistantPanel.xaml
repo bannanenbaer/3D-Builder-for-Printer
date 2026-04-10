@@ -5,7 +5,7 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              Width="Auto"
              Height="Auto"
-             MinHeight="300"
+             ClipToBounds="False"
              Background="Transparent">
 
     <!--
@@ -14,7 +14,7 @@
           2. Brixl mascot   – clickable to toggle the speech bubble
           3. Input bar      – [○ clock/history]  [text input]  [➡ send]
     -->
-    <Grid VerticalAlignment="Bottom">
+    <Grid VerticalAlignment="Bottom" ClipToBounds="False">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" MaxHeight="80"/>   <!-- Speech bubble  -->
             <RowDefinition Height="*"/>   <!-- Mascot (takes remaining space) -->
@@ -104,16 +104,18 @@
         <!-- ═══════════════════════════════════════════════════════════
              ROW 1 – Brixl mascot (click = toggle speech bubble) – LARGER
         ════════════════════════════════════════════════════════════ -->
-        <Grid Grid.Row="1" HorizontalAlignment="Right" Margin="0,0,0,0">
+        <Grid Grid.Row="1" HorizontalAlignment="Right" Margin="0,0,0,0" ClipToBounds="False">
             <Button Command="{Binding ToggleChatCommand}"
                     Background="Transparent"
                     BorderThickness="0"
                     Cursor="Hand"
                     Padding="0"
+                    ClipToBounds="False"
                     ToolTip="Brixel – klicken um Sprechblase zu öffnen/schließen">
                 <local:MascotAnimationView x:Name="MascotView"
-                                           Width="250" Height="350"
-                                           VerticalAlignment="Bottom"/>
+                                           Width="130" Height="175"
+                                           VerticalAlignment="Bottom"
+                                           ClipToBounds="False"/>
             </Button>
         </Grid>
 
