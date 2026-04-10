@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Media3D;
@@ -16,13 +17,29 @@ namespace ThreeDBuilder.Views;
 public partial class MainWindow : Window
 {
     private readonly MainViewModel _vm;
-    // O(1) lookup: object ID → viewport visual (avoids linear search on every update/remove)
+    // O(1) lookup: object ID → viewport visual
     private readonly Dictionary<string, ModelVisual3D> _visualMap = new();
+
+    // Tracks the position/rotation baked into each object's current STL file.
+    // WASD movement applies a delta transform on top of this baked-in transform
+    // so no Python round-trip is needed for movement.
+    private readonly Dictionary<string, (double X, double Y, double Z, double RotZ)> _bakedTransforms = new();
+
+    private const double MoveStep = 1.0;  // mm per key press
+    private const double RotStep  = 5.0;  // degrees per D key press
 
     public MainWindow()
     {
         InitializeComponent();
         _vm = new MainViewModel();
+
+        // Default camera: Z-up, isometric view matching the printer's coordinate system
+        if (Viewport3D.Camera is PerspectiveCamera startCam)
+        {
+            startCam.Position     = new Point3D(80, -80, 80);
+            startCam.LookDirection = new Vector3D(-1, 1, -1);
+            startCam.UpDirection  = new Vector3D(0, 0, 1);
+        }
         DataContext = _vm;
 
         // Show tutorial on first launch
@@ -91,6 +108,9 @@ public partial class MainWindow : Window
             var visual = new ModelVisual3D { Content = modelGroup };
             visual.SetValue(TagProperty, $"obj_{obj.Id}");
             _visualMap[obj.Id] = visual;
+            // Record the position/rotation that Python already baked into this STL.
+            // WASD movement will apply only the delta on top.
+            _bakedTransforms[obj.Id] = (obj.PosX, obj.PosY, obj.PosZ, obj.RotZ);
             Viewport3D.Children.Add(visual);
             Viewport3D.ZoomExtents(400);
         }
@@ -102,8 +122,187 @@ public partial class MainWindow : Window
         if (_visualMap.TryGetValue(objId, out var visual))
         {
             _visualMap.Remove(objId);
+            _bakedTransforms.Remove(objId);
             Viewport3D.Children.Remove(visual);
         }
+    }
+
+    // ── WASD movement helpers ─────────────────────────────────────────────
+
+    /// <summary>
+    /// Applies only the delta between the current SceneObject position/rotation
+    /// and the position that is already baked into the STL file.
+    /// This gives instant visual feedback without re-generating the mesh via Python.
+    /// </summary>
+    private void ApplyDeltaTransform(SceneObject obj)
+    {
+        if (!_visualMap.TryGetValue(obj.Id, out var visual)) return;
+        if (!_bakedTransforms.TryGetValue(obj.Id, out var baked)) return;
+
+        double dX    = obj.PosX  - baked.X;
+        double dY    = obj.PosY  - baked.Y;
+        double dZ    = obj.PosZ  - baked.Z;
+        double dRotZ = obj.RotZ  - baked.RotZ;
+
+        bool hasTranslate = Math.Abs(dX) > 0.0001 || Math.Abs(dY) > 0.0001 || Math.Abs(dZ) > 0.0001;
+        bool hasRotate    = Math.Abs(dRotZ) > 0.0001;
+
+        if (!hasTranslate && !hasRotate)
+        {
+            visual.Transform = Transform3D.Identity;
+            return;
+        }
+
+        var group = new Transform3DGroup();
+        if (hasRotate)
+            // Rotate around the object's own baked center, not the world origin.
+            // Without CenterX/Y the object would orbit around (0,0) instead of spinning in place.
+            group.Children.Add(new RotateTransform3D(
+                new AxisAngleRotation3D(new Vector3D(0, 0, 1), dRotZ),
+                baked.X, baked.Y, baked.Z));
+        if (hasTranslate)
+            group.Children.Add(new TranslateTransform3D(dX, dY, dZ));
+        visual.Transform = group;
+    }
+
+    /// <summary>
+    /// Returns camera-forward and camera-right vectors projected onto the XY build plate.
+    /// Used so WASD movement is always relative to the current camera view.
+    /// </summary>
+    private (Vector3D fwd, Vector3D rgt) GetCameraXYDirections()
+    {
+        if (Viewport3D.Camera is not PerspectiveCamera cam)
+            return (new Vector3D(0, 1, 0), new Vector3D(1, 0, 0));
+
+        var look = cam.LookDirection;
+        var up   = cam.UpDirection;
+
+        // Project forward onto the build plate (XY plane, ignore Z component)
+        var fwd = new Vector3D(look.X, look.Y, 0);
+        if (fwd.Length < 0.01) fwd = new Vector3D(0, 1, 0);
+        fwd.Normalize();
+
+        // Camera right = cross(look, up), then project onto XY
+        var rgt3 = Vector3D.CrossProduct(look, up);
+        var rgt  = new Vector3D(rgt3.X, rgt3.Y, 0);
+        if (rgt.Length < 0.01) rgt = new Vector3D(1, 0, 0);
+        rgt.Normalize();
+
+        return (fwd, rgt);
+    }
+
+    // ── Keyboard handler (WASD movement, always from camera perspective) ──
+
+    private void OnSceneKeyDown(object sender, KeyEventArgs e)
+    {
+        // If a TextBox (e.g. input bar, parameter fields) has focus → do nothing
+        if (Keyboard.FocusedElement is TextBox) return;
+
+        var obj = _vm.SelectedObject;
+        if (obj == null) return;
+
+        // Only handle plain WASD/Y without modifiers (Ctrl+Y = Redo must still work)
+        if (e.KeyboardDevice.Modifiers != ModifierKeys.None) return;
+
+        // Snapshot the scene before every movement step so Ctrl+Z can undo each step.
+        _vm.MarkUndoPoint();
+
+        var (fwd, rgt) = GetCameraXYDirections();
+        bool handled = true;
+
+        switch (e.Key)
+        {
+            case Key.W: // hoch – camera-forward auf der Bauplatte
+                obj.PosX += fwd.X * MoveStep;
+                obj.PosY += fwd.Y * MoveStep;
+                break;
+            case Key.A: // rechts – camera-right
+                obj.PosX += rgt.X * MoveStep;
+                obj.PosY += rgt.Y * MoveStep;
+                break;
+            case Key.S: // links – camera-left
+                obj.PosX -= rgt.X * MoveStep;
+                obj.PosY -= rgt.Y * MoveStep;
+                break;
+            case Key.Y: // runter – camera-backward
+                obj.PosX -= fwd.X * MoveStep;
+                obj.PosY -= fwd.Y * MoveStep;
+                break;
+            case Key.D: // gegen Uhrzeigersinn (aus Kamerasicht = um Z-Achse positiv)
+                obj.RotZ += RotStep;
+                break;
+            default:
+                handled = false;
+                break;
+        }
+
+        if (handled)
+        {
+            ApplyDeltaTransform(obj);
+            e.Handled = true;
+        }
+    }
+
+    // ── Left-click hit test: select object ───────────────────────────────
+
+    private void OnViewportMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    {
+        // Find the inner WPF Viewport3D inside the HelixViewport3D wrapper
+        var innerVp = FindVisualChild<System.Windows.Controls.Viewport3D>(Viewport3D);
+        if (innerVp == null) return;
+
+        var pos    = e.GetPosition(innerVp);
+        string? hitId = null;
+
+        VisualTreeHelper.HitTest(
+            innerVp,
+            null,
+            result =>
+            {
+                if (result is RayMeshGeometry3DHitTestResult)
+                {
+                    var hitVisual = result.VisualHit as ModelVisual3D;
+                    foreach (var kv in _visualMap)
+                    {
+                        if (kv.Value == hitVisual || IsVisualDescendant(kv.Value, hitVisual))
+                        {
+                            hitId = kv.Key;
+                            return HitTestResultBehavior.Stop;
+                        }
+                    }
+                }
+                return HitTestResultBehavior.Continue;
+            },
+            new PointHitTestParameters(pos));
+
+        if (hitId != null)
+            _vm.SelectedObject = _vm.SceneObjects.FirstOrDefault(o => o.Id == hitId);
+        // Note: clicking empty space does NOT deselect (preserves current selection)
+    }
+
+    // ── Visual tree helpers ───────────────────────────────────────────────
+
+    private static T? FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
+    {
+        for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+        {
+            var child = VisualTreeHelper.GetChild(parent, i);
+            if (child is T t) return t;
+            var found = FindVisualChild<T>(child);
+            if (found != null) return found;
+        }
+        return null;
+    }
+
+    private static bool IsVisualDescendant(DependencyObject ancestor, DependencyObject? element)
+    {
+        var current = element;
+        while (current != null)
+        {
+            if (current == ancestor) return true;
+            current = VisualTreeHelper.GetParent(current);
+        }
+        return false;
     }
 
     private void ClearViewport()
@@ -111,6 +310,7 @@ public partial class MainWindow : Window
         foreach (var visual in _visualMap.Values)
             Viewport3D.Children.Remove(visual);
         _visualMap.Clear();
+        _bakedTransforms.Clear();
     }
 
     // ── Menu / toolbar handlers ───────────────────────────────────────────

@@ -110,7 +110,7 @@
                     Padding="0"
                     ToolTip="Brixl – klicken um Sprechblase zu öffnen/schließen">
                 <local:MascotAnimationView x:Name="MascotView"
-                                           Width="88" Height="108"
+                                           Width="100" Height="130"
                                            VerticalAlignment="Bottom"/>
             </Button>
         </Grid>
@@ -143,12 +143,9 @@
                         Cursor="Hand"
                         ToolTip="Chatverlauf"
                         Padding="0"
-                        Margin="2,0,6,0">
-                    <Button.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="CornerRadius" Value="18"/>
-                        </Style>
-                    </Button.Resources>
+                        Margin="2,0,6,0"
+                        Style="{StaticResource MaterialDesignRaisedButton}"
+                        materialDesign:ButtonAssist.CornerRadius="18">
                     <materialDesign:PackIcon Kind="ClockOutline"
                                              Width="17" Height="17"
                                              Foreground="#60A5FA"/>
@@ -173,20 +170,15 @@
                          AcceptsReturn="False"
                          KeyDown="OnInputKeyDown"/>
 
-                <!-- ─ Send arrow button (right) ─ -->
+                <!-- ─ Send button (right) ─ -->
                 <Button Grid.Column="2"
                         Command="{Binding SendCommand}"
                         Width="36" Height="36"
-                        Background="#2563EB"
                         BorderThickness="0"
                         Cursor="Hand"
                         ToolTip="Senden (Enter)"
-                        Margin="6,0,2,0">
-                    <Button.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="CornerRadius" Value="18"/>
-                        </Style>
-                    </Button.Resources>
+                        Margin="6,0,2,0"
+                        materialDesign:ButtonAssist.CornerRadius="18">
                     <Button.Style>
                         <Style TargetType="Button"
                                BasedOn="{StaticResource MaterialDesignRaisedButton}">
@@ -201,7 +193,7 @@
                             </Style.Triggers>
                         </Style>
                     </Button.Style>
-                    <materialDesign:PackIcon Kind="ArrowRight"
+                    <materialDesign:PackIcon Kind="Send"
                                              Width="18" Height="18"
                                              Foreground="White"/>
                 </Button>

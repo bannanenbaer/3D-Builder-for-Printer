@@ -155,11 +155,21 @@ def _fallback_stl(shape_type: str, params: dict) -> str:
         (0,4,7),(0,7,3),   # left
         (1,2,6),(1,6,5),   # right
     ]
+    def _cross(a, b):
+        return (a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0])
+
+    def _norm(n):
+        mag = _math.sqrt(n[0]**2 + n[1]**2 + n[2]**2)
+        return (n[0]/mag, n[1]/mag, n[2]/mag) if mag > 1e-10 else (0.0, 0.0, 1.0)
+
     lines = ["solid fallback"]
     for t in tris:
         v0, v1, v2 = verts[t[0]], verts[t[1]], verts[t[2]]
+        e1 = (v1[0]-v0[0], v1[1]-v0[1], v1[2]-v0[2])
+        e2 = (v2[0]-v0[0], v2[1]-v0[1], v2[2]-v0[2])
+        nx, ny, nz = _norm(_cross(e1, e2))
         lines += [
-            "  facet normal 0 0 0", "    outer loop",
+            f"  facet normal {nx:.6f} {ny:.6f} {nz:.6f}", "    outer loop",
             f"      vertex {v0[0]} {v0[1]} {v0[2]}",
             f"      vertex {v1[0]} {v1[1]} {v1[2]}",
             f"      vertex {v2[0]} {v2[1]} {v2[2]}",

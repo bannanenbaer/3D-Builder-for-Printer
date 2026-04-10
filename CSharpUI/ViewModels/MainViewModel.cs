@@ -475,8 +475,13 @@ public class MainViewModel : INotifyPropertyChanged
         var obj = SelectedObject ?? SceneObjects.First();
         if (obj.StlPath != null && File.Exists(obj.StlPath))
         {
-            File.Copy(obj.StlPath, dlg.FileName, overwrite: true);
-            StatusText = T.T("msg_export_success");
+            try
+            {
+                File.Copy(obj.StlPath, dlg.FileName, overwrite: true);
+                StatusText = T.T("msg_export_success");
+            }
+            catch (IOException ex)       { StatusText = $"Export fehlgeschlagen: {ex.Message}"; }
+            catch (UnauthorizedAccessException ex) { StatusText = $"Zugriff verweigert: {ex.Message}"; }
         }
         else
             StatusText = T.T("msg_export_error");
@@ -592,6 +597,9 @@ public class MainViewModel : INotifyPropertyChanged
     }
 
     // ── Undo / Redo ───────────────────────────────────────────────────────
+
+    /// <summary>Called by MainWindow before WASD movement so keyboard moves are undoable.</summary>
+    public void MarkUndoPoint() => SaveUndoState();
 
     private void SaveUndoState()
     {

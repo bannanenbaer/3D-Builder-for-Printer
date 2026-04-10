@@ -11,7 +11,8 @@
         Foreground="{DynamicResource TextPrimary}"
         WindowStartupLocation="CenterScreen"
         FontFamily="Segoe UI"
-        FontSize="12">
+        FontSize="12"
+        PreviewKeyDown="OnSceneKeyDown">
 
     <Window.InputBindings>
         <KeyBinding Command="{Binding UndoCommand}"      Gesture="Ctrl+Z"/>
@@ -195,13 +196,15 @@
                                                Background="{DynamicResource ViewportBackground}"
                                                ShowCoordinateSystem="True"
                                                ShowFrameRate="False"
-                                               ZoomExtentsWhenLoaded="True">
+                                               ZoomExtentsWhenLoaded="True"
+                                               PreviewMouseLeftButtonDown="OnViewportMouseLeftButtonDown">
                             <helix:DefaultLights/>
+                            <!-- Normal="0,0,1" → Grid liegt in der XY-Ebene (Z=0 = Druckbett), Z zeigt nach oben -->
                             <helix:GridLinesVisual3D Width="200" Length="200"
+                                                     Normal="0,0,1"
                                                      MajorDistance="10"
                                                      MinorDistance="5"
-                                                     Thickness="0.3"
-                                                     />
+                                                     Thickness="0.3"/>
                         </helix:HelixViewport3D>
 
                         <!-- Loading overlay -->

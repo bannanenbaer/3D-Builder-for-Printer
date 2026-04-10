@@ -142,11 +142,11 @@
 
     </UserControl.Resources>
 
-    <!-- Root grid — clips overflowing arm/tail animations -->
-    <Grid Width="160" Height="200" ClipToBounds="False">
+    <!-- Viewbox scales the mascot to whatever Width/Height is set on the UserControl -->
+    <Viewbox Stretch="Uniform">
 
         <!-- ══ Mascot — entire body in a Canvas ══════════════════════════ -->
-        <Canvas x:Name="MascotRoot" Width="160" Height="200">
+        <Canvas x:Name="MascotRoot" Width="160" Height="245">
 
             <!-- TranslateTransform on root for idle-float + walk movement -->
             <Canvas.RenderTransform>
@@ -154,7 +154,7 @@
             </Canvas.RenderTransform>
 
             <!-- Shadow under feet -->
-            <Ellipse Canvas.Left="30" Canvas.Top="188" Width="100" Height="12"
+            <Ellipse Canvas.Left="30" Canvas.Top="232" Width="100" Height="12"
                      Fill="#33000000"/>
 
             <!-- ── TAIL ────────────────────────────────────────────────── -->
@@ -319,5 +319,5 @@
             <Ellipse Canvas.Left="152" Canvas.Top="100" Width="4" Height="4" Fill="#FFD700" Opacity="0.6"/>
         </Canvas>
 
-    </Grid>
+    </Viewbox>
 </UserControl>
