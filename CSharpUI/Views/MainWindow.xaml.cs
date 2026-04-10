@@ -204,6 +204,9 @@ public partial class MainWindow : Window
         // Only handle plain WASD/Y without modifiers (Ctrl+Y = Redo must still work)
         if (e.KeyboardDevice.Modifiers != ModifierKeys.None) return;
 
+        // Snapshot the scene before every movement step so Ctrl+Z can undo each step.
+        _vm.MarkUndoPoint();
+
         var (fwd, rgt) = GetCameraXYDirections();
         bool handled = true;
 
