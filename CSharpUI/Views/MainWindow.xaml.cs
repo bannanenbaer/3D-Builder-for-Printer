@@ -61,11 +61,19 @@ public partial class MainWindow : Window
         // Wire viewport events
         _vm.ObjectAdded   += obj =>
         {
-            // Refresh color when IsSubtractor or IsSelected toggles
+            // Refresh colour when IsSubtractor or IsSelected toggles.
+            // Guard: skip if the object has already been removed from the scene
+            // (avoids a ghost visual when Delete fires IsSelected=false AFTER
+            //  ObjectRemoved is queued but BEFORE it runs on the dispatcher).
             obj.PropertyChanged += (_, e) =>
             {
                 if (e.PropertyName is nameof(SceneObject.IsSubtractor) or nameof(SceneObject.IsSelected))
-                    Dispatcher.InvokeAsync(() => { RemoveFromViewport(obj.Id); AddStlToViewport(obj); });
+                    Dispatcher.InvokeAsync(() =>
+                    {
+                        if (!_vm.SceneObjects.Contains(obj)) return; // object was deleted
+                        RemoveFromViewport(obj.Id);
+                        AddStlToViewport(obj);
+                    });
             };
             Dispatcher.InvokeAsync(() => AddStlToViewport(obj));
         };
