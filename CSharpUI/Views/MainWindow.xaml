@@ -197,7 +197,7 @@
                                                ShowCoordinateSystem="True"
                                                ShowFrameRate="False"
                                                ZoomExtentsWhenLoaded="True"
-                                               MouseLeftButtonDown="OnViewportMouseLeftButtonDown">
+                                               PreviewMouseLeftButtonDown="OnViewportMouseLeftButtonDown">
                             <helix:DefaultLights/>
                             <!-- Normal="0,0,1" → Grid liegt in der XY-Ebene (Z=0 = Druckbett), Z zeigt nach oben -->
                             <helix:GridLinesVisual3D Width="200" Length="200"

@@ -155,8 +155,11 @@ public partial class MainWindow : Window
 
         var group = new Transform3DGroup();
         if (hasRotate)
+            // Rotate around the object's own baked center, not the world origin.
+            // Without CenterX/Y the object would orbit around (0,0) instead of spinning in place.
             group.Children.Add(new RotateTransform3D(
-                new AxisAngleRotation3D(new Vector3D(0, 0, 1), dRotZ)));
+                new AxisAngleRotation3D(new Vector3D(0, 0, 1), dRotZ),
+                baked.X, baked.Y, baked.Z));
         if (hasTranslate)
             group.Children.Add(new TranslateTransform3D(dX, dY, dZ));
         visual.Transform = group;
@@ -239,7 +242,7 @@ public partial class MainWindow : Window
 
     // ── Left-click hit test: select object ───────────────────────────────
 
-    private void OnViewportMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    private void OnViewportMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
         // Find the inner WPF Viewport3D inside the HelixViewport3D wrapper
         var innerVp = FindVisualChild<System.Windows.Controls.Viewport3D>(Viewport3D);
@@ -304,6 +307,7 @@ public partial class MainWindow : Window
         foreach (var visual in _visualMap.Values)
             Viewport3D.Children.Remove(visual);
         _visualMap.Clear();
+        _bakedTransforms.Clear();
     }
 
     // ── Menu / toolbar handlers ───────────────────────────────────────────
