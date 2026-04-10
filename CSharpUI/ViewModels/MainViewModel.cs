@@ -244,7 +244,9 @@ public class MainViewModel : INotifyPropertyChanged
             SceneObjects.Add(obj);
             SelectedObject = obj;
             ObjectAdded?.Invoke(obj);
-            StatusText = T.T("status_ready");
+            // Only reset to ready if no warning was already set above
+            if (_bridge?.IsRunning == true || !string.IsNullOrEmpty(obj.StlPath))
+                StatusText = T.T("status_ready");
         }
         catch (Exception ex) { StatusText = ex.Message; }
         finally { IsBusy = false; }
@@ -252,8 +254,14 @@ public class MainViewModel : INotifyPropertyChanged
 
     public async Task UpdateSelectedShapeAsync()
     {
-        if (SelectedObject == null || _bridge?.IsRunning != true) return;
+        if (SelectedObject == null) return;
+        if (_bridge?.IsRunning != true)
+        {
+            StatusText = T.T("backend_error");
+            return;
+        }
         IsBusy = true;
+        StatusText = T.T("status_loading");
         try
         {
             foreach (var row in ParameterRows)
@@ -269,6 +277,7 @@ public class MainViewModel : INotifyPropertyChanged
             {
                 SelectedObject.StlPath = result["stl_path"]?.ToString();
                 ObjectUpdated?.Invoke(SelectedObject);
+                StatusText = T.T("status_ready");
             }
             else
                 StatusText = result["message"]?.ToString() ?? T.T("backend_error");
@@ -371,6 +380,7 @@ public class MainViewModel : INotifyPropertyChanged
     public async Task ImportStlAsync(string filePath)
     {
         IsBusy = true;
+        StatusText = $"Importiere '{Path.GetFileName(filePath)}'…";
         SaveUndoState();
         try
         {
@@ -394,6 +404,8 @@ public class MainViewModel : INotifyPropertyChanged
                 ObjectAdded?.Invoke(obj);
                 StatusText = T.T("status_ready");
             }
+            else
+                StatusText = result["message"]?.ToString() ?? "Import fehlgeschlagen";
         }
         finally { IsBusy = false; }
     }
@@ -401,15 +413,18 @@ public class MainViewModel : INotifyPropertyChanged
     public void DeleteSelected()
     {
         if (SelectedObject == null) return;
+        var name = SelectedObject.Name;
         SaveUndoState();
         ObjectRemoved?.Invoke(SelectedObject);
         SceneObjects.Remove(SelectedObject);
         SelectedObject = null;
+        StatusText = $"'{name}' gelöscht";
     }
 
     public async Task DuplicateSelectedAsync()
     {
         if (SelectedObject == null) return;
+        StatusText = $"Dupliziere '{SelectedObject.Name}'…";
         SaveUndoState();
         var clone = SelectedObject.Clone();
         clone.PosX += 5;
@@ -457,8 +472,16 @@ public class MainViewModel : INotifyPropertyChanged
             Title  = T.T("dlg_open_scad"),
             Filter = T.T("dlg_filter_scad"),
         };
-        if (dlg.ShowDialog() == true)
+        if (dlg.ShowDialog() != true) return;
+        try
+        {
             ScadCode = File.ReadAllText(dlg.FileName);
+            StatusText = $"SCAD geladen: {Path.GetFileName(dlg.FileName)}";
+        }
+        catch (Exception ex)
+        {
+            StatusText = $"SCAD-Import fehlgeschlagen: {ex.Message}";
+        }
     }
 
     private async Task ExecuteExportStlAsync()
@@ -490,23 +513,33 @@ public class MainViewModel : INotifyPropertyChanged
 
     private async Task ExecuteExportScadAsync()
     {
-        if (_bridge?.IsRunning != true) return;
-        var result = await _bridge.ExportScadAsync(
-            SceneObjects.Select(o => (object)o.ToBackendDict()));
-        if (result["status"]?.ToString() == "ok")
+        if (_bridge?.IsRunning != true) { StatusText = T.T("backend_error"); return; }
+        IsBusy = true;
+        StatusText = "Exportiere SCAD…";
+        try
         {
-            var dlg = new SaveFileDialog
+            var result = await _bridge.ExportScadAsync(
+                SceneObjects.Select(o => (object)o.ToBackendDict()));
+            if (result["status"]?.ToString() == "ok")
             {
-                Title      = T.T("dlg_export_stl"),
-                Filter     = T.T("dlg_filter_scad"),
-                DefaultExt = ".scad",
-            };
-            if (dlg.ShowDialog() == true)
-            {
-                File.WriteAllText(dlg.FileName, result["scad_code"]?.ToString());
-                StatusText = T.T("msg_export_success");
+                var dlg = new SaveFileDialog
+                {
+                    Title      = T.T("dlg_export_stl"),
+                    Filter     = T.T("dlg_filter_scad"),
+                    DefaultExt = ".scad",
+                };
+                if (dlg.ShowDialog() == true)
+                {
+                    File.WriteAllText(dlg.FileName, result["scad_code"]?.ToString());
+                    StatusText = T.T("msg_export_success");
+                }
+                else
+                    StatusText = T.T("status_ready");
             }
+            else
+                StatusText = result["message"]?.ToString() ?? "SCAD-Export fehlgeschlagen";
         }
+        finally { IsBusy = false; }
     }
 
     private void ExecuteNewScene()
@@ -589,11 +622,22 @@ public class MainViewModel : INotifyPropertyChanged
 
     private async Task ExecuteScadFromSceneAsync()
     {
-        if (_bridge?.IsRunning != true) return;
-        var result = await _bridge.ExportScadAsync(
-            SceneObjects.Select(o => (object)o.ToBackendDict()));
-        if (result["status"]?.ToString() == "ok")
-            ScadCode = result["scad_code"]?.ToString() ?? "";
+        if (_bridge?.IsRunning != true) { StatusText = T.T("backend_error"); return; }
+        IsBusy = true;
+        StatusText = "Konvertiere Szene zu SCAD…";
+        try
+        {
+            var result = await _bridge.ExportScadAsync(
+                SceneObjects.Select(o => (object)o.ToBackendDict()));
+            if (result["status"]?.ToString() == "ok")
+            {
+                ScadCode = result["scad_code"]?.ToString() ?? "";
+                StatusText = "Szene als SCAD-Code geladen";
+            }
+            else
+                StatusText = result["message"]?.ToString() ?? "Konvertierung fehlgeschlagen";
+        }
+        finally { IsBusy = false; }
     }
 
     // ── Undo / Redo ───────────────────────────────────────────────────────
@@ -619,6 +663,7 @@ public class MainViewModel : INotifyPropertyChanged
         var state = _undoStack[^1];
         _undoStack.RemoveAt(_undoStack.Count - 1);
         await RestoreStateAsync(state);
+        StatusText = "Rückgängig gemacht";
     }
 
     public async Task RedoAsync()
@@ -628,6 +673,7 @@ public class MainViewModel : INotifyPropertyChanged
         var state = _redoStack[^1];
         _redoStack.RemoveAt(_redoStack.Count - 1);
         await RestoreStateAsync(state);
+        StatusText = "Wiederhergestellt";
     }
 
     private async Task RestoreStateAsync(List<SceneObject> state)
