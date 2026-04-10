@@ -645,6 +645,39 @@ public class MainViewModel : INotifyPropertyChanged
     /// <summary>Called by MainWindow before WASD movement so keyboard moves are undoable.</summary>
     public void MarkUndoPoint() => SaveUndoState();
 
+    /// <summary>
+    /// Toggles the selection state of <paramref name="obj"/> without deselecting
+    /// other objects. Used for Shift+click multi-selection.
+    /// </summary>
+    public void ToggleObjectSelection(SceneObject obj)
+    {
+        obj.IsSelected = !obj.IsSelected;
+
+        if (obj.IsSelected)
+        {
+            // Make the toggled-on object the primary for the properties panel,
+            // but only if nothing else was already primary.
+            if (_selectedObject == null || !_selectedObject.IsSelected)
+            {
+                _selectedObject = obj;
+                ParameterRows.Clear();
+                BuildParameterRows(obj);
+                OnPropertyChanged(nameof(SelectedObject));
+            }
+        }
+        else if (obj == _selectedObject)
+        {
+            // The primary was deselected — fall back to any still-selected object.
+            _selectedObject = SceneObjects.FirstOrDefault(o => o.IsSelected);
+            ParameterRows.Clear();
+            if (_selectedObject != null) BuildParameterRows(_selectedObject);
+            OnPropertyChanged(nameof(SelectedObject));
+        }
+
+        OnPropertyChanged(nameof(HasSelection));
+        OnPropertyChanged(nameof(HasTwoSelections));
+    }
+
     private void SaveUndoState()
     {
         _undoStack.Add(SceneObjects.Select(o => o.Clone(forUndo: true)).ToList());

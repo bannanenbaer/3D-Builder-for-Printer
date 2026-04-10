@@ -110,7 +110,7 @@
                     Padding="0"
                     ToolTip="Brixl – klicken um Sprechblase zu öffnen/schließen">
                 <local:MascotAnimationView x:Name="MascotView"
-                                           Width="100" Height="130"
+                                           Width="110" Height="145"
                                            VerticalAlignment="Bottom"/>
             </Button>
         </Grid>

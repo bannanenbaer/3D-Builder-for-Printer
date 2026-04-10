@@ -95,7 +95,7 @@ public partial class MainWindow : Window
                     : Color.FromArgb(140, 239, 68, 68);
             else
                 color = obj.IsSelected
-                    ? Color.FromRgb(0, 120, 212)
+                    ? Color.FromRgb(0, 150, 255)
                     : Color.FromRgb(130, 190, 220);
 
             var brush    = new SolidColorBrush(color);
@@ -111,10 +111,45 @@ public partial class MainWindow : Window
             // Record the position/rotation that Python already baked into this STL.
             // WASD movement will apply only the delta on top.
             _bakedTransforms[obj.Id] = (obj.PosX, obj.PosY, obj.PosZ, obj.RotZ);
+
+            // Bounding-box edge highlight for selected objects
+            if (obj.IsSelected)
+                visual.Children.Add(CreateSelectionBox(modelGroup.Bounds));
+
             Viewport3D.Children.Add(visual);
             Viewport3D.ZoomExtents(400);
         }
         catch (Exception ex) { _vm.StatusText = $"Fehler: {ex.Message}"; }
+    }
+
+    /// <summary>Draws a cyan wireframe bounding box around the given bounds (12 edges).</summary>
+    private static LinesVisual3D CreateSelectionBox(Rect3D b)
+    {
+        double x0 = b.X,        x1 = b.X + b.SizeX;
+        double y0 = b.Y,        y1 = b.Y + b.SizeY;
+        double z0 = b.Z,        z1 = b.Z + b.SizeZ;
+
+        var pts = new Point3DCollection(24)
+        {
+            // Bottom face
+            new(x0,y0,z0), new(x1,y0,z0),
+            new(x1,y0,z0), new(x1,y1,z0),
+            new(x1,y1,z0), new(x0,y1,z0),
+            new(x0,y1,z0), new(x0,y0,z0),
+            // Top face
+            new(x0,y0,z1), new(x1,y0,z1),
+            new(x1,y0,z1), new(x1,y1,z1),
+            new(x1,y1,z1), new(x0,y1,z1),
+            new(x0,y1,z1), new(x0,y0,z1),
+            // Verticals
+            new(x0,y0,z0), new(x0,y0,z1),
+            new(x1,y0,z0), new(x1,y0,z1),
+            new(x1,y1,z0), new(x1,y1,z1),
+            new(x0,y1,z0), new(x0,y1,z1),
+        };
+
+        return new LinesVisual3D { Points = pts, Thickness = 1.5,
+            Color = Color.FromRgb(0, 220, 255) }; // cyan
     }
 
     private void RemoveFromViewport(string objId)
@@ -212,21 +247,19 @@ public partial class MainWindow : Window
 
         switch (e.Key)
         {
-            case Key.W: // hoch – camera-forward auf der Bauplatte
-                obj.PosX += fwd.X * MoveStep;
-                obj.PosY += fwd.Y * MoveStep;
+            case Key.W: // hoch – von der Bauplatte weg (Z+)
+                obj.PosZ += MoveStep;
                 break;
-            case Key.A: // rechts – camera-right
+            case Key.A: // rechts – camera-right auf der Bauplatte
                 obj.PosX += rgt.X * MoveStep;
                 obj.PosY += rgt.Y * MoveStep;
                 break;
-            case Key.S: // links – camera-left
+            case Key.S: // links – camera-left auf der Bauplatte
                 obj.PosX -= rgt.X * MoveStep;
                 obj.PosY -= rgt.Y * MoveStep;
                 break;
-            case Key.Y: // runter – camera-backward
-                obj.PosX -= fwd.X * MoveStep;
-                obj.PosY -= fwd.Y * MoveStep;
+            case Key.Y: // runter – zur Bauplatte hin (Z-)
+                obj.PosZ -= MoveStep;
                 break;
             case Key.D: // gegen Uhrzeigersinn (aus Kamerasicht = um Z-Achse positiv)
                 obj.RotZ += RotStep;
@@ -276,7 +309,17 @@ public partial class MainWindow : Window
             new PointHitTestParameters(pos));
 
         if (hitId != null)
-            _vm.SelectedObject = _vm.SceneObjects.FirstOrDefault(o => o.Id == hitId);
+        {
+            var clicked = _vm.SceneObjects.FirstOrDefault(o => o.Id == hitId);
+            if (clicked != null)
+            {
+                bool shift = (Keyboard.Modifiers & ModifierKeys.Shift) != 0;
+                if (shift)
+                    _vm.ToggleObjectSelection(clicked);
+                else
+                    _vm.SelectedObject = clicked;
+            }
+        }
         // Note: clicking empty space does NOT deselect (preserves current selection)
     }
 
