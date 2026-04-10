@@ -112,6 +112,11 @@
                     Padding="0"
                     ClipToBounds="False"
                     ToolTip="Brixel – klicken um Sprechblase zu öffnen/schließen">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <ContentPresenter/>
+                    </ControlTemplate>
+                </Button.Template>
                 <local:MascotAnimationView x:Name="MascotView"
                                            Width="130" Height="175"
                                            VerticalAlignment="Bottom"
