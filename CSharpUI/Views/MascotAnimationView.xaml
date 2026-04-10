@@ -145,17 +145,21 @@
     <!-- Viewbox scales the mascot to whatever Width/Height is set on the UserControl -->
     <Viewbox Stretch="Uniform">
 
-        <!-- ══ Mascot — entire body in a Canvas ══════════════════════════ -->
-        <Canvas x:Name="MascotRoot" Width="160" Height="245">
+        <!-- Outer canvas: 15 px top padding gives IdleFloat/Jump room to move upward
+             without clipping; shadow is fixed here so it stays on the ground. -->
+        <Canvas Width="160" Height="260">
+
+            <!-- Shadow under feet — fixed to the ground, does NOT float with the body -->
+            <Ellipse Canvas.Left="30" Canvas.Top="247" Width="100" Height="12"
+                     Fill="#33000000"/>
+
+        <!-- ══ Mascot body starts 15 px from the top of the outer canvas ══ -->
+        <Canvas x:Name="MascotRoot" Width="160" Canvas.Top="15">
 
             <!-- TranslateTransform on root for idle-float + walk movement -->
             <Canvas.RenderTransform>
                 <TranslateTransform x:Name="RootTranslate" X="0" Y="0"/>
             </Canvas.RenderTransform>
-
-            <!-- Shadow under feet -->
-            <Ellipse Canvas.Left="30" Canvas.Top="232" Width="100" Height="12"
-                     Fill="#33000000"/>
 
             <!-- ── TAIL ────────────────────────────────────────────────── -->
             <Canvas x:Name="TailCanvas" Canvas.Left="88" Canvas.Top="80">
@@ -317,7 +321,9 @@
             <Ellipse Canvas.Left="148" Canvas.Top="12"  Width="6" Height="6" Fill="#FFD700" Opacity="0.8"/>
             <Ellipse Canvas.Left="2"   Canvas.Top="108" Width="5" Height="5" Fill="#FFD700" Opacity="0.6"/>
             <Ellipse Canvas.Left="152" Canvas.Top="100" Width="4" Height="4" Fill="#FFD700" Opacity="0.6"/>
-        </Canvas>
+        </Canvas><!-- end MascotRoot -->
+
+        </Canvas><!-- end outer canvas -->
 
     </Viewbox>
 </UserControl>
