@@ -79,6 +79,10 @@ public class SettingsViewModel : INotifyPropertyChanged
     };
 
     // ── Theme ─────────────────────────────────────────────────────────────
+
+    /// <summary>Fired whenever the UI theme changes so 3D elements can update their colors.</summary>
+    public static event Action? ThemeChanged;
+
     public string ThemeMode
     {
         get => _themeModeToDisplay.TryGetValue(_svc.Current.ThemeMode, out var d) ? d : "Dunkel";
@@ -91,6 +95,7 @@ public class SettingsViewModel : INotifyPropertyChanged
             ThemeApplier.ApplyBaseTheme(_svc.Current.ThemeMode);
             // Re-apply colorblind palette on top of new base
             ThemeApplier.ApplyColorBlindMode(_svc.Current.ColorBlindMode);
+            ThemeChanged?.Invoke();
             SaveAndNotify();
         }
     }

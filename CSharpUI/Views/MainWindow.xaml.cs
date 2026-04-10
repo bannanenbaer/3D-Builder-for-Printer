@@ -20,6 +20,12 @@ public partial class MainWindow : Window
     // O(1) lookup: object ID → viewport visual
     private readonly Dictionary<string, ModelVisual3D> _visualMap = new();
 
+    // Opaque slab covering the region below the build plate (Z < 0).
+    // Uses the viewport background colour so it appears invisible but occludes
+    // any geometry that dips below Z = 0.
+    private readonly ModelVisual3D _undergroundCover;
+    private SolidColorBrush _coverBrush = new(Color.FromRgb(0x11, 0x11, 0x11));
+
     // Tracks the position/rotation baked into each object's current STL file.
     // WASD movement applies a delta transform on top of this baked-in transform
     // so no Python round-trip is needed for movement.
@@ -41,6 +47,13 @@ public partial class MainWindow : Window
             startCam.UpDirection  = new Vector3D(0, 0, 1);
         }
         DataContext = _vm;
+
+        // Initialise the underground cover with the current theme colour and add it
+        // to the viewport. It sits just below Z = 0 and occludes sub-zero geometry.
+        UpdateCoverColor();
+        _undergroundCover = CreateUndergroundCover();
+        Viewport3D.Children.Add(_undergroundCover);
+        SettingsViewModel.ThemeChanged += () => Dispatcher.InvokeAsync(UpdateCoverColor);
 
         // Show tutorial on first launch
         CheckAndShowTutorial();
@@ -354,6 +367,64 @@ public partial class MainWindow : Window
             Viewport3D.Children.Remove(visual);
         _visualMap.Clear();
         _bakedTransforms.Clear();
+    }
+
+    // ── Underground cover (hides geometry below Z = 0) ────────────────────
+
+    /// <summary>
+    /// Creates a large flat quad at Z = -0.05 (just below the build plate) using
+    /// the viewport background colour as an emissive + opaque-diffuse material.
+    /// Because it is opaque and lies between the camera and any sub-zero geometry,
+    /// depth-buffering ensures that all geometry with Z &lt; -0.05 is invisible.
+    /// </summary>
+    private ModelVisual3D CreateUndergroundCover()
+    {
+        const double half = 5_000.0;  // 5 m radius – more than any printer bed
+        const double zTop = -0.05;    // just below Z = 0 so the grid stays visible
+
+        var mesh = new MeshGeometry3D
+        {
+            Positions = new Point3DCollection
+            {
+                new(-half, -half, zTop),
+                new( half, -half, zTop),
+                new( half,  half, zTop),
+                new(-half,  half, zTop),
+            },
+            TriangleIndices = new Int32Collection { 0, 1, 2,  0, 2, 3 },
+            Normals = new Vector3DCollection
+            {
+                new(0, 0, 1), new(0, 0, 1), new(0, 0, 1), new(0, 0, 1),
+            },
+        };
+
+        var material = BuildCoverMaterial();
+        var model = new GeometryModel3D(mesh, material) { BackMaterial = material };
+        return new ModelVisual3D { Content = model };
+    }
+
+    private MaterialGroup BuildCoverMaterial()
+    {
+        // Black diffuse absorbs all scene lighting → contributes nothing to the output.
+        // Emissive always outputs the exact cover colour regardless of lights.
+        // _coverBrush is a mutable shared instance: changing _coverBrush.Color
+        // automatically propagates to the render without rebuilding the material.
+        return new MaterialGroup
+        {
+            Children =
+            {
+                new DiffuseMaterial(Brushes.Black),
+                new EmissiveMaterial(_coverBrush),
+            },
+        };
+    }
+
+    private void UpdateCoverColor()
+    {
+        // Read the current ViewportBackground resource (updated by ThemeApplier) and
+        // update the shared brush; WPF propagates the change to the 3D material automatically.
+        if (Application.Current.Resources["ViewportBackground"] is SolidColorBrush b)
+            _coverBrush.Color = b.Color;
     }
 
     // ── Menu / toolbar handlers ───────────────────────────────────────────
