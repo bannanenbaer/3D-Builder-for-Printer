@@ -15,8 +15,8 @@
     -->
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>   <!-- Speech bubble  -->
-            <RowDefinition Height="Auto"/>   <!-- Mascot         -->
+            <RowDefinition Height="Auto" MaxHeight="80"/>   <!-- Speech bubble  -->
+            <RowDefinition Height="*"/>   <!-- Mascot (takes remaining space) -->
             <RowDefinition Height="Auto"/>   <!-- Input bar      -->
         </Grid.RowDefinitions>
 
