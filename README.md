@@ -28,7 +28,7 @@ Eine professionelle Desktop-Anwendung zum Erstellen und Optimieren von 3D-Modell
 - Qualitätsanalyse mit Score
 
 ### Weitere Features
-- **STL & 3MF Import/Export** (direkt in PrusaSlicer öffnen)
+- **STL & 3MF Import/Export** (exportierte Dateien direkt in PrusaSlicer, Cura oder Bambu Studio öffnen)
 - **Zweisprachig**: Deutsch / English
 - **Update-System**: Prüft GitHub Releases automatisch, lädt neue Version herunter
 - **Erstes-Start-Tutorial** von Brixl
@@ -72,13 +72,16 @@ pip install cadquery
 | Aktion | Beschreibung |
 |---|---|
 | Form erstellen | Im linken Panel auf Form klicken |
+| Objekt auswählen | **Linksklick** auf das Objekt im 3D-Viewport |
+| Objekt verschieben | Objekt auswählen, dann **W** (vor), **Y** (zurück), **A** (rechts), **S** (links) — immer aus Kamerasicht |
+| Objekt drehen | Objekt auswählen, dann **D** (5° gegen Uhrzeigersinn) |
 | Maße ändern | Werte im Properties-Panel eingeben |
 | AutoFix starten | AutoFix-Panel → "Start AutoFix!" |
-| Undo/Redo | Buttons in der Toolbar |
+| Undo/Redo | Ctrl+Z / Ctrl+Y — gilt auch für WASD-Bewegungen |
 | Fillet/Chamfer | Radius eingeben → "Apply" |
 | Boolean | Zwei Objekte wählen → Union/Subtract/Intersect |
 | STL exportieren | File → Export |
-| 3D-Ansicht | Scroll: Zoom, Rechtsklick+Drag: Drehen, Mittelklick: Pan |
+| 3D-Ansicht | Scroll: Zoom, **Linksklick+Drag**: Drehen, **Rechtsklick+Drag**: Pan |
 | Brixl fragen | Chat-Panel öffnen und Frage eingeben |
 | Update prüfen | Toolbar → Update-Button |
 
@@ -89,7 +92,7 @@ pip install cadquery
 | Schicht | Technologie |
 |---|---|
 | GUI / UI | C# WPF + Material Design 3 |
-| 3D-Ansicht | HelixToolkit (OpenGL via WPF) |
+| 3D-Ansicht | HelixToolkit.Wpf (WPF Direct3D) |
 | Geometrie-Engine | Python + CadQuery (OpenCASCADE) |
 | KI-Assistent | Claude API (optional, lokal als Fallback) |
 | Animationen | WPF Storyboards |

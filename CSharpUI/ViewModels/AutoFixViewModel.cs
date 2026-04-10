@@ -2,6 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -23,6 +24,7 @@ namespace ThreeDBuilder.ViewModels
     {
         private readonly AutoFixService _autoFixService;
         private readonly UndoRedoService _undoRedoService;
+        private ObservableCollection<SceneObject>? _sceneObjects;
         private bool _canUndo;
         private bool _canRedo;
         private string _undoDescription = "Nichts zum Rückgängigmachen";
@@ -65,6 +67,7 @@ namespace ThreeDBuilder.ViewModels
         {
             _autoFixService = autoFixService;
             _undoRedoService = undoRedoService;
+            _sceneObjects = sceneObjects;
 
             InitializeCommands();
             InitializePrinters();
@@ -137,10 +140,24 @@ namespace ThreeDBuilder.ViewModels
             _availableObjects.Add(new AutoFixSceneItem { Id = "obj_5", Name = "Torus", Type = "Torus" });
         }
 
+        private SceneObject? GetSelectedSceneObject()
+        {
+            if (_sceneObjects == null || SelectedObjectForOptimization == null) return null;
+            return _sceneObjects.FirstOrDefault(o => o.Id == SelectedObjectForOptimization.Id);
+        }
+
         private async void AnalyzeModel()
         {
             if (!HasSelectedObject || SelectedObjectForOptimization == null)
                 return;
+
+            var sceneObj = GetSelectedSceneObject();
+            if (sceneObj == null)
+            {
+                IssuesFound.Clear();
+                IssuesFound.Add("❌ Objekt nicht mehr in der Szene vorhanden.");
+                return;
+            }
 
             IsOptimizing = true;
             OptimizationProgress = $"Analysiere '{SelectedObjectForOptimization.Name}'...";
@@ -149,7 +166,7 @@ namespace ThreeDBuilder.ViewModels
 
             try
             {
-                var report = await _autoFixService.AnalyzeModel(SelectedObjectForOptimization.Id);
+                var report = await _autoFixService.AnalyzeModel(sceneObj, SelectedPrinter);
 
                 HasAnalysisReport = true;
                 PrintQualityScore = report.EstimatedPrintSuccess;
@@ -187,6 +204,13 @@ namespace ThreeDBuilder.ViewModels
             if (!HasSelectedObject || SelectedObjectForOptimization == null)
                 return;
 
+            var sceneObj = GetSelectedSceneObject();
+            if (sceneObj == null)
+            {
+                OptimizationProgress = "❌ Objekt nicht mehr in der Szene vorhanden.";
+                return;
+            }
+
             IsOptimizing = true;
             OptimizationProgress = $"Starte AutoFix für '{SelectedObjectForOptimization.Name}'...";
             MascotAnimationText = $"Das Maskottchen läuft über '{SelectedObjectForOptimization.Name}' und optimiert es! ✨";
@@ -213,7 +237,7 @@ namespace ThreeDBuilder.ViewModels
                 _undoRedoService.Execute(undoAction);
 
                 OptimizationProgress = $"Optimiere '{SelectedObjectForOptimization.Name}'...";
-                bool success = await _autoFixService.AutoFixModel(SelectedObjectForOptimization.Id, options);
+                bool success = await _autoFixService.AutoFixModel(sceneObj, options);
 
                 if (success)
                 {

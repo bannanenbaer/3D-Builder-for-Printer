@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
 using ThreeDBuilder.Models;
 
 namespace ThreeDBuilder.Services
 {
     /// <summary>
-    /// AutoFix Service - Optimiert 3D-Modelle automatisch für optimale Druckergebnisse
+    /// AutoFix Service - Analysiert und optimiert 3D-Modelle lokal für optimale Druckergebnisse.
+    /// Analyse erfolgt lokal via PrintQualityAnalyzer; Fillet-Fix via Python-Bridge.
     /// </summary>
     public class AutoFixService
     {
@@ -41,133 +41,62 @@ namespace ThreeDBuilder.Services
         }
 
         /// <summary>
-        /// Analysiert ein Modell auf Druck-Probleme
+        /// Analysiert ein SceneObject lokal auf Druck-Probleme (kein Python-Aufruf).
         /// </summary>
-        public async Task<OptimizationReport> AnalyzeModel(string modelId)
+        public Task<OptimizationReport> AnalyzeModel(SceneObject obj, PrinterProfile? profile = null)
         {
+            profile ??= PrinterProfile.Prusa;
             var report = new OptimizationReport();
 
             try
             {
-                // Rufe Python-Backend auf für detaillierte Analyse
-                var analysisResult = await _pythonBridge.SendAsync(
-                    "analyze_model",
-                    new { model_id = modelId }
-                );
+                var qr = PrintQualityAnalyzer.Analyze(obj, profile);
 
-                // Parse results
-                if (analysisResult.ContainsKey("sharp_edges"))
-                {
-                    report.HasSharpEdges = analysisResult["sharp_edges"]?.Value<bool>() ?? false;
-                    if (report.HasSharpEdges)
-                    {
-                        report.Issues.Add("⚠️ Scharfe Kanten gefunden - können zu Druckfehlern führen");
-                        report.Recommendations.Add("✓ Fillet mit 1-2mm Radius anwenden");
-                        report.EstimatedPrintSuccess -= 15;
-                    }
-                }
+                report.EstimatedPrintSuccess = Math.Max(0f, Math.Min(100f, (float)qr.Score));
+                report.Issues.AddRange(qr.Issues);
 
-                if (analysisResult.ContainsKey("small_holes"))
-                {
-                    report.HasSmallHoles = analysisResult["small_holes"]?.Value<bool>() ?? false;
-                    if (report.HasSmallHoles)
-                    {
-                        report.Issues.Add("⚠️ Kleine Löcher gefunden - können verstopfen");
-                        report.Recommendations.Add("✓ Kleine Löcher füllen oder vergrößern");
-                        report.EstimatedPrintSuccess -= 10;
-                    }
-                }
+                // Detect fixable issue types from analysis text
+                bool hasEdges = obj.ShapeType is not ("sphere" or "hemisphere");
+                report.HasThinWalls = qr.Issues.Any(i =>
+                    i.Contains("Wandstärke") || i.Contains("dünn") || i.Contains("Sternzacken"));
+                report.HasSharpEdges = hasEdges && report.Issues.Count > 0;
+                // Holes and non-manifold cannot be detected from params alone
 
-                if (analysisResult.ContainsKey("thin_walls"))
-                {
-                    report.HasThinWalls = analysisResult["thin_walls"]?.Value<bool>() ?? false;
-                    if (report.HasThinWalls)
-                    {
-                        report.Issues.Add("⚠️ Zu dünne Wände erkannt - können reißen");
-                        report.Recommendations.Add("✓ Wandstärke auf mindestens 1.5mm erhöhen");
-                        report.EstimatedPrintSuccess -= 20;
-                    }
-                }
+                // Build recommendations with quality prefix
+                if (report.EstimatedPrintSuccess >= 85)
+                    report.Recommendations.Add("🟢 Modell sieht gut aus für den Druck!");
+                else if (report.EstimatedPrintSuccess >= 70)
+                    report.Recommendations.Add("🟡 Einige Optimierungen könnten hilfreich sein");
+                else
+                    report.Recommendations.Add("🔴 Druckergebnis könnte problematisch sein — AutoFix empfohlen!");
 
-                if (analysisResult.ContainsKey("non_manifold"))
-                {
-                    report.HasNonManifoldGeometry = analysisResult["non_manifold"]?.Value<bool>() ?? false;
-                    if (report.HasNonManifoldGeometry)
-                    {
-                        report.Issues.Add("⚠️ Nicht-manifold Geometrie - kann zu Druckfehlern führen");
-                        report.Recommendations.Add("✓ Geometrie reparieren und bereinigen");
-                        report.EstimatedPrintSuccess -= 25;
-                    }
-                }
-
-                // Ensure minimum success rate
-                report.EstimatedPrintSuccess = Math.Max(report.EstimatedPrintSuccess, 50f);
+                report.Recommendations.Add($"Geschätzte Druckqualität: {report.EstimatedPrintSuccess:F0}%");
+                report.Recommendations.AddRange(qr.Suggestions);
             }
             catch (Exception ex)
             {
                 report.Issues.Add($"❌ Fehler bei der Analyse: {ex.Message}");
             }
 
-            return report;
+            return Task.FromResult(report);
         }
 
         /// <summary>
-        /// Führt automatische Optimierungen durch
+        /// Wendet Fillet-Fix auf das Objekt an (einziger unterstützter automatischer Fix).
         /// </summary>
-        public async Task<bool> AutoFixModel(string modelId, AutoFixOptions? options = null)
+        public async Task<bool> AutoFixModel(SceneObject obj, AutoFixOptions? options = null)
         {
             options ??= new AutoFixOptions();
 
             try
             {
-                // Schritt 1: Analysiere das Modell
-                var report = await AnalyzeModel(modelId);
-
-                // Schritt 2: Wende Optimierungen an
-                var optimizations = new List<string>();
+                var report = await AnalyzeModel(obj);
 
                 if (report.HasSharpEdges && options.FilletRadius > 0)
                 {
-                    optimizations.Add($"Fillet mit {options.FilletRadius}mm Radius anwenden");
                     await _pythonBridge.SendAsync(
                         "apply_fillet",
-                        new { model_id = modelId, radius = options.FilletRadius }
-                    );
-                }
-
-                if (report.HasSmallHoles && options.RemoveSmallHoles)
-                {
-                    optimizations.Add($"Kleine Löcher (< {options.MinHoleSize}mm) füllen");
-                    await _pythonBridge.SendAsync(
-                        "fill_small_holes",
-                        new { model_id = modelId, min_size = options.MinHoleSize }
-                    );
-                }
-
-                if (report.HasThinWalls)
-                {
-                    optimizations.Add($"Wandstärke auf mindestens {options.MinWallThickness}mm erhöhen");
-                    await _pythonBridge.SendAsync(
-                        "thicken_walls",
-                        new { model_id = modelId, min_thickness = options.MinWallThickness }
-                    );
-                }
-
-                if (report.HasNonManifoldGeometry && options.FixNonManifold)
-                {
-                    optimizations.Add("Nicht-manifold Geometrie reparieren");
-                    await _pythonBridge.SendAsync(
-                        "fix_non_manifold",
-                        new { model_id = modelId }
-                    );
-                }
-
-                if (options.SmoothMesh)
-                {
-                    optimizations.Add("Mesh glätten für bessere Oberflächenqualität");
-                    await _pythonBridge.SendAsync(
-                        "smooth_mesh",
-                        new { model_id = modelId }
+                        new { @object = obj.ToBackendDict(), radius = options.FilletRadius }
                     );
                 }
 
@@ -181,52 +110,24 @@ namespace ThreeDBuilder.Services
         }
 
         /// <summary>
-        /// Gibt Empfehlungen für optimale Druckergebnisse
+        /// Gibt die Empfehlungen aus einem bereits erstellten Bericht zurück.
         /// </summary>
         public List<string> GetPrintingRecommendations(OptimizationReport report)
-        {
-            var recommendations = new List<string>();
-
-            if (report.EstimatedPrintSuccess < 70)
-            {
-                recommendations.Add("🔴 Druckergebnis könnte problematisch sein - AutoFix empfohlen!");
-            }
-            else if (report.EstimatedPrintSuccess < 85)
-            {
-                recommendations.Add("🟡 Einige Optimierungen könnten hilfreich sein");
-            }
-            else
-            {
-                recommendations.Add("🟢 Modell sieht gut aus für den Druck!");
-            }
-
-            recommendations.Add($"Geschätzte Druckqualität: {report.EstimatedPrintSuccess:F0}%");
-
-            if (report.HasSharpEdges)
-                recommendations.Add("💡 Tipp: Scharfe Kanten können zu Druckfehlern führen. Nutze Fillet!");
-
-            if (report.HasThinWalls)
-                recommendations.Add("💡 Tipp: Zu dünne Wände können reißen. Erhöhe die Wandstärke!");
-
-            if (report.HasSmallHoles)
-                recommendations.Add("💡 Tipp: Kleine Löcher können verstopfen. Vergrößere sie oder fülle sie!");
-
-            return recommendations;
-        }
+            => report.Recommendations;
 
         /// <summary>
-        /// Optimiert ein Modell für einen bestimmten 3D-Drucker
+        /// Optimiert ein Modell für einen bestimmten 3D-Drucker.
         /// </summary>
-        public async Task<bool> OptimizeForPrinter(string modelId, PrinterProfile printer)
+        public async Task<bool> OptimizeForPrinter(SceneObject obj, PrinterProfile printer)
         {
             var options = new AutoFixOptions
             {
-                FilletRadius         = (float)(printer.NozzleDiameter * 3.0),
-                MinWallThickness     = (float)printer.MinWallThickness,
-                MinHoleSize          = (float)(printer.NozzleDiameter * 2.0)
+                FilletRadius     = (float)(printer.NozzleDiameter * 3.0),
+                MinWallThickness = (float)printer.MinWallThickness,
+                MinHoleSize      = (float)(printer.NozzleDiameter * 2.0)
             };
 
-            return await AutoFixModel(modelId, options);
+            return await AutoFixModel(obj, options);
         }
     }
 }
