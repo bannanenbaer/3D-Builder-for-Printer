@@ -5,6 +5,7 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              Width="Auto"
              Height="Auto"
+             MinHeight="300"
              Background="Transparent">
 
     <!--
