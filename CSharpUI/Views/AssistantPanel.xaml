@@ -17,7 +17,7 @@
     <Grid VerticalAlignment="Bottom" ClipToBounds="False">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" MaxHeight="80"/>   <!-- Speech bubble  -->
-            <RowDefinition Height="*"/>   <!-- Mascot (takes remaining space) -->
+            <RowDefinition Height="175"/>   <!-- Mascot (feste Höhe) -->
             <RowDefinition Height="Auto"/>   <!-- Input bar      -->
         </Grid.RowDefinitions>
 
