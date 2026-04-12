@@ -25,6 +25,10 @@ public partial class MainWindow : Window
     // so no Python round-trip is needed for movement.
     private readonly Dictionary<string, (double X, double Y, double Z, double RotZ)> _bakedTransforms = new();
 
+    // Set to true after the first ZoomExtents so subsequent adds/updates don't
+    // reset the camera.  Reset when the whole scene is cleared.
+    private bool _hasZoomedOnce;
+
     private const double MoveStep = 1.0;  // mm per key press
     private const double RotStep  = 5.0;  // degrees per D key press
 
@@ -54,12 +58,20 @@ public partial class MainWindow : Window
             //  ObjectRemoved is queued but BEFORE it runs on the dispatcher).
             obj.PropertyChanged += (_, e) =>
             {
-                if (e.PropertyName is nameof(SceneObject.IsSubtractor) or nameof(SceneObject.IsSelected))
+                if (e.PropertyName == nameof(SceneObject.IsSubtractor))
                     Dispatcher.InvokeAsync(() =>
                     {
                         if (!_vm.SceneObjects.Contains(obj)) return; // object was deleted
                         RemoveFromViewport(obj.Id);
                         AddStlToViewport(obj);
+                    });
+                else if (e.PropertyName == nameof(SceneObject.IsSelected))
+                    // Update colour/highlight in-place — do NOT remove+re-add the visual
+                    // or the WASD delta transform is lost and the object snaps back.
+                    Dispatcher.InvokeAsync(() =>
+                    {
+                        if (!_vm.SceneObjects.Contains(obj)) return;
+                        UpdateObjectAppearance(obj);
                     });
             };
             Dispatcher.InvokeAsync(() => AddStlToViewport(obj));
@@ -125,10 +137,14 @@ public partial class MainWindow : Window
                 visual.Children.Add(CreateSelectionBox(modelGroup.Bounds));
 
             Viewport3D.Children.Add(visual);
-            // Only auto-zoom when adding the first object so the camera does not
-            // fly back every time an existing object is regenerated.
-            if (_visualMap.Count == 1)
+            // Zoom to fit only once per scene (first object ever added).
+            // Using a flag instead of Count==1 because Remove+Add during regeneration
+            // would momentarily drop Count to 0 and re-trigger an unwanted zoom.
+            if (!_hasZoomedOnce)
+            {
+                _hasZoomedOnce = true;
                 Viewport3D.ZoomExtents(400);
+            }
         }
         catch (Exception ex) { _vm.StatusText = $"Fehler: {ex.Message}"; }
     }
@@ -171,6 +187,37 @@ public partial class MainWindow : Window
             _bakedTransforms.Remove(objId);
             Viewport3D.Children.Remove(visual);
         }
+    }
+
+    /// <summary>
+    /// Updates colour and selection box of an existing visual in-place.
+    /// Called when IsSelected changes so the visual is never removed/re-added,
+    /// which would destroy any pending WASD delta transform.
+    /// </summary>
+    private void UpdateObjectAppearance(SceneObject obj)
+    {
+        if (!_visualMap.TryGetValue(obj.Id, out var visual)) return;
+
+        Color color;
+        if (obj.IsSubtractor)
+            color = obj.IsSelected
+                ? Color.FromArgb(200, 255, 80, 80)
+                : Color.FromArgb(140, 239, 68, 68);
+        else
+            color = obj.IsSelected
+                ? Color.FromRgb(0, 150, 255)
+                : Color.FromRgb(130, 190, 220);
+
+        var material = new DiffuseMaterial(new SolidColorBrush(color));
+
+        if (visual.Content is Model3DGroup grp)
+            foreach (GeometryModel3D gm in grp.Children.OfType<GeometryModel3D>())
+                gm.Material = gm.BackMaterial = material;
+
+        // Refresh selection-box wireframe
+        visual.Children.Clear();
+        if (obj.IsSelected && visual.Content is Model3DGroup grp2)
+            visual.Children.Add(CreateSelectionBox(grp2.Bounds));
     }
 
     // ── WASD movement helpers ─────────────────────────────────────────────
@@ -365,6 +412,7 @@ public partial class MainWindow : Window
             Viewport3D.Children.Remove(visual);
         _visualMap.Clear();
         _bakedTransforms.Clear();
+        _hasZoomedOnce = false;
     }
 
     // ── Menu / toolbar handlers ───────────────────────────────────────────
