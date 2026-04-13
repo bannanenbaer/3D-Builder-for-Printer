@@ -29,6 +29,9 @@ public partial class MainWindow : Window
     // reset the camera.  Reset when the whole scene is cleared.
     private bool _hasZoomedOnce;
 
+    // Debounce timer: fires 600 ms after the last WASD step to recompute CSG previews.
+    private System.Windows.Threading.DispatcherTimer? _csgDebounce;
+
     private const double MoveStep = 1.0;  // mm per key press
     private const double RotStep  = 5.0;  // degrees per D key press
 
@@ -59,11 +62,12 @@ public partial class MainWindow : Window
             obj.PropertyChanged += (_, e) =>
             {
                 if (e.PropertyName == nameof(SceneObject.IsSubtractor))
-                    Dispatcher.InvokeAsync(() =>
+                    Dispatcher.InvokeAsync(async () =>
                     {
                         if (!_vm.SceneObjects.Contains(obj)) return; // object was deleted
                         RemoveFromViewport(obj.Id);
                         AddStlToViewport(obj);
+                        await UpdateCsgPreviewsAsync();
                     });
                 else if (e.PropertyName == nameof(SceneObject.IsSelected))
                     // Update colour/highlight in-place — do NOT remove+re-add the visual
@@ -74,9 +78,18 @@ public partial class MainWindow : Window
                         UpdateObjectAppearance(obj);
                     });
             };
-            Dispatcher.InvokeAsync(() => AddStlToViewport(obj));
+            Dispatcher.InvokeAsync(async () =>
+            {
+                AddStlToViewport(obj);
+                await UpdateCsgPreviewsAsync();
+            });
         };
-        _vm.ObjectUpdated += obj => Dispatcher.InvokeAsync(() => { RemoveFromViewport(obj.Id); AddStlToViewport(obj); });
+        _vm.ObjectUpdated += obj => Dispatcher.InvokeAsync(async () =>
+        {
+            RemoveFromViewport(obj.Id);
+            AddStlToViewport(obj);
+            await UpdateCsgPreviewsAsync();
+        });
         _vm.ObjectRemoved += obj => Dispatcher.InvokeAsync(() => RemoveFromViewport(obj.Id));
         _vm.SceneCleared  += ()  => Dispatcher.InvokeAsync(ClearViewport);
 
@@ -281,6 +294,15 @@ public partial class MainWindow : Window
         if (rgt.Length < 0.01) rgt = new Vector3D(1, 0, 0);
         rgt.Normalize();
 
+        // Snap both directions to the nearest cardinal grid axis (pure X or pure Y).
+        // Without snapping the camera angle causes diagonal movement on the grid.
+        fwd = Math.Abs(fwd.X) >= Math.Abs(fwd.Y)
+            ? new Vector3D(Math.Sign(fwd.X), 0, 0)
+            : new Vector3D(0, Math.Sign(fwd.Y), 0);
+        rgt = Math.Abs(rgt.X) >= Math.Abs(rgt.Y)
+            ? new Vector3D(Math.Sign(rgt.X), 0, 0)
+            : new Vector3D(0, Math.Sign(rgt.Y), 0);
+
         return (fwd, rgt);
     }
 
@@ -331,6 +353,9 @@ public partial class MainWindow : Window
         {
             ApplyDeltaTransform(obj);
             e.Handled = true;
+            // Recompute CSG preview 600 ms after the last keypress (debounced)
+            if (_vm.SceneObjects.Any(o => o.IsSubtractor))
+                ScheduleCsgUpdate();
         }
     }
 
@@ -555,17 +580,25 @@ public partial class MainWindow : Window
 
     private static readonly (string Title, string Text, MascotAnimationView.ToolType Tool)[] TutorialSteps =
     {
-        ("Willkommen bei 3D Builder Pro! 🎉",
-         "Hallo! Ich bin dein KI-Assistent. Ich führe dich kurz durch die wichtigsten Funktionen. Klick auf 'Weiter' um loszulegen!",
-         MascotAnimationView.ToolType.None),
+        ("Willkommen bei 3D Builder Pro!",
+         "Ich führe dich kurz durch die wichtigsten Funktionen. Klicke auf 'Weiter' um loszulegen!",
+         MascotAnimationView.ToolType.Happy),
 
         ("◀  Linke Leiste — Formen",
          "Hier findest du alle 3D-Formen: Würfel, Kugel, Zylinder, Kegel und viele mehr.\nKlicke eine Form an, um sie in die Szene einzufügen.",
          MascotAnimationView.ToolType.Brush),
 
         ("▶  Rechte Leiste — Eigenschaften",
-         "Wähle ein Objekt aus und passe hier Größe, Position, Drehung und Material an.\nMit Fillet & Chamfer rundest du Kanten ab.",
+         "Wähle ein Objekt aus und passe hier Größe, Position und Drehung an.\nMit Fillet & Chamfer rundest du Kanten ab.",
          MascotAnimationView.ToolType.Tape),
+
+        ("⌨️  Objekte bewegen (WASD)",
+         "Wähle ein Objekt aus und benutze:\n• A / S: Links / Rechts (kamerarelativ, am Gitter)\n• W / Y: Hoch / Runter (Z-Achse)\n• D: Drehen um Z-Achse",
+         MascotAnimationView.ToolType.None),
+
+        ("🔴  Leerblöcke (Subtraktoren)",
+         "Erstelle eine Form und aktiviere 'Leerblock' in den Eigenschaften.\nSchiebe sie in ein Objekt — der Überschneidungsbereich wird automatisch ausgehöhlt.",
+         MascotAnimationView.ToolType.Hammer),
 
         ("🖱️  3D-Navigation",
          "• Rechtsklick + Ziehen: Ansicht drehen\n• Mausrad: Rein- und Rauszoomen\n• Linksklick auf ein Objekt: Auswählen",
@@ -573,19 +606,11 @@ public partial class MainWindow : Window
 
         ("📂  Importieren & Exportieren",
          "Klicke auf das Ordner-Symbol in der Toolbar um STL- oder 3MF-Dateien zu laden.\nMit dem Speichern-Symbol exportierst du dein Modell als STL.",
-         MascotAnimationView.ToolType.Hammer),
-
-        ("🤖  Ich bin immer für dich da!",
-         "Klick auf 'Assistent' in der Toolbar um mich zu öffnen. Ich helfe dir bei Fragen, erstelle Formen per Texteingabe und löse Probleme.",
-         MascotAnimationView.ToolType.None),
-
-        ("☁️  Automatische Updates",
-         "Klicke auf den Update-Button in der Toolbar. Neue Versionen werden direkt von GitHub geladen und installiert — kein manueller Download nötig!",
          MascotAnimationView.ToolType.Tape),
 
         ("⌨️  Nützliche Tastenkürzel",
-         "• Ctrl+Z / Ctrl+Y: Rückgängig / Wiederholen\n• Ctrl+S: Als STL exportieren\n• Delete: Ausgewähltes Objekt löschen\n• Ctrl+D: Objekt duplizieren",
-         MascotAnimationView.ToolType.None),
+         "• Ctrl+Z / Ctrl+Y: Rückgängig / Wiederholen\n• Ctrl+S: Als STL exportieren\n• Delete: Ausgewähltes Objekt löschen\n• Ctrl+D: Objekt duplizieren\n\nTutorial jederzeit über Hilfe → Tutorial neu starten öffnen.",
+         MascotAnimationView.ToolType.Excited),
     };
 
     private int _tutorialStep;
@@ -657,5 +682,93 @@ public partial class MainWindow : Window
             "3DBuilderPro");
         Directory.CreateDirectory(dir);
         File.WriteAllText(Path.Combine(dir, "tutorial_shown.flag"), DateTime.Now.ToString());
+    }
+
+    /// <summary>Re-open tutorial from the Hilfe menu (ignores the flag file).</summary>
+    private void OnShowTutorial(object sender, RoutedEventArgs e)
+    {
+        _tutorialStep = 0;
+        ShowTutorialStep(0);
+        TutorialOverlay.Visibility = Visibility.Visible;
+    }
+
+    // ── CSG Preview (Subtractor visualization) ────────────────────────────
+
+    /// <summary>
+    /// Fires UpdateCsgPreviewsAsync 600 ms after the last call (debounced).
+    /// Used by WASD movement so Python isn't called on every single key press.
+    /// </summary>
+    private void ScheduleCsgUpdate()
+    {
+        _csgDebounce?.Stop();
+        if (_csgDebounce == null)
+        {
+            _csgDebounce = new System.Windows.Threading.DispatcherTimer
+                { Interval = TimeSpan.FromMilliseconds(600) };
+            _csgDebounce.Tick += async (_, _) =>
+            {
+                _csgDebounce.Stop();
+                await UpdateCsgPreviewsAsync();
+            };
+        }
+        _csgDebounce.Start();
+    }
+
+    /// <summary>
+    /// For every non-subtractor, non-imported object in the scene, ask Python to
+    /// cut all active subtractors from it and update the visual geometry in-place.
+    /// When no subtractors exist the visuals are already correct (original STLs).
+    /// </summary>
+    private async Task UpdateCsgPreviewsAsync()
+    {
+        var bridge = App.PythonBridge;
+        if (bridge?.IsRunning != true) return;
+
+        var subtractors = _vm.SceneObjects
+            .Where(o => o.IsSubtractor && o.ShapeType != "imported")
+            .ToList();
+
+        if (subtractors.Count == 0) return; // nothing to cut
+
+        var subDicts = subtractors.Select(s => (object)s.ToBackendDict()).ToList();
+
+        foreach (var baseObj in _vm.SceneObjects
+            .Where(o => !o.IsSubtractor && o.ShapeType != "imported")
+            .ToList())
+        {
+            if (!_visualMap.TryGetValue(baseObj.Id, out var visual)) continue;
+            try
+            {
+                var res = await bridge.CutWithSubtractorsAsync(
+                    baseObj.ToBackendDict(), subDicts);
+
+                if (res["status"]?.ToString() != "ok") continue;
+                var stlPath = res["stl_path"]?.ToString();
+                if (stlPath == null || !File.Exists(stlPath)) continue;
+
+                var reader   = new StLReader();
+                var newGroup = reader.Read(stlPath);
+
+                var color = baseObj.IsSelected
+                    ? Color.FromRgb(0, 150, 255)
+                    : Color.FromRgb(130, 190, 220);
+                var material = new DiffuseMaterial(new SolidColorBrush(color));
+                if (newGroup is Model3DGroup grp)
+                    foreach (GeometryModel3D gm in grp.Children.OfType<GeometryModel3D>())
+                        gm.Material = gm.BackMaterial = material;
+
+                // Replace geometry in-place.  The CSG result is already at the
+                // absolute world position, so clear any pending WASD delta transform.
+                visual.Content   = newGroup;
+                visual.Transform = Transform3D.Identity;
+                _bakedTransforms[baseObj.Id] =
+                    (baseObj.PosX, baseObj.PosY, baseObj.PosZ, baseObj.RotZ);
+
+                visual.Children.Clear();
+                if (baseObj.IsSelected && newGroup is Model3DGroup grp2)
+                    visual.Children.Add(CreateSelectionBox(grp2.Bounds));
+            }
+            catch { /* ignore individual CSG errors */ }
+        }
     }
 }

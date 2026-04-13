@@ -198,6 +198,14 @@ public class PythonBridge : IDisposable
     public Task<JObject> BooleanOpAsync(string op, object objA, object objB)
         => SendAsync("boolean_op", new { op, object_a = objA, object_b = objB });
 
+    /// <summary>
+    /// Cut <paramref name="baseObj"/> by every shape in <paramref name="subtractors"/>
+    /// and return the resulting preview STL path.
+    /// </summary>
+    public Task<JObject> CutWithSubtractorsAsync(object baseObj, IEnumerable<object> subtractors)
+        => SendAsync("cut_with_subtractors",
+            new { @base = baseObj, subtractors }, timeoutMs: 60_000);
+
     public Task<JObject> ImportStlAsync(string filePath)
     {
         var ext = Path.GetExtension(filePath).ToLowerInvariant();

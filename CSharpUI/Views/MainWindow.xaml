@@ -74,6 +74,7 @@
             <!-- Help -->
             <MenuItem Header="{Binding T[menu_help]}" Foreground="{DynamicResource TextPrimary}">
                 <MenuItem Header="{Binding T[help_about]}" Click="OnAbout"/>
+                <MenuItem Header="Tutorial neu starten" Click="OnShowTutorial"/>
             </MenuItem>
         </Menu>
 

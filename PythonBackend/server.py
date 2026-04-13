@@ -442,19 +442,32 @@ def handle_smooth_mesh(req: dict) -> dict:
             "warning": "Mesh-Glättung noch nicht implementiert"}
 
 
+def handle_cut_with_subtractors(req: dict) -> dict:
+    """Cut a base shape by one or more subtractor shapes and return a preview STL."""
+    result = _load_object(req["base"])
+    for sub in req.get("subtractors", []):
+        try:
+            result = ops.boolean_cut(result, _load_object(sub))
+        except Exception:
+            pass  # non-overlapping or degenerate cut – just skip
+    stl_path = _stl_from_shape(result, "preview")
+    return {"status": "ok", "stl_path": stl_path}
+
+
 HANDLERS = {
-    "create_shape":    handle_create_shape,
-    "apply_fillet":    handle_apply_fillet,
-    "apply_chamfer":   handle_apply_chamfer,
-    "boolean_op":      handle_boolean_op,
-    "import_stl":      handle_import_stl,
-    "import_3mf":      handle_import_3mf,
-    "compile_scad":    handle_compile_scad,
-    "export_scad":     handle_export_scad,
-    "shape_to_scad":   handle_shape_to_scad,
-    "get_shape_defs":  handle_get_shape_defs,
-    "check_openscad":  handle_check_openscad,
-    "ping":            handle_ping,
+    "create_shape":          handle_create_shape,
+    "apply_fillet":          handle_apply_fillet,
+    "apply_chamfer":         handle_apply_chamfer,
+    "boolean_op":            handle_boolean_op,
+    "cut_with_subtractors":  handle_cut_with_subtractors,
+    "import_stl":            handle_import_stl,
+    "import_3mf":            handle_import_3mf,
+    "compile_scad":          handle_compile_scad,
+    "export_scad":           handle_export_scad,
+    "shape_to_scad":         handle_shape_to_scad,
+    "get_shape_defs":        handle_get_shape_defs,
+    "check_openscad":        handle_check_openscad,
+    "ping":                  handle_ping,
     "delete_stl":      handle_delete_stl,
     # AutoFix handlers
     "analyze_model":   handle_analyze_model,
